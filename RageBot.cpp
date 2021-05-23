@@ -86,7 +86,7 @@ void CRageBot::Move(CUserCmd *pCmd, bool &bSendPacket)
 	if (Menu::Window.RageBotTab.AntiAimEnable.GetState())
 	{
 		static int ChokedPackets = -1;
-		/*
+
 		CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
 		if (!pWeapon)
 			return;
@@ -96,13 +96,13 @@ void CRageBot::Move(CUserCmd *pCmd, bool &bSendPacket)
 			bSendPacket = false;
 		}
 		else
-		{*/
+		{
 			if (pLocalEntity->GetLifeState() == LIFE_ALIVE)
 			{
 				DoAntiAim(pCmd, bSendPacket);
 			}
 			ChokedPackets = -1;
-		//}
+		}
 	}
 
 	// Position Adjustment
@@ -1306,37 +1306,37 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 {
 	IClientEntity* pLocal = hackManager.pLocal();
 
-	//if ((pCmd->buttons & IN_USE) || pLocal->GetMoveType() == MOVETYPE_LADDER)
-	//	return;
-	//
-	//// If the aimbot is doing something don't do anything
-	//if ((IsAimStepping || pCmd->buttons & IN_ATTACK) && !Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
-	//	return;
+	if ((pCmd->buttons & IN_USE) || pLocal->GetMoveType() == MOVETYPE_LADDER)
+		return;
+	
+	// If the aimbot is doing something don't do anything
+	if ((IsAimStepping || pCmd->buttons & IN_ATTACK) && !Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
+		return;
 
-	//// Weapon shit
-	//CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
-	//if (pWeapon)
-	//{
-	//	CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
-	//	// Knives or grenades
-	//	if (!GameUtils::IsBallisticWeapon(pWeapon))
-	//	{
-	//		if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
-	//		{
-	//			if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
-	//				return;
-	//		}
-	//		else
-	//		{
-	//			return;
-	//		}
-	//	}
-	//}
+	// Weapon shit
+	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
+	if (pWeapon)
+	{
+		CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
+		// Knives or grenades
+		if (!GameUtils::IsBallisticWeapon(pWeapon))
+		{
+			if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
+			{
+				if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
+					return;
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
 
-	//if (Menu::Window.RageBotTab.AntiAimTarget.GetState())
-	//{
-	//	AntiAims::AimAtTarget(pCmd);
-	//}
+	if (Menu::Window.RageBotTab.AntiAimTarget.GetState())
+	{
+		AntiAims::AimAtTarget(pCmd);
+	}
 
 	// Don't do antiaim
 	// if (DoExit) return;

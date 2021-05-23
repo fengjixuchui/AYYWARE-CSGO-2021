@@ -25,12 +25,12 @@ public:
 	virtual void Function2();
 	virtual IClientEntity* GetClientEntity(int entnum){
 						using OriginalFn = IClientEntity*(*)(int);
-						call_vfunc<OriginalFn>(this,4);
+						call_vfunc<OriginalFn>(this,3);
 	
 	}
 	virtual IClientEntity* GetClientEntityFromHandle(HANDLE hEnt){
 		using OriginalFn = IClientEntity*(*)(HANDLE);
-		call_vfunc<OriginalFn>(this,1);
+		call_vfunc<OriginalFn>(this,4);
 		
 	}
 	virtual int					NumberOfEntities(bool bIncludeNonNetworkable)
