@@ -29,3 +29,7 @@ https://developer.valvesoftware.com/wiki/Networking_Entities
 this version still have many bugs,give me some time to fix it,
 
 if you find the bug,open a issue to tell me
+
+2021.5.24
+
+fix anti-aim that cause connect losed
