@@ -2,7 +2,7 @@
 
 ![Image text](https://github.com/helloobaby/AYYWARE-CSGO-2021/blob/master/ESP.png)
 
-![Image](https://github.com/helloobaby/AYYWARE-CSGO-2021/blob/master/spinbot.png)
+![image](https://github.com/helloobaby/AYYWARE-CSGO-2021/blob/master/spinbot.gif)
 
 
 Useage:ReflectiveInject this Dll
