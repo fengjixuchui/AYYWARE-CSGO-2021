@@ -623,19 +623,21 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 	// check hits
 	for (auto HitBoxID : HitBoxesToScan)
 	{
-		if (AWall)
+		if (AWall)//Hit behine the Wall
 		{
 			Vector Point = GetHitboxPosition(pEntity, HitBoxID);
 			float Damage = 0.f;
 			Color c = Color(255, 255, 255, 255);
 			if (CanHit(Point, &Damage))
 			{
+				Utilities::Log("[Debug]can hit");
 				c = Color(0, 255, 0, 255);
 				if (Damage >= Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue())
 				{
 					return HitBoxID;
 				}
 			}
+			Utilities::Log("[Debug]can't hit behind wall");
 		}
 		else
 		{
