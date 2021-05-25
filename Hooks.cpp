@@ -219,7 +219,7 @@ void ClanTag()
 		SetClanTag("\r", "\r");
 		break;
 	case 4:
-		SetClanTag("[VALV\xE1\xB4\xB1]", "Valve");
+		SetClanTag("ValveAntiCheat ", "ValveAntiCheat");
 		break;
 	}
 }

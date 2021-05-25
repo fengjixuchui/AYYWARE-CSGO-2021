@@ -533,7 +533,7 @@ public:
 		typedef float(__thiscall* oInaccuracy)(PVOID);
 		return call_vfunc< oInaccuracy >(this, 469)(this);
 	}
-
+	//no reference
 	float GetInnacc()
 	{
 		typedef float(__thiscall *OrigFn)(void *);
@@ -666,9 +666,11 @@ public:
 
 	//---                 NetVars                  ---//
 
+	//no reference
 	int GetGlowIndex()
 	{
-		return *(int*)(this + 0xA310);
+		//return *(int*)(this + 0xA310);
+		return *(int*)(this + 0xA438);
 	}
 
 	CPNETVAR_FUNC(CLocalPlayerExclusive*, localPlayerExclusive, 0x7177BC3E);// m_Local
@@ -713,14 +715,16 @@ public:
 		if (!this)
 			return 0;
 
-		return ptr(int, this, 0x258);
+		//return ptr(int, this, 0x258);
+		return ptr(int, this, 0x25C);
 	}
 
 	QAngle* GetEyeAnglesPointer()
 	{
-		return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
+		return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB380);
+		//return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
 	}
-
+	//no references
 	QAngle GetEyeAngles()
 	{
 		return *reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
@@ -756,14 +760,16 @@ public:
 		return GetClientClass()->m_ClassID == (int)CSGOClassID::CCSPlayer;
 	}
 
+	//no references
 	Vector GetOrigin2() {
 		return *(Vector*)((DWORD)this + 0x00000134);
 	}
-
+	//no references
 	Vector GetViewAngles2() {
 		return *(Vector*)((DWORD)this + 0x00000104);
 	}
 
+	//no references
 	Vector GetAbsOrigin2() {
 		__asm {
 			MOV ECX, this
@@ -771,6 +777,7 @@ public:
 			CALL DWORD PTR DS : [EAX + 0x28]
 		}
 	}
+	//no references
 	Vector GetAbsAngles2() {
 		__asm {
 			MOV ECX, this;
@@ -785,18 +792,22 @@ public:
 		Vector View = *(Vector*)((DWORD)this + 0x108);
 		return(Origin + View);
 	}
+	//no reference
 	Vector GetAimPunch() {
 		return *(Vector*)((DWORD)this + 0x00003018);
 	}
+	//no reference
 	bool IsImmune() {
 		return *(bool*)((DWORD)this + 0x000038A0);
 	}
+	//no reference
 	ClientClass *GetClientClass2() {
 		PVOID Networkable = (PVOID)((DWORD)(this) + 0x8);
 		using Original = ClientClass*(__thiscall*)(PVOID);
 		return call_vfunc<Original>(Networkable, 2)(Networkable);
 	}
 	HANDLE GetWeaponHandle() {
-		return *(HANDLE*)((DWORD)this + 0x00002EE8);
+		//return *(HANDLE*)((DWORD)this + 0x00002EE8
+		return *(HANDLE*)((DWORD)this + 0x00002EF8);
 	}
 };

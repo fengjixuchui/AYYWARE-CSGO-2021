@@ -22,6 +22,8 @@ https://developer.valvesoftware.com/wiki/Usercmd
 
 https://developer.valvesoftware.com/wiki/Networking_Entities
 
+https://developer.valvesoftware.com/wiki/UTIL_TraceLine
+
 
 
 2021.5.23

@@ -700,9 +700,13 @@ void CRageBot::DoNoRecoil(CUserCmd *pCmd)
 	if (pLocal)
 	{
 		Vector AimPunch = pLocal->localPlayerExclusive()->GetAimPunchAngle();
+		//Utilities::Log("%f", AimPunch.x);
+		//Utilities::Log("%f", AimPunch.y);
+		//Utilities::Log("%f", AimPunch.z);
 		if (AimPunch.Length2D() > 0 && AimPunch.Length2D() < 150)
 		{
-			pCmd->viewangles -= AimPunch * 2;
+			//Utilities::Log("DoNoRecoil");
+			pCmd->viewangles -= AimPunch * 2.0f;
 			GameUtils::NormaliseViewAngle(pCmd->viewangles);
 		}
 	}

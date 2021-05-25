@@ -104,7 +104,7 @@ namespace Offsets
 		extern DWORD dwCalcPlayerView;
 
 		extern DWORD dwGetPlayerCompRank;
-		extern DWORD dwIsReady;
+		//extern DWORD dwIsReady;
 	};
 
 };

@@ -15,12 +15,12 @@ AyyWareWindow Menu::Window;
 
 void SaveCallbk()
 {
-	GUI.SaveWindowState(&Menu::Window, "config.cfg");
+	GUI.SaveWindowState(&Menu::Window, "ayyconfig.cfg");
 }
 
 void LoadCallbk()
 {
-	GUI.LoadWindowState(&Menu::Window, "config.cfg");
+	GUI.LoadWindowState(&Menu::Window, "ayyconfig.cfg");
 }
 
 void UnLoadCallbk()
@@ -625,7 +625,7 @@ void CMiscTab::Setup()
 	OtherClantag.AddItem("pasteware");
 	OtherClantag.AddItem("skeet.cc");
 	OtherClantag.AddItem("Blank");
-	OtherClantag.AddItem("Valve");
+	OtherClantag.AddItem("ValveAntiCheat");
 	OtherGroup.PlaceLabledControl("Custom Clantag", this, &OtherClantag);
 
 	OtherTeamChat.SetFileId("otr_teamchat");

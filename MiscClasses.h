@@ -483,10 +483,10 @@ struct cplane_t
 class CBaseTrace
 {
 public:
-	Vector                  startpos;
-	Vector                  endpos;
-	cplane_t                plane;
-	float                   fraction;
+	Vector                  startpos;//The start of the TraceLine as a Vector.
+	Vector                  endpos;//The end of the TraceLine as a Vector.
+	cplane_t                plane;//Struct. Contains the information about the plane you hit.
+	float                   fraction;//How far the trace went before hitting something. 0-1, 1.0 means it didn't hit anything.
 	int                             contents;
 	unsigned short  dispFlags;
 	bool                    allsolid;
@@ -505,7 +505,7 @@ class CGameTrace : public CBaseTrace
 public:
 	bool                    DidHitWorld() const;
 	bool                    DidHitNonWorldEntity() const;
-	int                             GetEntityIndex() const;
+	int                             GetEntityIndex() const;//no reference
 	bool                    DidHit() const;
 public:
 	float                   fractionleftsolid;
@@ -513,7 +513,7 @@ public:
 	int                             hitgroup;
 	short                   physicsbone;
 	unsigned short  worldSurfaceIndex;
-	IClientEntity*               m_pEnt;
+	IClientEntity*               m_pEnt;//The entity hit. Can be invalid.
 	int                             hitbox;
 	char shit[0x24];
 };
