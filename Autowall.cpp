@@ -11,11 +11,13 @@
 #define HITGROUP_RIGHTLEG    7
 #define HITGROUP_GEAR        10
 
+//no reference
 inline bool CGameTrace::DidHitWorld() const
 {
 	return m_pEnt->GetIndex() == 0;
 }
 
+//no reference
 inline bool CGameTrace::DidHitNonWorldEntity() const
 {
 	return m_pEnt != NULL && !DidHitWorld();

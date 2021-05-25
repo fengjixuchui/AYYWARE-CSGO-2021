@@ -286,8 +286,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="hooks.backup">
       <Filter>Source Files\Backend</Filter>
     </None>

@@ -7,7 +7,7 @@
 
 Useage:ReflectiveInject this Dll
 
-if you don't have injector,
+if you don't have injector or config, 
 
 see https://github.com/helloobaby/AYYWARE-injector
 

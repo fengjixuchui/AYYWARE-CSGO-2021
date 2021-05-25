@@ -500,6 +500,7 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 	int HitScanMode = Menu::Window.RageBotTab.TargetHitscan.GetIndex();
 	int iSmart = Menu::Window.RageBotTab.AccuracySmart.GetValue();
 	bool AWall = Menu::Window.RageBotTab.AccuracyAutoWall.GetState();
+	//Multipoint is useless
 	bool Multipoint = Menu::Window.RageBotTab.TargetMultipoint.GetState();
 
 	if (iSmart > 0 && pLocal->GetShotsFired() + 1 > iSmart)
