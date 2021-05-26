@@ -630,14 +630,14 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 			Color c = Color(255, 255, 255, 255);
 			if (CanHit(Point, &Damage))
 			{
-				Utilities::Log("[Debug]can hit");
+				//Utilities::Log("[Debug]can hit");
 				c = Color(0, 255, 0, 255);
 				if (Damage >= Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue())
 				{
 					return HitBoxID;
 				}
 			}
-			Utilities::Log("[Debug]can't hit behind wall");
+			//Utilities::Log("[Debug]can't hit behind wall");
 		}
 		else
 		{
@@ -1321,24 +1321,24 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		return;
 
 	// Weapon shit
-	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
-	if (pWeapon)
-	{
-		CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
-		// Knives or grenades
-		if (!GameUtils::IsBallisticWeapon(pWeapon))
-		{
-			if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
-			{
-				if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
-					return;
-			}
-			else
-			{
-				return;
-			}
-		}
-	}
+	//CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
+	//if (pWeapon)
+	//{
+	//	CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
+	//	// Knives or grenades
+	//	if (!GameUtils::IsBallisticWeapon(pWeapon))
+	//	{
+	//		if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
+	//		{
+	//			if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
+	//				return;
+	//		}
+	//		else
+	//		{
+	//			return;
+	//		}
+	//	}
+	//}
 
 	if (Menu::Window.RageBotTab.AntiAimTarget.GetState())
 	{

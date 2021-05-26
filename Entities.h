@@ -34,11 +34,11 @@ public:
 	char unknowndata01[1]; //0x0083
 };//Size=0x00AC
 
-class CSWeaponInfo
+__declspec(novtable) class CSWeaponInfo
 {
 public:
 	virtual ~CSWeaponInfo() {};
-	char pad_0x0000[0x4]; //0x0000
+	//char pad_0x0000[0x4]; //0x0000
 	char* szWeaponName; //0x0004 
 	char pad_0x0008[0xC]; //0x0008
 	__int32 iMaxClip1; //0x0014 

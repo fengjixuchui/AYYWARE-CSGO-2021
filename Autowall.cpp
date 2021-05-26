@@ -1,4 +1,5 @@
 #include "AutoWall.h"
+#include"bspflags.h"
 // Don't take credits for this ;) Joplin / Manhhao are the first uploaders ;)
 
 #define    HITGROUP_GENERIC    0
@@ -77,19 +78,26 @@ bool SimulateFireBullet(IClientEntity *local, CBaseCombatWeapon *weapon, FireBul
 {
 	data.penetrate_count = 4; // Max Amount Of Penitration
 	data.trace_length = 0.0f; // wow what a meme
-	auto *wpn_data = weapon->GetCSWpnData(); // Get Weapon Info
+	auto *wpn_data = weapon->GetCSWpnData(); // Get Weapon Info(work fine 2021.5.25)
+
 	data.current_damage = (float)wpn_data->iDamage;// Set Damage Memes
+
 	while ((data.penetrate_count > 0) && (data.current_damage >= 1.0f))
 	{
 		data.trace_length_remaining = wpn_data->flRange - data.trace_length;
+
 		Vector End_Point = data.src + data.direction * data.trace_length_remaining;
+
 		UTIL_TraceLine(data.src, End_Point, 0x4600400B, local, 0, &data.enter_trace);
+
 		UTIL_ClipTraceToPlayers(data.src, End_Point * 40.f, 0x4600400B, &data.filter, &data.enter_trace);
-		if (data.enter_trace.fraction == 1.0f) break;
+
+		if (data.enter_trace.fraction == 1.0f) break;//no hit something
+		
 		if ((data.enter_trace.hitgroup <= 7) && (data.enter_trace.hitgroup > 0) && (local->GetTeamNum() != data.enter_trace.m_pEnt->GetTeamNum()))
 		{
-			data.trace_length += data.enter_trace.fraction * data.trace_length_remaining;
-			data.current_damage *= pow(wpn_data->flRangeModifier, data.trace_length * 0.002);
+			data.trace_length += (float)(data.enter_trace.fraction * data.trace_length_remaining);
+			data.current_damage *= (float)(pow(wpn_data->flRangeModifier, data.trace_length * 0.002));
 			ScaleDamage(data.enter_trace.hitgroup, data.enter_trace.m_pEnt, wpn_data->flArmorRatio, data.current_damage);
 			return true;
 		}
@@ -101,15 +109,24 @@ bool SimulateFireBullet(IClientEntity *local, CBaseCombatWeapon *weapon, FireBul
 bool HandleBulletPenetration(CSWeaponInfo *wpn_data, FireBulletData &data)
 {
 	surfacedata_t *enter_surface_data = Interfaces::PhysProps->GetSurfaceData(data.enter_trace.surface.surfaceProps);
+
 	int enter_material = enter_surface_data->game.material;
+
 	float enter_surf_penetration_mod = enter_surface_data->game.flPenetrationModifier;
+
 	data.trace_length += data.enter_trace.fraction * data.trace_length_remaining;
-	data.current_damage *= pow(wpn_data->flRangeModifier, (data.trace_length * 0.002));
+	data.current_damage *= (float)(pow(wpn_data->flRangeModifier, (data.trace_length * 0.002)));
+		
 	if ((data.trace_length > 3000.f) || (enter_surf_penetration_mod < 0.1f))data.penetrate_count = 0;
-	if (data.penetrate_count <= 0)return false;
+
+	if (data.penetrate_count <= 0){
+		return false;//failed from here
+	}
 	Vector dummy;
 	trace_t trace_exit;
-	if (!TraceToExit(dummy, data.enter_trace, data.enter_trace.endpos, data.direction, &trace_exit)) return false;
+	if (!TraceToExit(dummy, data.enter_trace, data.enter_trace.endpos, data.direction, &trace_exit)) {
+		return false;
+	};
 	surfacedata_t *exit_surface_data = Interfaces::PhysProps->GetSurfaceData(trace_exit.surface.surfaceProps);
 	int exit_material = exit_surface_data->game.material;
 	float exit_surf_penetration_mod = exit_surface_data->game.flPenetrationModifier;
@@ -129,12 +146,19 @@ bool HandleBulletPenetration(CSWeaponInfo *wpn_data, FireBulletData &data)
 	thickness *= v34;
 	thickness /= 24.0f;
 	float lost_damage = fmaxf(0.0f, v35 + thickness);
-	if (lost_damage > data.current_damage)return false;
+
+	if (lost_damage > data.current_damage) {
+		return false;
+	}
 	if (lost_damage >= 0.0f)data.current_damage -= lost_damage;
-	if (data.current_damage < 1.0f) return false;
+
+	if (data.current_damage < 1.0f) {
+		return false;
+	}
 	data.src = trace_exit.endpos;
 	data.penetrate_count--;
 
+	//Utilities::Log("[DEBUG]HandleBulletPenetration return to true");
 	return true;
 }
 
@@ -160,7 +184,7 @@ bool CanHit(const Vector &point, float *damage_given)
 	if (SimulateFireBullet(local, (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle((HANDLE)local->GetActiveWeaponHandle()), data))
 	{
 		*damage_given = data.current_damage;
-		//Utils::ToLog("CANHIT END");
+		//Utilities::Log("[DEBUG]CANHIT END");
 		return true;
 	}
 

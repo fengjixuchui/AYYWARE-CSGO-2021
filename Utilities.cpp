@@ -223,7 +223,7 @@ int		Utilities::Memory::VMTManager::MethodCount(DWORD* InstancePointer)
 	DWORD *VMT = (DWORD*)*InstancePointer;
 	int Index = 0;
 	int Amount = 0;
-	while (!IsBadCodePtr((FARPROC)VMT[Index]))
+	while (!IsBadCodePtr((FARPROC)VMT[Index]))//IsBadCodePtr is Debug Assist
 	{
 		if (!IsBadCodePtr((FARPROC)VMT[Index]))
 		{

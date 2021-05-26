@@ -135,6 +135,7 @@
     <ClInclude Include="CommonIncludes.h" />
     <ClInclude Include="Controls.h" />
     <ClInclude Include="CRC32.h" />
+    <ClInclude Include="decals.h" />
     <ClInclude Include="DLLMain.h" />
     <ClInclude Include="Dumping.h" />
     <ClInclude Include="EngineClient.h" />

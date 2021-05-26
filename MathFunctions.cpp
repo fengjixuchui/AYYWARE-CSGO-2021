@@ -32,7 +32,7 @@ void VectorTransform(const Vector in1, float in2[3][4], Vector &out)
 		
 	}__except(1){
 	
-		Utilities::Log("[ERROR]VectorTransform Raise Exception");
+		//Utilities::Log("[ERROR]VectorTransform Raise Exception");
 		return;
 	}
 

@@ -820,7 +820,6 @@ struct surfacegameprops_t
 public:
 	float    maxSpeedFactor; //0x0000
 	float    jumpFactor; //0x0004
-	char    pad00[0x4]; //0x0008
 	float    flPenetrationModifier; //0x000C
 	float    flDamageModifier; //0x0010
 	unsigned short    material; //0x0014
