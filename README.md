@@ -43,3 +43,7 @@ fix anti-aim that cause connect losed
 2021.5.25
 
 fix(VectorTransform Raise Exception), this will cause the game crashed sometime
+
+2021.5.26
+
+fix anti-aim,(autowall still broken)
