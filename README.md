@@ -51,3 +51,10 @@ fix anti-aim,(autowall still broken)
 2021.5.27
 
 autowall can work fine, but only in bot mode
+
+2021.5.27 
+perfect fix autowall (thanks for Osiris due to some vtable index and some structures)
+
+
+Give me a Star
+Thx!

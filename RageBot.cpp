@@ -156,7 +156,7 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 	IClientEntity* pLocal = hackManager.pLocal();
 	Vector Start = pLocal->GetViewOffset() + pLocal->GetOrigin();
 	bool FindNewTarget = true;
-	//IsLocked = false;
+	IsLocked = false;
 
 	CSWeaponInfo* weapInfo = ((CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(pLocal->GetActiveWeaponHandle()))->GetCSWpnData();
 
@@ -492,6 +492,9 @@ int CRageBot::GetTargetHealth()
 
 int CRageBot::HitScan(IClientEntity* pEntity)
 {
+	//for test
+	//return -1;
+
 	IClientEntity* pLocal = hackManager.pLocal();
 	std::vector<int> HitBoxesToScan;
 
@@ -772,7 +775,7 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 	// pSilent Aim 
 	Vector Oldview = pCmd->viewangles;
 
-	if (Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
+	/*if (Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
 	{
 		static int ChokedPackets = -1;
 		ChokedPackets++;
@@ -789,9 +792,7 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 			ChokedPackets = -1;
 			ReturnValue = false;
 		}
-		
-		//pCmd->viewangles.z = 0;
-	}
+	}*/
 
 	return ReturnValue;
 }
@@ -1194,7 +1195,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 		Vector eye_position = pLocal->GetEyePosition();
 
-		float best_dist = pWeapon->GetCSWpnData()->flRange;
+		float best_dist = pWeapon->GetCSWpnData()->range;
 
 		IClientEntity* target = Interfaces::EntList->GetClientEntity(Globals::TargetID);
 
@@ -1321,24 +1322,24 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		return;
 
 	// Weapon shit
-	//CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
-	//if (pWeapon)
-	//{
-	//	CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
-	//	// Knives or grenades
-	//	if (!GameUtils::IsBallisticWeapon(pWeapon))
-	//	{
-	//		if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
-	//		{
-	//			if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
-	//				return;
-	//		}
-	//		else
-	//		{
-	//			return;
-	//		}
-	//	}
-	//}
+	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
+	if (pWeapon)
+	{
+		CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
+		// Knives or grenades
+		if (!GameUtils::IsBallisticWeapon(pWeapon))
+		{
+			if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
+			{
+				if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
+					return;
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
 
 	if (Menu::Window.RageBotTab.AntiAimTarget.GetState())
 	{

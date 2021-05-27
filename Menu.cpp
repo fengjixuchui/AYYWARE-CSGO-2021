@@ -285,7 +285,7 @@ void CRageBotTab::Setup()
 	AimbotGroup.PlaceLabledControl("Silent Aim", this, &AimbotSilentAim);
 
 	AimbotPerfectSilentAim.SetFileId("aim_psilent");
-	AimbotGroup.PlaceLabledControl("Perfect Silent", this, &AimbotPerfectSilentAim);
+	AimbotGroup.PlaceLabledControl("Dont use", this, &AimbotPerfectSilentAim);
 
 	AimbotAutoPistol.SetFileId("aim_autopistol");
 	AimbotGroup.PlaceLabledControl("Auto Pistol", this, &AimbotAutoPistol);
