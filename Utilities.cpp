@@ -37,6 +37,10 @@ void Utilities::CloseConsole()
 // Outputs text to the console
 void Utilities::Log(const char *fmt, ...)
 {
+#ifndef AYY_DEBUG
+	return;
+#endif
+
 	if (!fmt) return; //if the passed string is null return
 	if (strlen(fmt) < 2) return;
 
