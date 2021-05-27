@@ -47,3 +47,7 @@ fix(VectorTransform Raise Exception), this will cause the game crashed sometime
 2021.5.26
 
 fix anti-aim,(autowall still broken)
+
+2021.5.27
+
+autowall can work fine, but only in bot mode

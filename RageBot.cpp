@@ -627,11 +627,11 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 		{
 			Vector Point = GetHitboxPosition(pEntity, HitBoxID);
 			float Damage = 0.f;
-			Color c = Color(255, 255, 255, 255);
+			//Color c = Color(255, 255, 255, 255);
 			if (CanHit(Point, &Damage))
 			{
 				//Utilities::Log("[Debug]can hit");
-				c = Color(0, 255, 0, 255);
+				//c = Color(0, 255, 0, 255);
 				if (Damage >= Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue())
 				{
 					return HitBoxID;

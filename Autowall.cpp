@@ -158,7 +158,6 @@ bool HandleBulletPenetration(CSWeaponInfo *wpn_data, FireBulletData &data)
 	data.src = trace_exit.endpos;
 	data.penetrate_count--;
 
-	//Utilities::Log("[DEBUG]HandleBulletPenetration return to true");
 	return true;
 }
 

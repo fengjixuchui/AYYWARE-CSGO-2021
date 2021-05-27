@@ -793,26 +793,32 @@ struct surfacephysicsparams_t
 
 struct surfaceaudioparams_t
 {
-	float    reflectivity;            // like elasticity, but how much sound should be reflected by this surface
-	float    hardnessFactor;            // like elasticity, but only affects impact sound choices
-	float    roughnessFactor;        // like friction, but only affects scrape sound choices   
-	float    roughThreshold;            // surface roughness > this causes "rough" scrapes, < this causes "smooth" scrapes
-	float    hardThreshold;            // surface hardness > this causes "hard" impacts, < this causes "soft" impacts
-	float    hardVelocityThreshold;    // collision velocity > this causes "hard" impacts, < this causes "soft" impacts   
+	float reflectivity; // like elasticity, but how much sound should be reflected by this surface
+	float hardnessFactor; // like elasticity, but only affects impact sound choices
+	float roughnessFactor; // like friction, but only affects scrape sound choices   
+	float roughThreshold; // surface roughness > this causes "rough" scrapes, < this causes "smooth" scrapes
+	float hardThreshold; // surface hardness > this causes "hard" impacts, < this causes "soft" impacts
+	float hardVelocityThreshold; // collision velocity > this causes "hard" impacts, < this causes "soft" impacts   
+	float highPitchOcclusion;
+	//a value betweeen 0 and 100 where 0 is not occluded at all and 100 is silent (except for any additional reflected sound)
+	float midPitchOcclusion;
+	float lowPitchOcclusion;
 };
 
 struct surfacesoundnames_t
 {
-	unsigned short    stepleft;
-	unsigned short    stepright;
-	unsigned short    impactSoft;
-	unsigned short    impactHard;
-	unsigned short    scrapeSmooth;
-	unsigned short    scrapeRough;
-	unsigned short    bulletImpact;
-	unsigned short    rolling;
-	unsigned short    breakSound;
-	unsigned short    strainSound;
+	unsigned short walkstepleft;
+	unsigned short walkstepright;
+	unsigned short runstepleft;
+	unsigned short runstepright;
+	unsigned short impactsoft;
+	unsigned short impacthard;
+	unsigned short scrapesmooth;
+	unsigned short scraperough;
+	unsigned short bulletimpact;
+	unsigned short rolling;
+	unsigned short breaksound;
+	unsigned short strainsound;
 };
 
 struct surfacegameprops_t
@@ -823,7 +829,7 @@ public:
 	float    flPenetrationModifier; //0x000C
 	float    flDamageModifier; //0x0010
 	unsigned short    material; //0x0014
-	char    pad01[0x3];
+	uint8_t climbable;
 
 };//Size=0x0019
 
