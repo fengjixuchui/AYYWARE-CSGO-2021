@@ -57,10 +57,10 @@ autowall can work fine, but only in bot mode
 perfect fix autowall (thanks for Osiris due to some vtable index and some structures)
 
 
-Tips:Only use on Steam, Dont use on 5E, B5, 完美 , ficeit etc. battle platform.
+Tips:Only use on Steam, Dont use on 5E, B5, 完美 etc. And faceit(if you are not a Chinese).
 play with hacks, pls.
 
-
+if you have a better config with AYYWARE, please tell me through issue.
 
 Give me a Star
 Thx!
