@@ -52,9 +52,9 @@ typedef void(*RecvVarProxyFn)(const CRecvProxyData *pData, void *pStruct, void *
 struct RecvTable
 {
 	RecvProp		*m_pProps;
-	int				m_nProps;
+	int				m_nProps;//how many netVars this table have
 	void			*m_pDecoder;
-	char			*m_pNetTableName;
+	char			*m_pNetTableName;//such as "DT_CSPlayer"
 	bool			m_bInitialized;
 	bool			m_bInMainList;
 };

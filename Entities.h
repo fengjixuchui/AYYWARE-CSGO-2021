@@ -379,27 +379,26 @@ enum moveTypes
 
 enum class CSGOHitboxID
 {
-	Head = 0,
+	Head,
 	Neck,
-	NeckLower,
 	Pelvis,
-	Stomach,
+	Belly,
+	Thorax,
 	LowerChest,
-	Chest,
 	UpperChest,
 	RightThigh,
 	LeftThigh,
-	RightShin,
-	LeftShin,
+	RightCalf,
+	LeftCalf,
 	RightFoot,
 	LeftFoot,
 	RightHand,
 	LeftHand,
 	RightUpperArm,
-	RightLowerArm,
+	RightForearm,
 	LeftUpperArm,
-	LeftLowerArm,
-	Max,
+	LeftForearm,
+	Max
 };
 
 // Weapon IDs

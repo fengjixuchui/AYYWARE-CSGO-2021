@@ -25,17 +25,6 @@ void AngleVectors(const Vector &angles, Vector *forward)
 
 void VectorTransform(const Vector in1, float in2[3][4], Vector &out)
 {
-	__try{
-	
-		in1.x;//for read
-		in2[0][0]=in2[0][0];//for write
-		
-	}__except(1){
-	
-		//Utilities::Log("[ERROR]VectorTransform Raise Exception");
-		return;
-	}
-
 	out[0] = DotProduct(in1, Vector(in2[0][0], in2[0][1], in2[0][2])) + in2[0][3];
 	out[1] = DotProduct(in1, Vector(in2[1][0], in2[1][1], in2[1][2])) + in2[1][3];
 	out[2] = DotProduct(in1, Vector(in2[2][0], in2[2][1], in2[2][2])) + in2[2][3];

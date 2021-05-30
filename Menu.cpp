@@ -332,7 +332,7 @@ void CRageBotTab::Setup()
 	TargetHitscan.AddItem("Medium"); // 2
 	TargetHitscan.AddItem("High"); // 3
 	TargetHitscan.AddItem("Extreme"); // 4
-	TargetGroup.PlaceLabledControl("Hitscan", this, &TargetHitscan);
+	TargetGroup.PlaceLabledControl("Dont Use", this, &TargetHitscan);
 
 	TargetMultipoint.SetFileId("tgt_multipoint");
 	TargetGroup.PlaceLabledControl("Multipoint", this, &TargetMultipoint);
@@ -383,7 +383,7 @@ void CRageBotTab::Setup()
 	AccuracySmart.SetFileId("acc_smart");
 	AccuracySmart.SetBoundaries(0, 20);
 	AccuracySmart.SetValue(1);
-	AccuracyGroup.PlaceLabledControl("Smart Aim", this, &AccuracySmart);
+	AccuracyGroup.PlaceLabledControl("Dont Use", this, &AccuracySmart);
 #pragma endregion  Accuracy controls get Setup in here
 
 #pragma region AntiAim

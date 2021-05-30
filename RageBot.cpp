@@ -509,22 +509,21 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 	if (iSmart > 0 && pLocal->GetShotsFired() + 1 > iSmart)
 	{
 		HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
 		HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
 		HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
 		HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftLowerArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightLowerArm);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
 	}
 	else
 	{
@@ -541,83 +540,21 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 				break;
 			case 2:
 				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
 				break;
 			case 3:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
 				break;
 			case 4:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
 				break;
 			}
 		}
 		else
 		{
-			switch (HitScanMode)
-			{
-			case 1:
-				// Low
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				break;
-			case 2:
-				// Normal
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-				break;
-			case 3:
-				// High
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftLowerArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightLowerArm);
-			case 4:
-				// Extreme
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::NeckLower);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftLowerArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightLowerArm);
-			}
+			
 		}
 	}
 #pragma endregion Get the list of shit to scan
