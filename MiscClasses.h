@@ -652,7 +652,7 @@ struct studiohdr_t
 
 	int                                     flags;
 
-	int                                     numbones;
+	int                                     numbones;//Number of data sections (of type mstudiobone_t)
 	int                                     boneindex;
 
 	inline mstudiobone_t *GetBone(int i) const { return (mstudiobone_t *)(((byte *)this) + boneindex) + i; };
