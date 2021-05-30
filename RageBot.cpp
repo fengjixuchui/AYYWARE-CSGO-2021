@@ -86,7 +86,7 @@ void CRageBot::Move(CUserCmd *pCmd, bool &bSendPacket)
 	if (Menu::Window.RageBotTab.AntiAimEnable.GetState())
 	{
 		static int ChokedPackets = -1;
-		/*
+
 		CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
 		if (!pWeapon)
 			return;
@@ -96,13 +96,13 @@ void CRageBot::Move(CUserCmd *pCmd, bool &bSendPacket)
 			bSendPacket = false;
 		}
 		else
-		{*/
+		{
 			if (pLocalEntity->GetLifeState() == LIFE_ALIVE)
 			{
 				DoAntiAim(pCmd, bSendPacket);
 			}
 			ChokedPackets = -1;
-		//}
+		}
 	}
 
 	// Position Adjustment
@@ -156,7 +156,7 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 	IClientEntity* pLocal = hackManager.pLocal();
 	Vector Start = pLocal->GetViewOffset() + pLocal->GetOrigin();
 	bool FindNewTarget = true;
-	//IsLocked = false;
+	IsLocked = false;
 
 	CSWeaponInfo* weapInfo = ((CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(pLocal->GetActiveWeaponHandle()))->GetCSWpnData();
 
@@ -492,6 +492,9 @@ int CRageBot::GetTargetHealth()
 
 int CRageBot::HitScan(IClientEntity* pEntity)
 {
+	//for test
+	//return -1;
+
 	IClientEntity* pLocal = hackManager.pLocal();
 	std::vector<int> HitBoxesToScan;
 
@@ -500,27 +503,27 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 	int HitScanMode = Menu::Window.RageBotTab.TargetHitscan.GetIndex();
 	int iSmart = Menu::Window.RageBotTab.AccuracySmart.GetValue();
 	bool AWall = Menu::Window.RageBotTab.AccuracyAutoWall.GetState();
+	//Multipoint is useless
 	bool Multipoint = Menu::Window.RageBotTab.TargetMultipoint.GetState();
 
 	if (iSmart > 0 && pLocal->GetShotsFired() + 1 > iSmart)
 	{
 		HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
 		HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
 		HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
 		HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftLowerArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightLowerArm);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
 	}
 	else
 	{
@@ -537,83 +540,21 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 				break;
 			case 2:
 				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
 				break;
 			case 3:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
 				break;
 			case 4:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
 				break;
 			}
 		}
 		else
 		{
-			switch (HitScanMode)
-			{
-			case 1:
-				// Low
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				break;
-			case 2:
-				// Normal
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-				break;
-			case 3:
-				// High
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftLowerArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightLowerArm);
-			case 4:
-				// Extreme
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::NeckLower);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Stomach);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::Chest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightShin);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftLowerArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightLowerArm);
-			}
+			
 		}
 	}
 #pragma endregion Get the list of shit to scan
@@ -622,19 +563,21 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 	// check hits
 	for (auto HitBoxID : HitBoxesToScan)
 	{
-		if (AWall)
+		if (AWall)//Hit behine the Wall
 		{
 			Vector Point = GetHitboxPosition(pEntity, HitBoxID);
 			float Damage = 0.f;
-			Color c = Color(255, 255, 255, 255);
+			//Color c = Color(255, 255, 255, 255);
 			if (CanHit(Point, &Damage))
 			{
-				c = Color(0, 255, 0, 255);
+				//Utilities::Log("[Debug]can hit");
+				//c = Color(0, 255, 0, 255);
 				if (Damage >= Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue())
 				{
 					return HitBoxID;
 				}
 			}
+			//Utilities::Log("[Debug]can't hit behind wall");
 		}
 		else
 		{
@@ -700,9 +643,13 @@ void CRageBot::DoNoRecoil(CUserCmd *pCmd)
 	if (pLocal)
 	{
 		Vector AimPunch = pLocal->localPlayerExclusive()->GetAimPunchAngle();
+		//Utilities::Log("%f", AimPunch.x);
+		//Utilities::Log("%f", AimPunch.y);
+		//Utilities::Log("%f", AimPunch.z);
 		if (AimPunch.Length2D() > 0 && AimPunch.Length2D() < 150)
 		{
-			pCmd->viewangles -= AimPunch * 2;
+			//Utilities::Log("DoNoRecoil");
+			pCmd->viewangles -= AimPunch * 2.0f;
 			GameUtils::NormaliseViewAngle(pCmd->viewangles);
 		}
 	}
@@ -765,7 +712,7 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 	// pSilent Aim 
 	Vector Oldview = pCmd->viewangles;
 
-	if (Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
+	/*if (Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
 	{
 		static int ChokedPackets = -1;
 		ChokedPackets++;
@@ -782,9 +729,7 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 			ChokedPackets = -1;
 			ReturnValue = false;
 		}
-		
-		//pCmd->viewangles.z = 0;
-	}
+	}*/
 
 	return ReturnValue;
 }
@@ -1187,7 +1132,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 		Vector eye_position = pLocal->GetEyePosition();
 
-		float best_dist = pWeapon->GetCSWpnData()->flRange;
+		float best_dist = pWeapon->GetCSWpnData()->range;
 
 		IClientEntity* target = Interfaces::EntList->GetClientEntity(Globals::TargetID);
 
@@ -1306,37 +1251,37 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 {
 	IClientEntity* pLocal = hackManager.pLocal();
 
-	//if ((pCmd->buttons & IN_USE) || pLocal->GetMoveType() == MOVETYPE_LADDER)
-	//	return;
-	//
-	//// If the aimbot is doing something don't do anything
-	//if ((IsAimStepping || pCmd->buttons & IN_ATTACK) && !Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
-	//	return;
+	if ((pCmd->buttons & IN_USE) || pLocal->GetMoveType() == MOVETYPE_LADDER)
+		return;
+	
+	// If the aimbot is doing something don't do anything
+	if ((IsAimStepping || pCmd->buttons & IN_ATTACK) && !Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
+		return;
 
-	//// Weapon shit
-	//CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
-	//if (pWeapon)
-	//{
-	//	CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
-	//	// Knives or grenades
-	//	if (!GameUtils::IsBallisticWeapon(pWeapon))
-	//	{
-	//		if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
-	//		{
-	//			if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
-	//				return;
-	//		}
-	//		else
-	//		{
-	//			return;
-	//		}
-	//	}
-	//}
+	// Weapon shit
+	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
+	if (pWeapon)
+	{
+		CSWeaponInfo* pWeaponInfo = pWeapon->GetCSWpnData();
+		// Knives or grenades
+		if (!GameUtils::IsBallisticWeapon(pWeapon))
+		{
+			if (Menu::Window.RageBotTab.AntiAimKnife.GetState())
+			{
+				if (!CanOpenFire() || pCmd->buttons & IN_ATTACK2)
+					return;
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
 
-	//if (Menu::Window.RageBotTab.AntiAimTarget.GetState())
-	//{
-	//	AntiAims::AimAtTarget(pCmd);
-	//}
+	if (Menu::Window.RageBotTab.AntiAimTarget.GetState())
+	{
+		AntiAims::AimAtTarget(pCmd);
+	}
 
 	// Don't do antiaim
 	// if (DoExit) return;

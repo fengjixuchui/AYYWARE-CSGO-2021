@@ -25,12 +25,12 @@ public:
 	virtual void Function2();
 	virtual IClientEntity* GetClientEntity(int entnum){
 						using OriginalFn = IClientEntity*(*)(int);
-						call_vfunc<OriginalFn>(this,4);
+						call_vfunc<OriginalFn>(this,3);
 	
 	}
 	virtual IClientEntity* GetClientEntityFromHandle(HANDLE hEnt){
 		using OriginalFn = IClientEntity*(*)(HANDLE);
-		call_vfunc<OriginalFn>(this,1);
+		call_vfunc<OriginalFn>(this,4);
 		
 	}
 	virtual int					NumberOfEntities(bool bIncludeNonNetworkable)
@@ -483,10 +483,10 @@ struct cplane_t
 class CBaseTrace
 {
 public:
-	Vector                  startpos;
-	Vector                  endpos;
-	cplane_t                plane;
-	float                   fraction;
+	Vector                  startpos;//The start of the TraceLine as a Vector.
+	Vector                  endpos;//The end of the TraceLine as a Vector.
+	cplane_t                plane;//Struct. Contains the information about the plane you hit.
+	float                   fraction;//How far the trace went before hitting something. 0-1, 1.0 means it didn't hit anything.
 	int                             contents;
 	unsigned short  dispFlags;
 	bool                    allsolid;
@@ -505,7 +505,7 @@ class CGameTrace : public CBaseTrace
 public:
 	bool                    DidHitWorld() const;
 	bool                    DidHitNonWorldEntity() const;
-	int                             GetEntityIndex() const;
+	int                             GetEntityIndex() const;//no reference
 	bool                    DidHit() const;
 public:
 	float                   fractionleftsolid;
@@ -513,7 +513,7 @@ public:
 	int                             hitgroup;
 	short                   physicsbone;
 	unsigned short  worldSurfaceIndex;
-	IClientEntity*               m_pEnt;
+	IClientEntity*               m_pEnt;//The entity hit. Can be invalid.
 	int                             hitbox;
 	char shit[0x24];
 };
@@ -793,26 +793,32 @@ struct surfacephysicsparams_t
 
 struct surfaceaudioparams_t
 {
-	float    reflectivity;            // like elasticity, but how much sound should be reflected by this surface
-	float    hardnessFactor;            // like elasticity, but only affects impact sound choices
-	float    roughnessFactor;        // like friction, but only affects scrape sound choices   
-	float    roughThreshold;            // surface roughness > this causes "rough" scrapes, < this causes "smooth" scrapes
-	float    hardThreshold;            // surface hardness > this causes "hard" impacts, < this causes "soft" impacts
-	float    hardVelocityThreshold;    // collision velocity > this causes "hard" impacts, < this causes "soft" impacts   
+	float reflectivity; // like elasticity, but how much sound should be reflected by this surface
+	float hardnessFactor; // like elasticity, but only affects impact sound choices
+	float roughnessFactor; // like friction, but only affects scrape sound choices   
+	float roughThreshold; // surface roughness > this causes "rough" scrapes, < this causes "smooth" scrapes
+	float hardThreshold; // surface hardness > this causes "hard" impacts, < this causes "soft" impacts
+	float hardVelocityThreshold; // collision velocity > this causes "hard" impacts, < this causes "soft" impacts   
+	float highPitchOcclusion;
+	//a value betweeen 0 and 100 where 0 is not occluded at all and 100 is silent (except for any additional reflected sound)
+	float midPitchOcclusion;
+	float lowPitchOcclusion;
 };
 
 struct surfacesoundnames_t
 {
-	unsigned short    stepleft;
-	unsigned short    stepright;
-	unsigned short    impactSoft;
-	unsigned short    impactHard;
-	unsigned short    scrapeSmooth;
-	unsigned short    scrapeRough;
-	unsigned short    bulletImpact;
-	unsigned short    rolling;
-	unsigned short    breakSound;
-	unsigned short    strainSound;
+	unsigned short walkstepleft;
+	unsigned short walkstepright;
+	unsigned short runstepleft;
+	unsigned short runstepright;
+	unsigned short impactsoft;
+	unsigned short impacthard;
+	unsigned short scrapesmooth;
+	unsigned short scraperough;
+	unsigned short bulletimpact;
+	unsigned short rolling;
+	unsigned short breaksound;
+	unsigned short strainsound;
 };
 
 struct surfacegameprops_t
@@ -820,11 +826,10 @@ struct surfacegameprops_t
 public:
 	float    maxSpeedFactor; //0x0000
 	float    jumpFactor; //0x0004
-	char    pad00[0x4]; //0x0008
 	float    flPenetrationModifier; //0x000C
 	float    flDamageModifier; //0x0010
 	unsigned short    material; //0x0014
-	char    pad01[0x3];
+	uint8_t climbable;
 
 };//Size=0x0019
 

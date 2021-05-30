@@ -56,10 +56,10 @@ void CLegitBot::SyncWeaponSettings()
 			HitBox = ((int)CSGOHitboxID::Neck);
 			break;
 		case 2:
-			HitBox = ((int)CSGOHitboxID::Chest);
+			HitBox = ((int)CSGOHitboxID::LowerChest);
 			break;
 		case 3:
-			HitBox = ((int)CSGOHitboxID::Stomach);
+			HitBox = ((int)CSGOHitboxID::Belly);
 			break;
 		}
 	}
@@ -80,10 +80,10 @@ void CLegitBot::SyncWeaponSettings()
 			HitBox = ((int)CSGOHitboxID::Neck);
 			break;
 		case 2:
-			HitBox = ((int)CSGOHitboxID::Chest);
+			HitBox = ((int)CSGOHitboxID::LowerChest);
 			break;
 		case 3:
-			HitBox = ((int)CSGOHitboxID::Stomach);
+			HitBox = ((int)CSGOHitboxID::Belly);
 			break;
 		}
 	}
@@ -104,10 +104,10 @@ void CLegitBot::SyncWeaponSettings()
 			HitBox = ((int)CSGOHitboxID::Neck);
 			break;
 		case 2:
-			HitBox = ((int)CSGOHitboxID::Chest);
+			HitBox = ((int)CSGOHitboxID::LowerChest);
 			break;
 		case 3:
-			HitBox = ((int)CSGOHitboxID::Stomach);
+			HitBox = ((int)CSGOHitboxID::Belly);
 			break;
 		}
 	}

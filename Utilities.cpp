@@ -37,6 +37,10 @@ void Utilities::CloseConsole()
 // Outputs text to the console
 void Utilities::Log(const char *fmt, ...)
 {
+#ifndef AYY_DEBUG
+	return;
+#endif
+
 	if (!fmt) return; //if the passed string is null return
 	if (strlen(fmt) < 2) return;
 
@@ -223,7 +227,7 @@ int		Utilities::Memory::VMTManager::MethodCount(DWORD* InstancePointer)
 	DWORD *VMT = (DWORD*)*InstancePointer;
 	int Index = 0;
 	int Amount = 0;
-	while (!IsBadCodePtr((FARPROC)VMT[Index]))
+	while (!IsBadCodePtr((FARPROC)VMT[Index]))//IsBadCodePtr is Debug Assist
 	{
 		if (!IsBadCodePtr((FARPROC)VMT[Index]))
 		{

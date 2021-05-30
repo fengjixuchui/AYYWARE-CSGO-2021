@@ -120,10 +120,10 @@ void Offsets::Initialise()
 	Utilities::Log("Functions::KeyValues_KeyValues Base %x", Functions::KeyValues_KeyValues);
 	Utilities::Log("Functions::KeyValues_LoadFromBuffer %x", Functions::KeyValues_LoadFromBuffer);
 	Utilities::Log("Functions::dwCalcPlayerView %x", Functions::dwCalcPlayerView);
-	Utilities::Log("Functions::dwGetPlayerCompRank %x", Functions::dwGetPlayerCompRank);
+	//Utilities::Log("Functions::dwGetPlayerCompRank %x", Functions::dwGetPlayerCompRank);
 	//Utilities::Log("Functions::dwIsReady %x", Functions::dwIsReady);
 
-	Utilities::Log("Offsets/Indexes Up to Date");
+	Utilities::Log("[INFO]Offsets/Indexes Up to Date");
 }
 
 namespace Offsets
@@ -231,7 +231,7 @@ namespace Offsets
 		DWORD dwCalcPlayerView;
 
 		DWORD dwGetPlayerCompRank;
-		DWORD dwIsReady;
+		//DWORD dwIsReady;
 	};
 
 };

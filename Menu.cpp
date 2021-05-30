@@ -15,12 +15,12 @@ AyyWareWindow Menu::Window;
 
 void SaveCallbk()
 {
-	GUI.SaveWindowState(&Menu::Window, "config.cfg");
+	GUI.SaveWindowState(&Menu::Window, "ayyconfig.cfg");
 }
 
 void LoadCallbk()
 {
-	GUI.LoadWindowState(&Menu::Window, "config.cfg");
+	GUI.LoadWindowState(&Menu::Window, "ayyconfig.cfg");
 }
 
 void UnLoadCallbk()
@@ -285,7 +285,7 @@ void CRageBotTab::Setup()
 	AimbotGroup.PlaceLabledControl("Silent Aim", this, &AimbotSilentAim);
 
 	AimbotPerfectSilentAim.SetFileId("aim_psilent");
-	AimbotGroup.PlaceLabledControl("Perfect Silent", this, &AimbotPerfectSilentAim);
+	AimbotGroup.PlaceLabledControl("Dont use", this, &AimbotPerfectSilentAim);
 
 	AimbotAutoPistol.SetFileId("aim_autopistol");
 	AimbotGroup.PlaceLabledControl("Auto Pistol", this, &AimbotAutoPistol);
@@ -332,7 +332,7 @@ void CRageBotTab::Setup()
 	TargetHitscan.AddItem("Medium"); // 2
 	TargetHitscan.AddItem("High"); // 3
 	TargetHitscan.AddItem("Extreme"); // 4
-	TargetGroup.PlaceLabledControl("Hitscan", this, &TargetHitscan);
+	TargetGroup.PlaceLabledControl("Dont Use", this, &TargetHitscan);
 
 	TargetMultipoint.SetFileId("tgt_multipoint");
 	TargetGroup.PlaceLabledControl("Multipoint", this, &TargetMultipoint);
@@ -383,7 +383,7 @@ void CRageBotTab::Setup()
 	AccuracySmart.SetFileId("acc_smart");
 	AccuracySmart.SetBoundaries(0, 20);
 	AccuracySmart.SetValue(1);
-	AccuracyGroup.PlaceLabledControl("Smart Aim", this, &AccuracySmart);
+	AccuracyGroup.PlaceLabledControl("Dont Use", this, &AccuracySmart);
 #pragma endregion  Accuracy controls get Setup in here
 
 #pragma region AntiAim
@@ -625,7 +625,7 @@ void CMiscTab::Setup()
 	OtherClantag.AddItem("pasteware");
 	OtherClantag.AddItem("skeet.cc");
 	OtherClantag.AddItem("Blank");
-	OtherClantag.AddItem("Valve");
+	OtherClantag.AddItem("ValveAntiCheat");
 	OtherGroup.PlaceLabledControl("Custom Clantag", this, &OtherClantag);
 
 	OtherTeamChat.SetFileId("otr_teamchat");

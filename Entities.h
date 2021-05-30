@@ -8,6 +8,9 @@ Syn's AyyWare Framework 2015
 #include "ClientRecvProps.h"
 #include "offsets.h"
 #include "Vector.h"
+#include"Pad.h"
+
+#define IS_WIN32() true
 
 #define TEAM_CS_T 2
 #define TEAM_CS_CT 3
@@ -34,49 +37,39 @@ public:
 	char unknowndata01[1]; //0x0083
 };//Size=0x00AC
 
-class CSWeaponInfo
+struct CSWeaponInfo
 {
 public:
-	virtual ~CSWeaponInfo() {};
-	char pad_0x0000[0x4]; //0x0000
-	char* szWeaponName; //0x0004 
-	char pad_0x0008[0xC]; //0x0008
-	__int32 iMaxClip1; //0x0014 
-	char pad_0x0018[0xC]; //0x0018
-	__int32 max_reserved_ammo; //0x0024 
-	char pad_0x0028[0x4]; //0x0028
-	char* m_WeaponMdlPath; //0x002C 
-	char pad_0x0030[0x4]; //0x0030
-	char* m_DropWeaponMdlPath; //0x0034 
-	char pad_0x0038[0x48]; //0x0038
-	char* m_BulletType; //0x0080 
-	char pad_0x0084[0x4]; //0x0084
-	char* hud_name; //0x0088 
-	char pad_0x008C[0x40]; //0x008C
-	__int32 m_WeaponType; //0x00CC 
-	__int32 m_WeaponPrice; //0x00D0 
-	__int32 m_WeaponReward; //0x00D4 
-	char* m_WeaponGroupName; //0x00D8 
-	char pad_0x00DC[0x10]; //0x00DC
-	unsigned char bFullAuto; //0x00EC 
-	char pad_0x00ED[0x3]; //0x00ED
-	__int32 iDamage; //0x00F0 
-	float flArmorRatio; //0x00F4 
-	__int32 bullets;
-	float flPenetration; //0x00F8
-	char pad_0x00F8[0x8]; //0x00FC
-	float flRange; //0x0108 
-	float flRangeModifier; //0x010C 
-	char pad_0x0110[0x10]; //0x0110
-	unsigned char silencer; //0x0120 
-	char pad_0x0121[0xF]; //0x0121
-	float flMaxPlayerSpeed; //0x0130 
-	float flMaxPlayerSpeedAlt; //0x0134 
-	char pad_0x0138[0x4C]; //0x0138
-	__int32 recoil_seed; //0x0184 
-	char pad_0x0188[0x68]; //0x0188
-	char* m_WeaponTracesType; //0x01F0 
-	char pad_0x01F4[0x638]; //0x01F4
+	PAD(IS_WIN32() ? 20 : 32)
+		int maxClip;
+	PAD(IS_WIN32() ? 112 : 204)
+		const char* name;
+	PAD(IS_WIN32() ? 60 : 72)
+		int type;
+	PAD(4)
+		int price;
+	PAD(IS_WIN32() ? 8 : 12)
+		float cycletime;
+	PAD(12)
+		bool fullAuto;
+	PAD(3)
+		int damage;
+	float armorRatio;
+	int bullets;
+	float penetration;
+	PAD(8)
+		float range;
+	float rangeModifier;
+	PAD(16)
+		bool silencer;
+	PAD(IS_WIN32() ? 15 : 23)
+		float maxSpeed;
+	float maxSpeedAlt;
+	PAD(100)
+		float recoilMagnitude;
+	float recoilMagnitudeAlt;
+	PAD(16)
+		float recoveryTimeStand;
 };
 
 
@@ -386,27 +379,26 @@ enum moveTypes
 
 enum class CSGOHitboxID
 {
-	Head = 0,
+	Head,
 	Neck,
-	NeckLower,
 	Pelvis,
-	Stomach,
+	Belly,
+	Thorax,
 	LowerChest,
-	Chest,
 	UpperChest,
 	RightThigh,
 	LeftThigh,
-	RightShin,
-	LeftShin,
+	RightCalf,
+	LeftCalf,
 	RightFoot,
 	LeftFoot,
 	RightHand,
 	LeftHand,
 	RightUpperArm,
-	RightLowerArm,
+	RightForearm,
 	LeftUpperArm,
-	LeftLowerArm,
-	Max,
+	LeftForearm,
+	Max
 };
 
 // Weapon IDs
@@ -531,15 +523,15 @@ public:
 	float GetInaccuracy()
 	{
 		typedef float(__thiscall* oInaccuracy)(PVOID);
-		return call_vfunc< oInaccuracy >(this, 469)(this);
+		return call_vfunc< oInaccuracy >(this, 482)(this);
 	}
-
+	//no reference
 	float GetInnacc()
 	{
 		typedef float(__thiscall *OrigFn)(void *);
 		return call_vfunc<OrigFn>(this, 469)(this);
 	}
-
+	//no reference
 	void UpdateAccPenalty() 
 	{
 		typedef void(__thiscall *OrigFn)(void *);
@@ -556,7 +548,7 @@ public:
 		if (!this) return nullptr;
 
 		typedef CSWeaponInfo*(__thiscall* OriginalFn)(void*);
-		return  call_vfunc<OriginalFn>(this, 446)(this);
+		return  call_vfunc<OriginalFn>(this, 460)(this);
 	}
 };
 
@@ -666,9 +658,11 @@ public:
 
 	//---                 NetVars                  ---//
 
+	//no reference
 	int GetGlowIndex()
 	{
-		return *(int*)(this + 0xA310);
+		//return *(int*)(this + 0xA310);
+		return *(int*)(this + 0xA438);
 	}
 
 	CPNETVAR_FUNC(CLocalPlayerExclusive*, localPlayerExclusive, 0x7177BC3E);// m_Local
@@ -713,14 +707,16 @@ public:
 		if (!this)
 			return 0;
 
-		return ptr(int, this, 0x258);
+		//return ptr(int, this, 0x258);
+		return ptr(int, this, 0x25C);
 	}
 
 	QAngle* GetEyeAnglesPointer()
 	{
-		return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
+		return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB380);
+		//return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
 	}
-
+	//no references
 	QAngle GetEyeAngles()
 	{
 		return *reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
@@ -756,14 +752,16 @@ public:
 		return GetClientClass()->m_ClassID == (int)CSGOClassID::CCSPlayer;
 	}
 
+	//no references
 	Vector GetOrigin2() {
 		return *(Vector*)((DWORD)this + 0x00000134);
 	}
-
+	//no references
 	Vector GetViewAngles2() {
 		return *(Vector*)((DWORD)this + 0x00000104);
 	}
 
+	//no references
 	Vector GetAbsOrigin2() {
 		__asm {
 			MOV ECX, this
@@ -771,6 +769,7 @@ public:
 			CALL DWORD PTR DS : [EAX + 0x28]
 		}
 	}
+	//no references
 	Vector GetAbsAngles2() {
 		__asm {
 			MOV ECX, this;
@@ -785,18 +784,22 @@ public:
 		Vector View = *(Vector*)((DWORD)this + 0x108);
 		return(Origin + View);
 	}
+	//no reference
 	Vector GetAimPunch() {
 		return *(Vector*)((DWORD)this + 0x00003018);
 	}
+	//no reference
 	bool IsImmune() {
 		return *(bool*)((DWORD)this + 0x000038A0);
 	}
+	//no reference
 	ClientClass *GetClientClass2() {
 		PVOID Networkable = (PVOID)((DWORD)(this) + 0x8);
 		using Original = ClientClass*(__thiscall*)(PVOID);
 		return call_vfunc<Original>(Networkable, 2)(Networkable);
 	}
 	HANDLE GetWeaponHandle() {
-		return *(HANDLE*)((DWORD)this + 0x00002EE8);
+		//return *(HANDLE*)((DWORD)this + 0x00002EE8
+		return *(HANDLE*)((DWORD)this + 0x00002EF8);
 	}
 };

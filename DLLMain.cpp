@@ -89,8 +89,9 @@ int InitialThread()
 
 	//BugLog.txt for code test when game update
 	//Users[Administor]
+#ifdef AYY_DEBUG
 	Utilities::EnableLogFile("C:\\Users\\sbb\\Desktop\\BugLog.txt");
-
+#endif
 	//ZwTerminateProcess
 #ifdef  AYY_DEBUG
 	//HMODULE hDbg = LoadLibraryW(L"‪C:\\Program Files (x86)\\Windows Kits\\10\\Debuggers\\x86\\dbghelp.dll");

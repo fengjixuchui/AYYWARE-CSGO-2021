@@ -34,6 +34,7 @@ void Interfaces::Initialise()
 
 	//Get the interface names regardless of their version number by scanning for each string
 	//#define CLIENT_DLL_INTERFACE_VERSION		"VClient017" 
+	//source-sdk-2013-master\mp\src\public\icliententitylist.h
 	char* CHLClientInterfaceName = (char*)Utilities::Memory::FindTextPattern("client.dll", "VClient0");
 	char* VGUI2PanelsInterfaceName = (char*)Utilities::Memory::FindTextPattern("vgui2.dll", "VGUI_Panel0");
 	char* VGUISurfaceInterfaceName = (char*)Utilities::Memory::FindTextPattern("vguimatsurface.dll", "VGUI_Surface0");

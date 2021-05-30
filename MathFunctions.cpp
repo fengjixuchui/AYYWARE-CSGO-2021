@@ -134,11 +134,11 @@ void CalcAngle(Vector src, Vector dst, Vector &angles)
 {
 	Vector delta = src - dst;
 	double hyp = delta.Length2D(); //delta.Length
-	angles.y = (atan(delta.y / delta.x) * 57.295779513082f);
-	angles.x = (atan(delta.z / hyp) * 57.295779513082f);
+	angles.y = (atan(delta.y / delta.x) * 57.295779513082f);//pitch
+	angles.x = (atan(delta.z / hyp) * 57.295779513082f);//yaw
 	angles[2] = 0.00;
 
-	if (delta.x >= 0.0)
+	if (delta.x >= 0.0)//src behind the dst
 		angles.y += 180.0f;
 }
 
