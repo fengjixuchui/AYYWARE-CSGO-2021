@@ -360,16 +360,19 @@ void __fastcall PaintTraverse_Hooked(PVOID pPanels, int edx, unsigned int vguiPa
 }
 
 // InPrediction Hooked Function
+//
 bool __stdcall Hooked_InPrediction()
 {
 	bool result;
+	//mov     eax, g_Prediction_vtable
+	//mov     eax, [eax+38h]  38h/4 = 14
 	static InPrediction_ origFunc = (InPrediction_)Hooks::VMTPrediction.GetOriginalFunction(14);
 	static DWORD *ecxVal = Interfaces::Prediction;
 	result = origFunc(ecxVal);
 
 	// If we are in the right place where the player view is calculated
 	// Calculate the change in the view and get rid of it
-	if (Menu::Window.VisualsTab.OtherNoVisualRecoil.GetState() && (DWORD)(_ReturnAddress()) == Offsets::Functions::dwCalcPlayerView)
+	if (Menu::Window.VisualsTab.OtherNoVisualRecoil.GetState() && (DWORD)(_ReturnAddress()) == Offsets::Functions::dwCalcPlayerView)//C_BasePlayer::CalcPlayerView
 	{
 		IClientEntity* pLocalEntity = NULL;
 
@@ -377,9 +380,11 @@ bool __stdcall Hooked_InPrediction()
 
 		__asm
 		{
-			MOV pLocalEntity, ESI
+			MOV pLocalEntity, ESI	
 			MOV m_LocalViewAngles, EBX
 		}
+
+		//CNetworkVarEmbedded( CPlayerLocalData, m_Local );
 
 		Vector viewPunch = pLocalEntity->localPlayerExclusive()->GetViewPunchAngle();
 		Vector aimPunch = pLocalEntity->localPlayerExclusive()->GetAimPunchAngle();

@@ -219,7 +219,7 @@ Vector GetAutostrafeView()
 	return AutoStrafeView;
 }
 
-// �e սʿ
+//
 void CMiscHacks::ChatSpamInterwebz()
 {
 	static clock_t start_t = clock();
@@ -228,19 +228,18 @@ void CMiscHacks::ChatSpamInterwebz()
 		return;
 
 	static bool wasSpamming = true;
-	//static std::string nameBackup = "INTERWEBZ";
 
 	if (wasSpamming)
 	{
 		static bool useSpace = true;
 		if (useSpace)
 		{
-			change_name ("INTERWEBZ-");
+			change_name ("[Name]");
 			useSpace = !useSpace;
 		}
 		else
 		{
-			change_name("-INTERWEBZ");
+			change_name("[Name]");
 			useSpace = !useSpace;
 		}
 	}
@@ -256,7 +255,6 @@ void CMiscHacks::ChatSpamDisperseName()
 		return;
 
 	static bool wasSpamming = true;
-	//static std::string nameBackup = "INTERWEBZ";
 
 	if (wasSpamming)
 	{
@@ -299,8 +297,9 @@ void CMiscHacks::ChatSpamName()
 	}
 
 	static bool wasSpamming = true;
-	//static std::string nameBackup = "INTERWEBZ.CC";
 
+	if(!Names.size())
+		return;
 	int randomIndex = rand() % Names.size();
 	char buffer[128];
 	sprintf_s(buffer, "%s ", Names[randomIndex].c_str());
@@ -321,6 +320,7 @@ void CMiscHacks::ChatSpamRegular()
 {
 	// Don't spam it too fast so you can still do stuff
 	static clock_t start_t = clock();
+	//SpamDelay
 	int spamtime = Menu::Window.MiscTab.OtherChatDelay.GetValue();
 	double timeSoFar = (double)(clock() - start_t) / CLOCKS_PER_SEC;
 	if (timeSoFar < spamtime)
@@ -330,11 +330,11 @@ void CMiscHacks::ChatSpamRegular()
 
 	if (Menu::Window.MiscTab.OtherTeamChat.GetState())
 	{
-		SayInTeamChat("INTERWEBZ.CC OWNS ME AND ALL");
+		SayInTeamChat("[Say What You Want Say To Team Players]");
 	}
 	else
 	{
-		SayInChat("INTERWEBZ.CC OWNS ME AND ALL");
+		SayInChat("Say What You Want Say To All Players");
 	}
 
 	start_t = clock();

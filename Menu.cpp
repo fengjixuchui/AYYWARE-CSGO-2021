@@ -600,7 +600,7 @@ void CMiscTab::Setup()
 	OtherGroup.PlaceLabledControl("Auto Jump", this, &OtherAutoJump);
 
 	OtherEdgeJump.SetFileId("otr_edgejump");
-	OtherGroup.PlaceLabledControl("Edge Jump", this, &OtherEdgeJump);
+	OtherGroup.PlaceLabledControl("Dont Use", this, &OtherEdgeJump);
 
 	OtherAutoStrafe.SetFileId("otr_strafe");
 	OtherAutoStrafe.AddItem("Off");
@@ -637,7 +637,7 @@ void CMiscTab::Setup()
 	OtherGroup.PlaceLabledControl("Spam Delay", this, &OtherChatDelay);
 
 	OtherAirStuck.SetFileId("otr_astuck");
-	OtherGroup.PlaceLabledControl("Air Stuck", this, &OtherAirStuck);
+	OtherGroup.PlaceLabledControl("Dont Use", this, &OtherAirStuck);
 
 	OtherSpectators.SetFileId("otr_speclist");
 	OtherGroup.PlaceLabledControl("Spectators List", this, &OtherSpectators);
