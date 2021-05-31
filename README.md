@@ -44,10 +44,9 @@ autowall can work fine, but only in bot mode
 perfect fix autowall (thanks for Osiris due to some vtable index and some structures)
 
 2021.5.28 
+
 remove some functions that are outdated 
 
-TODO:
-Support a button that can auto  load the best config for current weapon	
 
 
 
