@@ -15,20 +15,7 @@ see https://github.com/helloobaby/AYYWARE-injector
 
 credits for: synraw - original ayyware developer.
 
-
-references:
-
-https://developer.valvesoftware.com/wiki/Source_SDK_2013
-
-https://developer.valvesoftware.com/wiki/Usercmd
-
-https://developer.valvesoftware.com/wiki/Networking_Entities
-
-https://developer.valvesoftware.com/wiki/UTIL_TraceLine
-
-https://developer.valvesoftware.com/wiki/Category:UTIL
-
-
+Version:
 
 2021.5.23
 
@@ -62,10 +49,16 @@ remove some functions that are outdated
 TODO:
 Support a button that can auto  load the best config for current weapon	
 
-Tips:Only use on Steam, Dont use on 5E, B5, 完美 etc. And faceit(if you are not a Chinese).
-play with hacks, pls.
 
-if you have a better config with AYYWARE, please tell me through issue.
+
+
+
+
+
+
+
+
 
 Give me a Star
+
 Thx!
