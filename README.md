@@ -1,7 +1,5 @@
 # Ayyware-2021
 
-![Image text](https://github.com/helloobaby/AYYWARE-CSGO-2021/blob/master/ESP.png)
-
 ![image](https://github.com/helloobaby/AYYWARE-CSGO-2021/blob/master/spinbot.gif)
 
 
