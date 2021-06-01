@@ -13,6 +13,8 @@ Syn's AyyWare Framework 2015
 
 AyyWareWindow Menu::Window;
 
+extern void LoadBestConfig();
+
 void SaveCallbk()
 {
 	GUI.SaveWindowState(&Menu::Window, "ayyconfig.cfg");
@@ -39,7 +41,7 @@ void AyyWareWindow::Setup()
 {
 	SetPosition(350, 50);
 	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-	SetTitle("Whip");
+	SetTitle("Solo King");
 
 	RegisterTab(&LegitBotTab);
 	RegisterTab(&RageBotTab);
@@ -61,13 +63,15 @@ void AyyWareWindow::Setup()
 	SaveButton.SetCallback(SaveCallbk);
 	SaveButton.SetPosition(16, Client.bottom - 42);
 
-	LoadButton.SetText("Load Configuration");
+	LoadButton.SetText("Load Config(default)");
 	LoadButton.SetCallback(LoadCallbk);
 	LoadButton.SetPosition(203, Client.bottom - 42);
 	
-	UnloadButton.SetText("Complete Unload");
-	UnloadButton.SetCallback(UnLoadCallbk);
+	UnloadButton.SetText("Load best config for current weapon");
+	UnloadButton.SetCallback(LoadBestConfig);
 	UnloadButton.SetPosition(396, Client.bottom - 42);
+	UnloadButton.AddWidth(80);
+	
 
 	LegitBotTab.RegisterControl(&SaveButton);
 	RageBotTab.RegisterControl(&SaveButton);

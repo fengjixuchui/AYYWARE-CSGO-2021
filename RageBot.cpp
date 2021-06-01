@@ -10,6 +10,100 @@
 #define TICK_INTERVAL			( Interfaces::Globals->interval_per_tick )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 
+//for load best config
+extern CGUI GUI;
+extern AyyWareWindow Menu::Window;
+
+enum class WeaponId : short {
+	Deagle = 1,
+	Elite,
+	Fiveseven,
+	Glock,
+	Ak47 = 7,
+	Aug,
+	Awp,
+	Famas,
+	G3SG1,
+	GalilAr = 13,
+	M249,
+	M4A1 = 16,
+	Mac10,
+	P90 = 19,
+	ZoneRepulsor,
+	Mp5sd = 23,
+	Ump45,
+	Xm1014,
+	Bizon,
+	Mag7,
+	Negev,
+	Sawedoff,
+	Tec9,
+	Taser,
+	Hkp2000,
+	Mp7,
+	Mp9,
+	Nova,
+	P250,
+	Shield,
+	Scar20,
+	Sg553,
+	Ssg08,
+	GoldenKnife,
+	Knife,
+	Flashbang = 43,
+	HeGrenade,
+	SmokeGrenade,
+	Molotov,
+	Decoy,
+	IncGrenade,
+	C4,
+	Healthshot = 57,
+	KnifeT = 59,
+	M4a1_s,
+	Usp_s,
+	Cz75a = 63,
+	Revolver,
+	TaGrenade = 68,
+	Axe = 75,
+	Hammer,
+	Spanner = 78,
+	GhostKnife = 80,
+	Firebomb,
+	Diversion,
+	FragGrenade,
+	Snowball,
+	BumpMine,
+	Bayonet = 500,
+	ClassicKnife = 503,
+	Flip = 505,
+	Gut,
+	Karambit,
+	M9Bayonet,
+	Huntsman,
+	Falchion = 512,
+	Bowie = 514,
+	Butterfly,
+	Daggers,
+	Paracord,
+	SurvivalKnife,
+	Ursus = 519,
+	Navaja,
+	NomadKnife,
+	Stiletto = 522,
+	Talon,
+	SkeletonKnife = 525,
+	GloveStuddedBrokenfang = 4725,
+	GloveStuddedBloodhound = 5027,
+	GloveT,
+	GloveCT,
+	GloveSporty,
+	GloveSlick,
+	GloveLeatherWrap,
+	GloveMotorcycle,
+	GloveSpecialist,
+	GloveHydra
+};
+
 
 void CRageBot::Init()
 {
@@ -40,7 +134,6 @@ bool IsAbleToShoot(IClientEntity* pLocal)
 
 float hitchance(IClientEntity* pLocal, CBaseCombatWeapon* pWeapon)
 {
-	//	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(pLocal->GetActiveWeaponHandle());
 	float hitchance = 101;
 	if (!pWeapon) return 0;
 	if (Menu::Window.RageBotTab.AccuracyHitchance.GetValue() > 1)
@@ -284,7 +377,7 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 		}
 		else
 		{
-			if ((Menu::Window.RageBotTab.AccuracyHitchance.GetValue() * 1.5 <= hitchance(pLocal, pWeapon)) || Menu::Window.RageBotTab.AccuracyHitchance.GetValue() == 0 || *pWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == 64)
+			if ((Menu::Window.RageBotTab.AccuracyHitchance.GetValue() * 1.5 <= hitchance(pLocal, pWeapon)) || Menu::Window.RageBotTab.AccuracyHitchance.GetValue() == 0 || *pWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == WEAPON_REVOLVER)
 			{
 				if (AimAtPoint(pLocal, Point, pCmd, bSendPacket))
 				{
@@ -312,9 +405,11 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 		{
 			if (Menu::Window.RageBotTab.AccuracyAutoStop.GetState())
 			{
+				//fix:Not very useful nowadays
 				pCmd->forwardmove = 0.f;
 				pCmd->sidemove = 0.f;
 				pCmd->buttons |= IN_DUCK;
+
 			}
 		}
 	}
@@ -1387,3 +1482,201 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 	pCmd->viewangles.y += Menu::Window.RageBotTab.AntiAimOffset.GetValue();
 }
 
+
+void LoadBestConfig()
+{
+	auto pBasedPlayer = hackManager.pLocal();
+
+	auto pEntity = Interfaces::EntList->GetClientEntityFromHandle(pBasedPlayer->GetActiveWeaponHandle());
+
+	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)pEntity;
+
+	WeaponId Weaponid = (WeaponId)*pWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex();
+
+	switch (Weaponid)
+	{
+	case WeaponId::Deagle:
+		break;
+	case WeaponId::Elite:
+		GUI.LoadWindowState(&Menu::Window,"brettas.cfg");
+		break;
+	case WeaponId::Fiveseven:
+		break;
+	case WeaponId::Glock:
+		break;
+	case WeaponId::Ak47:
+		break;
+	case WeaponId::Aug:
+		break;
+	case WeaponId::Awp:
+		GUI.LoadWindowState(&Menu::Window, "AWP.cfg");
+		break;
+	case WeaponId::Famas:
+		break;
+	case WeaponId::G3SG1:
+		GUI.LoadWindowState(&Menu::Window, "G3SG1.cfg");
+		break;
+	case WeaponId::GalilAr:
+		break;
+	case WeaponId::M249:
+		break;
+	case WeaponId::M4A1:
+		break;
+	case WeaponId::Mac10:
+		break;
+	case WeaponId::P90:
+		break;
+	case WeaponId::ZoneRepulsor:
+		break;
+	case WeaponId::Mp5sd:
+		break;
+	case WeaponId::Ump45:
+		break;
+	case WeaponId::Xm1014:
+		break;
+	case WeaponId::Bizon:
+		break;
+	case WeaponId::Mag7:
+		break;
+	case WeaponId::Negev:
+		break;
+	case WeaponId::Sawedoff:
+		break;
+	case WeaponId::Tec9:
+		break;
+	case WeaponId::Taser:
+		break;
+	case WeaponId::Hkp2000:
+		break;
+	case WeaponId::Mp7:
+		break;
+	case WeaponId::Mp9:
+		break;
+	case WeaponId::Nova:
+		break;
+	case WeaponId::P250:
+		break;
+	case WeaponId::Shield:
+		break;
+	case WeaponId::Scar20:
+		break;
+	case WeaponId::Sg553:
+		break;
+	case WeaponId::Ssg08:
+		GUI.LoadWindowState(&Menu::Window, "SSG08.cfg");
+		break;
+	case WeaponId::GoldenKnife:
+		break;
+	case WeaponId::Knife:
+		break;
+	case WeaponId::Flashbang:
+		break;
+	case WeaponId::HeGrenade:
+		break;
+	case WeaponId::SmokeGrenade:
+		break;
+	case WeaponId::Molotov:
+		break;
+	case WeaponId::Decoy:
+		break;
+	case WeaponId::IncGrenade:
+		break;
+	case WeaponId::C4:
+		break;
+	case WeaponId::Healthshot:
+		break;
+	case WeaponId::KnifeT:
+		break;
+	case WeaponId::M4a1_s:
+		break;
+	case WeaponId::Usp_s:
+		break;
+	case WeaponId::Cz75a:
+		break;
+	case WeaponId::Revolver:
+		GUI.LoadWindowState(&Menu::Window, "R8.cfg");
+		break;
+	case WeaponId::TaGrenade:
+		break;
+	case WeaponId::Axe:
+		break;
+	case WeaponId::Hammer:
+		break;
+	case WeaponId::Spanner:
+		break;
+	case WeaponId::GhostKnife:
+		break;
+	case WeaponId::Firebomb:
+		break;
+	case WeaponId::Diversion:
+		break;
+	case WeaponId::FragGrenade:
+		break;
+	case WeaponId::Snowball:
+		break;
+	case WeaponId::BumpMine:
+		break;
+	case WeaponId::Bayonet:
+		break;
+	case WeaponId::ClassicKnife:
+		break;
+	case WeaponId::Flip:
+		break;
+	case WeaponId::Gut:
+		break;
+	case WeaponId::Karambit:
+		break;
+	case WeaponId::M9Bayonet:
+		break;
+	case WeaponId::Huntsman:
+		break;
+	case WeaponId::Falchion:
+		break;
+	case WeaponId::Bowie:
+		break;
+	case WeaponId::Butterfly:
+		break;
+	case WeaponId::Daggers:
+		break;
+	case WeaponId::Paracord:
+		break;
+	case WeaponId::SurvivalKnife:
+		break;
+	case WeaponId::Ursus:
+		break;
+	case WeaponId::Navaja:
+		break;
+	case WeaponId::NomadKnife:
+		break;
+	case WeaponId::Stiletto:
+		break;
+	case WeaponId::Talon:
+		break;
+	case WeaponId::SkeletonKnife:
+		break;
+	case WeaponId::GloveStuddedBrokenfang:
+		break;
+	case WeaponId::GloveStuddedBloodhound:
+		break;
+	case WeaponId::GloveT:
+		break;
+	case WeaponId::GloveCT:
+		break;
+	case WeaponId::GloveSporty:
+		break;
+	case WeaponId::GloveSlick:
+		break;
+	case WeaponId::GloveLeatherWrap:
+		break;
+	case WeaponId::GloveMotorcycle:
+		break;
+	case WeaponId::GloveSpecialist:
+		break;
+	case WeaponId::GloveHydra:
+		break;
+	default:
+		break;
+	}
+
+	return;
+}

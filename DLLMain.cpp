@@ -197,10 +197,6 @@ int InitialThread()
 
 	//--------------------------------------------------------------------------
 
-
-
-	//GUI.LoadWindowState(&Menu::Window, "config.xml");
-
 	//Dumping
 	//Dump::DumpClassIds();
 
@@ -209,16 +205,8 @@ int InitialThread()
 	Utilities::SetConsoleColor(FOREGROUND_GREEN);
 	Utilities::Log("[*]EveryThing have Ready,Have Fun");
 
-	// While our cheat is running
-	//click Unload Button And Callback will set DoUnload
-	while (DoUnload == false)
-	{
-		Sleep(1000);
-	}
-
-	Hooks::UndoHooks();
-	Sleep(2000); // Make sure none of our hooks are running
-	FreeLibraryAndExitThread(HThisModule, 0);
+	//just wait ,no need to unload
+	WaitForSingleObject(GetCurrentProcess(),INFINITE);
 
 	return 0;
 }

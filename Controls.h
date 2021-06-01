@@ -83,6 +83,8 @@ public:
 	CButton();
 	void SetCallback(ButtonCallback_t callback);
 	void SetText(std::string text);
+	void AddWidth(int Width);
+	void AddHeight(int Height);
 protected:
 	ButtonCallback_t CallBack;
 	std::string Text;

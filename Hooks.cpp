@@ -82,7 +82,7 @@ VMTClient.Initialise((DWORD*)Interfaces::Client);
 oCreateMove = (CreateMoveFn)VMTClient.HookMethod((DWORD)&hkCreateMove, 21);
 }*/
 
-// Undo our hooks
+//fix: No Need To Unload,dont call this function
 void Hooks::UndoHooks()
 {
 	VMTPanel.RestoreOriginal();
