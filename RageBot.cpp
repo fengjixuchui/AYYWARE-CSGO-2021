@@ -1559,6 +1559,7 @@ void LoadBestConfig()
 	case WeaponId::Shield:
 		break;
 	case WeaponId::Scar20:
+		GUI.LoadWindowState(&Menu::Window, "G3SG1.cfg");
 		break;
 	case WeaponId::Sg553:
 		break;
