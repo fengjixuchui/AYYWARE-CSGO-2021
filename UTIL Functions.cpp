@@ -149,7 +149,6 @@ bool GameUtils::IsVisible(IClientEntity* pLocal, IClientEntity* pEntity, int Bon
 	entCopy = pEntity;
 	Vector start = pLocal->GetOrigin() + pLocal->GetViewOffset();
 	Vector end = GetHitboxPosition(pEntity, BoneID);//pEntity->GetBonePos(BoneID);
-	char shit3[32];
 	
 	//Interfaces::Trace->TraceRay(Ray,MASK_SOLID, NULL/*&filter*/, &Trace);
 	UTIL_TraceLine(start, end, MASK_SOLID, pLocal, 0, &Trace);

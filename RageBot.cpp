@@ -259,9 +259,6 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 	{
 		if (pWeapon->GetAmmoInClip() == 0 || !GameUtils::IsBallisticWeapon(pWeapon))
 		{
-			//TargetID = 0;
-			//pTarget = nullptr;
-			//HitBox = -1;
 			return;
 		}
 	}
@@ -596,33 +593,15 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 	// Get the hitboxes to scan
 #pragma region GetHitboxesToScan
 	int HitScanMode = Menu::Window.RageBotTab.TargetHitscan.GetIndex();
-	int iSmart = Menu::Window.RageBotTab.AccuracySmart.GetValue();
 	bool AWall = Menu::Window.RageBotTab.AccuracyAutoWall.GetState();
-	//Multipoint is useless
+	
 	bool Multipoint = Menu::Window.RageBotTab.TargetMultipoint.GetState();
 
-	if (iSmart > 0 && pLocal->GetShotsFired() + 1 > iSmart)
-	{
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
-	}
-	else
-	{
-		if (HitScanMode == 0)
+	//hellobaby:
+	//in my opinion,i prefer to use hitscan.Because you probably cant to resolve enemy's head or neck.
+	//so you can hit hisbody through scar-20
+	//
+	if (HitScanMode == 0)
 		{
 			// No Hitscan, just a single hitbox
 			switch (Menu::Window.RageBotTab.TargetHitbox.GetIndex())
@@ -634,24 +613,95 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
 				break;
 			case 2:
+				HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
 				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
 				HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
 				break;
 			case 3:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
 				break;
 			case 4:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+				break;
+			case 5:
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
 				break;
 			}
 		}
-		else
+	else
+	{
+		switch (HitScanMode)
 		{
-			
+		case 1:
+			// Low
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+
+			break;
+		case 2:
+			// Normal
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+			break;
+		case 3:
+			// High
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			break;
+		case 4:
+			// Extreme
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			break;
 		}
+
+
 	}
+		
+		
+	
 #pragma endregion Get the list of shit to scan
 
 	// check hits
@@ -665,8 +715,6 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 			//Color c = Color(255, 255, 255, 255);
 			if (CanHit(Point, &Damage))
 			{
-				//Utilities::Log("[Debug]can hit");
-				//c = Color(0, 255, 0, 255);
 				if (Damage >= Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue())
 				{
 					return HitBoxID;

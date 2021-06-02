@@ -381,23 +381,23 @@ enum class CSGOHitboxID
 {
 	Head,
 	Neck,
-	Pelvis,
-	Belly,
-	Thorax,
-	LowerChest,
-	UpperChest,
-	RightThigh,
-	LeftThigh,
-	RightCalf,
-	LeftCalf,
+	Pelvis,//骨盆
+	Belly,//肚子
+	Thorax,//胸
+	LowerChest,//下胸
+	UpperChest,//上胸
+	RightThigh,//右大腿
+	LeftThigh,//左大腿
+	RightCalf,//右小腿
+	LeftCalf,//左小腿
 	RightFoot,
 	LeftFoot,
 	RightHand,
 	LeftHand,
 	RightUpperArm,
-	RightForearm,
+	RightForearm,//右前臂
 	LeftUpperArm,
-	LeftForearm,
+	LeftForearm,//
 	Max
 };
 

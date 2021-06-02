@@ -328,6 +328,7 @@ void CRageBotTab::Setup()
 	TargetHitbox.AddItem("Chest");
 	TargetHitbox.AddItem("Stomach");
 	TargetHitbox.AddItem("Shins");
+	TargetHitbox.AddItem("Foot");
 	TargetGroup.PlaceLabledControl("Hitbox", this, &TargetHitbox);
 
 	TargetHitscan.SetFileId("tgt_hitscan");
@@ -336,7 +337,7 @@ void CRageBotTab::Setup()
 	TargetHitscan.AddItem("Medium"); // 2
 	TargetHitscan.AddItem("High"); // 3
 	TargetHitscan.AddItem("Extreme"); // 4
-	TargetGroup.PlaceLabledControl("Dont Use", this, &TargetHitscan);
+	TargetGroup.PlaceLabledControl("HitScanPos", this, &TargetHitscan);
 
 	TargetMultipoint.SetFileId("tgt_multipoint");
 	TargetGroup.PlaceLabledControl("Multipoint", this, &TargetMultipoint);
