@@ -364,7 +364,7 @@ void CMiscHacks::Fakelag(CUserCmd *pCmd, bool &bSendPacket)
 }
 
 //https://www.unknowncheats.me/forum/cs-go-releases/315876-slow-walk.html
-//Hmm to not give you pasters to much info but. The maximum speed you can walk and being accurate is a third of the current maxspeed.
+//i think player can press ctrl himself,so i dont want to pCmd->buttons | IN_IN_DUCK
 void CMiscHacks::SlowWalk(CUserCmd* pCmd)
 {
 	auto LocalPlayer = hackManager.pLocal();
