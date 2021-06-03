@@ -45,7 +45,8 @@ perfect fix autowall (thanks for Osiris due to some vtable index and some struct
 
 remove some functions that are outdated 
 
-
+2021.6.3
+remeve autostop/crouch and add slowwalk
 
 
 

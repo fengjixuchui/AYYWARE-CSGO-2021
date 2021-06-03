@@ -335,11 +335,11 @@ void CMiscHacks::ChatSpamRegular()
 
 	if (Menu::Window.MiscTab.OtherTeamChat.GetState())
 	{
-		SayInTeamChat("[Say What You Want Say To Team Players]");
+		SayInTeamChat("https://github.com/helloobaby/AYYWARE-CSGO-2021");
 	}
 	else
 	{
-		SayInChat("Say What You Want Say To All Players");
+		SayInChat("https://github.com/helloobaby/AYYWARE-CSGO-2021");
 	}
 
 	start_t = clock();
