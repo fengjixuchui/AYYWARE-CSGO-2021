@@ -366,7 +366,7 @@ void CRageBotTab::Setup()
 	AccuracyGroup.PlaceLabledControl("Autowall Damage", this, &AccuracyMinimumDamage);
 
 	AccuracyAutoStop.SetFileId("acc_stop");
-	AccuracyGroup.PlaceLabledControl("Auto Stop / Crouch", this, &AccuracyAutoStop);
+	AccuracyGroup.PlaceLabledControl("Dont Use", this, &AccuracyAutoStop);
 
 	AccuracyAutoScope.SetFileId("acc_scope");
 	AccuracyGroup.PlaceLabledControl("Auto Scope", this, &AccuracyAutoScope);
@@ -605,7 +605,7 @@ void CMiscTab::Setup()
 	OtherGroup.PlaceLabledControl("Auto Jump", this, &OtherAutoJump);
 
 	OtherEdgeJump.SetFileId("otr_edgejump");
-	OtherGroup.PlaceLabledControl("Dont Use", this, &OtherEdgeJump);
+	OtherGroup.PlaceLabledControl("Slow Walk",this, &OtherEdgeJump);
 
 	OtherAutoStrafe.SetFileId("otr_strafe");
 	OtherAutoStrafe.AddItem("Off");

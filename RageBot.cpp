@@ -397,18 +397,6 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 		if (IsAbleToShoot(pLocal) && pCmd->buttons & IN_ATTACK)
 			Globals::Shots += 1;
 
-		// Stop and Crouch
-		if (TargetID >= 0 && pTarget)
-		{
-			if (Menu::Window.RageBotTab.AccuracyAutoStop.GetState())
-			{
-				//fix:Not very useful nowadays
-				pCmd->forwardmove = 0.f;
-				pCmd->sidemove = 0.f;
-				pCmd->buttons |= IN_DUCK;
-
-			}
-		}
 	}
 
 	// Auto Pistol

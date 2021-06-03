@@ -96,6 +96,11 @@ void CMiscHacks::Move(CUserCmd *pCmd, bool &bSendPacket)
 	//Fake Lag
 	if (Menu::Window.MiscTab.FakeLagEnable.GetState())
 		Fakelag(pCmd, bSendPacket);
+
+	//SlowWalk
+	if(Menu::Window.MiscTab.OtherEdgeJump.GetState())
+		SlowWalk(pCmd);
+
 }
 
 static __declspec(naked) void __cdecl Invoke_NET_SetConVar(void* pfn, const char* cvar, const char* value)
@@ -357,3 +362,51 @@ void CMiscHacks::Fakelag(CUserCmd *pCmd, bool &bSendPacket)
 		iFakeLag = -1;
 	}
 }
+
+//https://www.unknowncheats.me/forum/cs-go-releases/315876-slow-walk.html
+//Hmm to not give you pasters to much info but. The maximum speed you can walk and being accurate is a third of the current maxspeed.
+void CMiscHacks::SlowWalk(CUserCmd* pCmd)
+{
+	auto LocalPlayer = hackManager.pLocal();
+
+	if(!LocalPlayer)
+		return ;
+
+	if (!Interfaces::Engine->IsInGame())
+		return ;
+
+	//if hold a knife or no weapon
+	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(LocalPlayer
+		->GetActiveWeaponHandle());
+	CSWeaponInfo* pWeaponInfo = nullptr;
+	if (pWeapon)
+	{
+		pWeaponInfo = pWeapon->GetCSWpnData();
+		if (!GameUtils::IsBallisticWeapon(pWeapon))
+		return;
+	}
+	else
+		return;
+
+	//alreay press shift
+	if(pCmd->buttons & IN_WALK)
+		return;
+
+	const float MaxSpeed =  (LocalPlayer->IsScoped() ? pWeaponInfo->maxSpeedAlt : pWeaponInfo->maxSpeed) / 3;
+
+//just copy paste from Osiris
+#define M_SQRT1_2  0.707106781186547524401  // 1/sqrt(2)
+	if (pCmd->forwardmove && pCmd->sidemove) {
+		const float maxSpeedRoot = MaxSpeed * static_cast<float>(M_SQRT1_2);
+		pCmd->forwardmove = pCmd->forwardmove < 0.0f ? -maxSpeedRoot : maxSpeedRoot;
+		pCmd->sidemove = pCmd->sidemove < 0.0f ? -maxSpeedRoot : maxSpeedRoot;
+	}
+	else if (pCmd->forwardmove) {
+		pCmd->forwardmove = pCmd->forwardmove < 0.0f ? -MaxSpeed : MaxSpeed;
+	}
+	else if (pCmd->sidemove) {
+		pCmd->sidemove = pCmd->sidemove < 0.0f ? -MaxSpeed : MaxSpeed;
+	}
+
+}
+
