@@ -163,27 +163,6 @@ void Hacks::MoveHacks(CUserCmd *pCmd,bool &bSendPacket)
 	Vector origView = pCmd->viewangles;
 	IClientEntity *pLocal = hackManager.pLocal();
 	hackManager.Move(pCmd, bSendPacket);
-	// ------------------------------
-
-	// Put it in here so it's applied AFTER the aimbot
-	int AirStuckKey = Menu::Window.MiscTab.OtherAirStuck.GetKey();
-	if (AirStuckKey > 0 && GUI.GetKeyState(AirStuckKey))
-	{
-		if (!(pCmd->buttons & IN_ATTACK))
-		{
-			pCmd->tick_count = INT_MAX;//0xFFFFF or 16777216
-		}
-	}
-
-	int TeleportKey = Menu::Window.MiscTab.TeleportKey.GetKey();
-	if (Menu::Window.MiscTab.TeleportEnable.GetState() && !Menu::Window.MiscTab.OtherSafeMode.GetState())
-	{
-		if (TeleportKey > 0 && GUI.GetKeyState(TeleportKey))
-		{
-			pCmd->viewangles.z = 9e+37;
-		}
-	}
-
 }
 
 //---------------------------------------------------------------------//

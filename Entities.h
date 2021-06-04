@@ -780,8 +780,8 @@ public:
 
 
 	Vector GetEyePosition() {
-		Vector Origin = *(Vector*)((DWORD)this + 0x138);
-		Vector View = *(Vector*)((DWORD)this + 0x108);
+		Vector Origin = *(Vector*)((DWORD)this + 0x138);//m_vecOrigin
+		Vector View = *(Vector*)((DWORD)this + 0x108);//m_vecViewOffset
 		return(Origin + View);
 	}
 	//no reference

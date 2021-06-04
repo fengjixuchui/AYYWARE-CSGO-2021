@@ -843,25 +843,6 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 	// pSilent Aim 
 	Vector Oldview = pCmd->viewangles;
 
-	/*if (Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
-	{
-		static int ChokedPackets = -1;
-		ChokedPackets++;
-
-		if (ChokedPackets < 6)
-		{
-			bSendPacket = false;
-			pCmd->viewangles = angles;
-		}
-		else
-		{
-			bSendPacket = true;
-			pCmd->viewangles = Oldview;
-			ChokedPackets = -1;
-			ReturnValue = false;
-		}
-	}*/
-
 	return ReturnValue;
 }
 
@@ -922,7 +903,6 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 	void FastSpin(CUserCmd *pCmd)
 	{
-		//Utilities::Log("%s",__FUNCTION__);
 
 		static int y2 = -179;
 		int spinBotSpeedFast = 100;
@@ -1284,6 +1264,8 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 		{
 			best_dist = temp_dist;
 			CalcAngle(eye_position, target_position, pCmd->viewangles);
+			//back to enemy?
+			//pCmd->viewangles.y -= 180.f;
 		}
 	}
 
@@ -1378,7 +1360,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 }
 
 // AntiAim
-void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.y = 0xFFFFF INT_MAX or idk
+void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) 
 {
 	IClientEntity* pLocal = hackManager.pLocal();
 
@@ -1386,7 +1368,7 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		return;
 	
 	// If the aimbot is doing something don't do anything
-	if ((IsAimStepping || pCmd->buttons & IN_ATTACK) && !Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
+	if ((IsAimStepping || pCmd->buttons & IN_ATTACK))
 		return;
 
 	// Weapon shit
@@ -1414,24 +1396,17 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		AntiAims::AimAtTarget(pCmd);
 	}
 
-	// Don't do antiaim
-	// if (DoExit) return;
-
-	//[Debug]can go there
-	//Utilities::Log("[INFO]Anti-aim in");
-
 	// Anti-Aim Pitch
-	switch (Menu::Window.RageBotTab.AntiAimPitch.GetIndex()) // Magic pitch is 69.69?
+	switch (Menu::Window.RageBotTab.AntiAimPitch.GetIndex()) 
 	{
 	case 0:
 		// No Pitch AA
 		break;
 	case 1:
 		// Down
-		//AntiAims::StaticPitch(pCmd, false);
 		pCmd->viewangles.x = 89.0f;
 		if (fabsf(pCmd->sidemove) < 5.0f) {
-			if (pCmd->buttons & 4)
+			if (pCmd->buttons & IN_DUCK)
 				pCmd->sidemove = pCmd->tick_count & 1 ? 3.25f : -3.25f;
 			else
 				pCmd->sidemove = pCmd->tick_count & 1 ? 1.1f : -1.1f;
@@ -1510,9 +1485,6 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		AntiAims::fakelowerbody(pCmd, bSendPacket);
 		break;
 	}
-
-	// Edge Anti Aim
-	//AntiAims::EdgeDetect(pCmd, bSendPacket); this is broken it seems ill just remove it cuz what if it causes some crashes
 
 	// Angle offset
 	pCmd->viewangles.y += Menu::Window.RageBotTab.AntiAimOffset.GetValue();

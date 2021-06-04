@@ -681,7 +681,7 @@ void CMiscTab::Setup()
 #pragma region Teleport
 	TeleportGroup.SetPosition(16, 316);
 	TeleportGroup.SetSize(360, 75);
-	TeleportGroup.SetText("Teleport");
+	TeleportGroup.SetText("Dont Use");
 	RegisterControl(&TeleportGroup);
 
 	TeleportEnable.SetFileId("teleport_enable");
