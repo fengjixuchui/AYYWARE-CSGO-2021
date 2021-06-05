@@ -2,7 +2,7 @@
 
 This project is based on Ayyware that for learn.
 
-![image](https://github.com/helloobaby/AYYWARE-CSGO-2021/blob/master/spinbot.gif)
+![image](https://github.com/helloobaby/alwayslose/blob/master/spinbot.gif)
 
 
 Useage:ReflectiveInject this Dll
