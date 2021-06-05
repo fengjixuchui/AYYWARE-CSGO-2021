@@ -1,6 +1,8 @@
 # Ayyware-2021
 
-This project is based on Ayyware that for learn.
+This project is based on Ayyware that for learn
+
+Now all function are based on official server(not community server or hvh server)
 
 ![image](https://github.com/helloobaby/alwayslose/blob/master/spinbot.gif)
 
