@@ -333,6 +333,7 @@ void CRageBotTab::Setup()
 
 	TargetHitscan.SetFileId("tgt_hitscan");
 	TargetHitscan.AddItem("Off"); //0
+	TargetHitscan.AddItem("NoHead");
 	TargetHitscan.AddItem("Low"); // 1
 	TargetHitscan.AddItem("Medium"); // 2
 	TargetHitscan.AddItem("High"); // 3
@@ -403,12 +404,6 @@ void CRageBotTab::Setup()
 	AntiAimPitch.SetFileId("aa_x");
 	AntiAimPitch.AddItem("None");
 	AntiAimPitch.AddItem("Down");
-	AntiAimPitch.AddItem("SMAC Safe");
-	AntiAimPitch.AddItem("Jitter");
-	AntiAimPitch.AddItem("Static");
-	AntiAimPitch.AddItem("Fake Down");
-	AntiAimPitch.AddItem("Lisp Down");
-	AntiAimPitch.AddItem("Lisp Up");
 	AntiAimGroup.PlaceLabledControl("Pitch", this, &AntiAimPitch);
 
 	AntiAimYaw.SetFileId("aa_y");

@@ -2,7 +2,7 @@
 
 This project is based on Ayyware that for learn
 
-Now all function are based on official server(not community server or hvh server)
+All functions have tested on official server.
 
 ![image](https://github.com/helloobaby/alwayslose/blob/master/spinbot.gif)
 

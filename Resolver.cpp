@@ -50,21 +50,6 @@ void R::Resolve()
 					case 4:eyeAngles->y = AimAngle.y + 15; break;
 					}
 				}
-			/*	if (Menu::Window.RageBotTab.AccuracyAutoResolver.GetIndex() == 4 && eyeAngles->y != pEntity->GetLowerBodyYaw())
-				{
-					int num = Globals::Shots % 9;
-					switch (num) {
-					case 0:eyeAngles->y = AimAngle.y - 0; break;
-					case 1:eyeAngles->y = AimAngle.y + 45; break;
-					case 2:eyeAngles->y = AimAngle.y + 90; break;
-					case 3:eyeAngles->y = AimAngle.y + 135; break;
-					case 4:eyeAngles->y = AimAngle.y + 180; break;
-					case 5:eyeAngles->y = AimAngle.y + 225; break;
-					case 6:eyeAngles->y = AimAngle.y + 270; break;
-					case 7:eyeAngles->y = AimAngle.y + 315; break;
-					case 8:eyeAngles->y = AimAngle.y + 360; break;
-					}
-				} */
 			}
 
 			if (Menu::Window.RageBotTab.AccuracyResolver.GetIndex() == 2) //pitch

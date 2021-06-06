@@ -628,8 +628,31 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 		switch (HitScanMode)
 		{
 		case 1:
+
+			//just no head, sometimes win by surprise
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+			break;
+		case 2:
 			// Low
 			//hit all Hitbox that we can see
+
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
@@ -651,7 +674,7 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
 
 			break;
-		case 2:
+		case 3:
 			// Normal
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
@@ -669,7 +692,7 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 			HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
 			break;
-		case 3:
+		case 4:
 			// High
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
@@ -680,7 +703,7 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
 			break;
-		case 4:
+		case 5:
 			// Extreme
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
 			break;
@@ -775,12 +798,8 @@ void CRageBot::DoNoRecoil(CUserCmd *pCmd)
 	if (pLocal)
 	{
 		Vector AimPunch = pLocal->localPlayerExclusive()->GetAimPunchAngle();
-		//Utilities::Log("%f", AimPunch.x);
-		//Utilities::Log("%f", AimPunch.y);
-		//Utilities::Log("%f", AimPunch.z);
 		if (AimPunch.Length2D() > 0 && AimPunch.Length2D() < 150)
 		{
-			//Utilities::Log("DoNoRecoil");
 			pCmd->viewangles -= AimPunch * 2.0f;
 			GameUtils::NormaliseViewAngle(pCmd->viewangles);
 		}
@@ -998,6 +1017,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 				pCmd->viewangles.y = qTmp.y;
 
+				//almost cheats set 180,so you can see that they back to enemy
 				int offset = Menu::Window.RageBotTab.AntiAimOffset.GetValue();
 
 				static int ChokedPackets = -1;
@@ -1008,6 +1028,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 				}
 				else
 				{
+					//send true angle
 					bSendPacket = true;
 					pCmd->viewangles.y -= offset;
 					ChokedPackets = -1;
@@ -1397,6 +1418,9 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket)
 		AntiAims::AimAtTarget(pCmd);
 	}
 
+	// what is bSendPacket?
+	//https://www.unknowncheats.me/forum/counterstrike-global-offensive/247182-csgo-fake-angles-demystified.html
+
 	// Anti-Aim Pitch
 	switch (Menu::Window.RageBotTab.AntiAimPitch.GetIndex()) 
 	{
@@ -1406,36 +1430,6 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket)
 	case 1:
 		// Down
 		pCmd->viewangles.x = 89.0f;
-		if (fabsf(pCmd->sidemove) < 5.0f) {
-			if (pCmd->buttons & IN_DUCK)
-				pCmd->sidemove = pCmd->tick_count & 1 ? 3.25f : -3.25f;
-			else
-				pCmd->sidemove = pCmd->tick_count & 1 ? 1.1f : -1.1f;
-		}
-		break;
-	case 2:
-		// Half Down
-		pCmd->viewangles.x = 51.f;
-		break;
-	case 3:
-		// SMAC / Casual safe
-		AntiAims::JitterPitch(pCmd);
-		break;
-	case 4:
-		// Jitter
-		pCmd->viewangles.x = 179.0f;
-		break;
-	case 5:
-		// Fake Pitch
-		pCmd->viewangles.x = -181.f;
-		break;
-	case 6:
-		// Static Down
-		pCmd->viewangles.x = 1800089.0f;
-		break;
-	case 7:
-		// Static Jitter
-		pCmd->viewangles.y = -1800089.0f;
 		break;
 	}
 
