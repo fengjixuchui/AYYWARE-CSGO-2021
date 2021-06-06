@@ -627,10 +627,7 @@ void CMiscTab::Setup()
 
 	OtherClantag.SetFileId("otr_spam");
 	OtherClantag.AddItem("Off");
-	OtherClantag.AddItem("pasteware");
-	OtherClantag.AddItem("skeet.cc");
-	OtherClantag.AddItem("Blank");
-	OtherClantag.AddItem("ValveAntiCheat");
+	OtherClantag.AddItem("AlwaysLose.cc");
 	OtherGroup.PlaceLabledControl("Custom Clantag", this, &OtherClantag);
 
 	OtherTeamChat.SetFileId("otr_teamchat");

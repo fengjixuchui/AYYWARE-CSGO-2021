@@ -629,6 +629,7 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 		{
 		case 1:
 			// Low
+			//hit all Hitbox that we can see
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
 			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);

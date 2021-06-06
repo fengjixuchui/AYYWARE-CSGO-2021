@@ -157,69 +157,41 @@ void ClanTag()
 
 		if (counter % 48 == 0)
 			motion++;
-		int value = ServerTime % 19;
+		int value = ServerTime % 20;
 		switch (value) {
-		case 0:SetClanTag("          ", "pasteware"); break;
-		case 1:SetClanTag("         p", "pasteware"); break;
-		case 2:SetClanTag("        pa", "pasteware"); break;
-		case 3:SetClanTag("       pas", "pasteware"); break;
-		case 4:SetClanTag("      past", "pasteware"); break;
-		case 5:SetClanTag("     paste", "pasteware"); break;
-		case 6:SetClanTag("    pastew", "pasteware"); break;
-		case 7:SetClanTag("   pastewa", "pasteware"); break;
-		case 8:SetClanTag("  pastewar", "pasteware"); break;
-		case 9:SetClanTag(" pasteware", "pasteware"); break;
-		case 10:SetClanTag("pasteware ", "pasteware"); break;
-		case 11:SetClanTag("asteware  ", "pasteware"); break;
-		case 12:SetClanTag("steware   ", "pasteware"); break;
-		case 13:SetClanTag("teware    ", "pasteware"); break;
-		case 14:SetClanTag("eware     ", "pasteware"); break;
-		case 15:SetClanTag("ware      ", "pasteware"); break;
-		case 16:SetClanTag("are       ", "pasteware"); break;
-		case 17:SetClanTag("re        ", "pasteware"); break;
-		case 18:SetClanTag("e         ", "pasteware"); break;
-		case 19:SetClanTag("          ", "pasteware"); break;
+		case 0:SetClanTag("         A", "alwayslose"); break;
+		case 1:SetClanTag("        Al", "alwayslose"); break;
+		case 2:SetClanTag("       Alw", "alwayslose"); break;
+		case 3:SetClanTag("      Alwa", "alwayslose"); break;
+		case 4:SetClanTag("     Alway", "alwayslose"); break;
+		case 5:SetClanTag("    Always", "alwayslose"); break;
+		case 6:SetClanTag("   Alwaysl", "alwayslose"); break;
+		case 7:SetClanTag("  Alwayswa", "alwayslose"); break;
+		case 8:SetClanTag(" Alwayslos", "alwayslose"); break;
+		case 9:SetClanTag("Alwayslose.cc", "alwayslose"); break;
+		case 10:SetClanTag("Alwayslose.cc ", "alwayslose"); break;
+		case 11:SetClanTag("lwayslose.cc ", "alwayslose"); break;
+		case 12:SetClanTag("wayslose.cc  ", "alwayslose"); break;
+		case 13:SetClanTag("ayslose.cc   ", "alwayslose"); break;
+		case 14:SetClanTag("yslose.cc    ", "alwayslose"); break;
+		case 15:SetClanTag("slose.cc     ", "alwayslose"); break;
+		case 16:SetClanTag("lose.cc      ", "alwayslose"); break;
+		case 17:SetClanTag("ose.cc       ", "alwayslose"); break;
+		case 18:SetClanTag("se.cc        ", "alwayslose"); break;
+		case 19:SetClanTag("s.cc         ", "alwayslose"); break;
+		case 20:SetClanTag("          ", "alwayslose");break;
 		}
 		counter++;
 	}
 	break;
 	case 2:
 	{
-		static int motion = 0;
-		int ServerTime = (float)Interfaces::Globals->interval_per_tick * hackManager.pLocal()->GetTickBase() * 3;
-
-		if (counter % 48 == 0)
-			motion++;
-		int value = ServerTime % 17;
-		switch (value) {
-		case 0:SetClanTag("          ", "skeet.cc"); break;
-		case 1:SetClanTag("         s", "skeet.cc"); break;
-		case 2:SetClanTag("        sk", "skeet.cc"); break;
-		case 3:SetClanTag("       ske", "skeet.cc"); break;
-		case 4:SetClanTag("      skee", "skeet.cc"); break;
-		case 5:SetClanTag("     skeet", "skeet.cc"); break;
-		case 6:SetClanTag("    skeet.", "skeet.cc"); break;
-		case 7:SetClanTag("   skeet.c", "skeet.cc"); break;
-		case 8:SetClanTag(" skeet.cc", "skeet.cc"); break;
-		case 9:SetClanTag("skeet.cc ", "skeet.cc"); break;
-		case 10:SetClanTag("keet.cc  ", "skeet.cc"); break;
-		case 11:SetClanTag("eet.cc   ", "skeet.cc"); break;
-		case 12:SetClanTag("et.cc    ", "skeet.cc"); break;
-		case 13:SetClanTag("t.cc     ", "skeet.cc"); break;
-		case 14:SetClanTag(".cc      ", "skeet.cc"); break;
-		case 15:SetClanTag("cc       ", "skeet.cc"); break;
-		case 16:SetClanTag("c        ", "skeet.cc"); break;
-		case 17:SetClanTag("         ", "skeet.cc"); break;
-		}
-		counter++;
+		
 	}
 	break;
 	case 3:
-		// stainless
-		SetClanTag("\r", "\r");
 		break;
 	case 4:
-		SetClanTag("ValveAntiCheat ", "ValveAntiCheat");
 		break;
 	}
 }
