@@ -136,6 +136,7 @@ void Hooked_RecvProxy_Viewmodel(CRecvProxyData *pData, void *pStruct, void *pOut
 	static int default_ct = Interfaces::ModelInfo->GetModelIndex("models/weapons/v_knife_default_ct.mdl");
 	static int bayonet = Interfaces::ModelInfo->GetModelIndex("models/weapons/v_knife_bayonet.mdl");
 	static int karam = Interfaces::ModelInfo->GetModelIndex("models/weapons/v_knife_karam.mdl");
+	static int butterfly = Interfaces::ModelInfo->GetModelIndex("models/weapons/v_knife_butterfly.mdl");
 
 	// Get local player (just to stop replacing spectators knifes)
 	IClientEntity* pLocal = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
@@ -149,6 +150,8 @@ void Hooked_RecvProxy_Viewmodel(CRecvProxyData *pData, void *pStruct, void *pOut
 				pData->m_Value.m_Int = karam;
 			else if (Menu::Window.MiscTab.KnifeModel.GetIndex() == 1)
 				pData->m_Value.m_Int = bayonet;
+			else if(Menu::Window.MiscTab.KnifeModel.GetIndex() == 2)
+				pData->m_Value.m_Int = butterfly;
 		}
 	}
 

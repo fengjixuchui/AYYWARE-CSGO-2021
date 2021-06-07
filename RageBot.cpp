@@ -724,7 +724,6 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 		{
 			Vector Point = GetHitboxPosition(pEntity, HitBoxID);
 			float Damage = 0.f;
-			//Color c = Color(255, 255, 255, 255);
 			if (CanHit(Point, &Damage))
 			{
 				if (Damage >= Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue())
@@ -732,7 +731,6 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 					return HitBoxID;
 				}
 			}
-			//Utilities::Log("[Debug]can't hit behind wall");
 		}
 		else
 		{
@@ -859,9 +857,6 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 	{
 		Interfaces::Engine->SetViewAngles(angles);
 	}
-
-	// pSilent Aim 
-	Vector Oldview = pCmd->viewangles;
 
 	return ReturnValue;
 }

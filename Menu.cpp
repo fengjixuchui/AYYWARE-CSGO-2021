@@ -573,6 +573,7 @@ void CMiscTab::Setup()
 	KnifeModel.SetFileId("knife_model");
 	KnifeModel.AddItem("Karam");
 	KnifeModel.AddItem("Bayo");
+	KnifeModel.AddItem("Butterfly");
 	KnifeGroup.PlaceLabledControl("Knife", this, &KnifeModel);
 
 	KnifeSkin.SetFileId("knife_skin");
@@ -620,9 +621,9 @@ void CMiscTab::Setup()
 	OtherChatSpam.AddItem("Disperse Name");
 	OtherGroup.PlaceLabledControl("Chat Spam", this, &OtherChatSpam);
 
-	OtherClantag.SetFileId("otr_spam");
+	OtherClantag.SetFileId("otr_clan");
 	OtherClantag.AddItem("Off");
-	OtherClantag.AddItem("AlwaysLose.cc");
+	OtherClantag.AddItem("Alwayslose.cc");
 	OtherGroup.PlaceLabledControl("Custom Clantag", this, &OtherClantag);
 
 	OtherTeamChat.SetFileId("otr_teamchat");

@@ -54,7 +54,6 @@ void R::Resolve()
 
 			if (Menu::Window.RageBotTab.AccuracyResolver.GetIndex() == 2) //pitch
 			{
-				std::string strPitch = std::to_string(eyeAngles->x);
 
 				if (eyeAngles->x < -179.f) eyeAngles->x += 360.f;
 				else if (eyeAngles->x > 90.0 || eyeAngles->x < -90.0) eyeAngles->x = 89.f;

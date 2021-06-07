@@ -218,9 +218,6 @@ bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime,
 		if (Menu::Window.MiscTab.OtherClantag.GetIndex() > 0)
 			ClanTag();
 
-		//	CUserCmd* cmdlist = *(CUserCmd**)((DWORD)Interfaces::pInput + 0xEC);
-		//	CUserCmd* pCmd = &cmdlist[sequence_number % 150];
-
 
 			// Backup for safety
 		Vector origView = pCmd->viewangles;
@@ -622,18 +619,6 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 	{
 		IClientEntity *pLocal = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 
-	/*	for (int i = 1; i < 65; i++)
-		{
-			IClientEntity* pEnt = Interfaces::EntList->GetClientEntity(i);
-			if (!pEnt) continue;
-			if (pEnt->IsDormant()) continue;
-			if (pEnt->GetHealth() < 1) continue;
-			if (pEnt->GetLifeState() != 0) continue;
-
-			*(float*)((DWORD)pEnt + eyeangles) = pEnt->GetTargetYaw();
-			//Msg("%f\n", *(float*)((DWORD)pEnt + m_angEyeAnglesYaw));
-		} */
-
 		if (Menu::Window.MiscTab.KnifeEnable.GetState() && pLocal)
 		{
 			IClientEntity* WeaponEnt = Interfaces::EntList->GetClientEntityFromHandle(pLocal->GetActiveWeaponHandle());
@@ -673,12 +658,28 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 						else if (Skin == 3)
 							*Weapon->FallbackPaintKit() = 558; // Lore
 					}
-					else if (Model == 1) // Karambit
+					else if (Model == 1) // Bayonet
 					{
 						*Weapon->ModelIndex() = iBayonet; // m_nModelIndex
 						*Weapon->ViewModelIndex() = iBayonet;
 						*Weapon->WorldModelIndex() = iBayonet + 1;
 						*Weapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() = 500;
+
+						if (Skin == 0)
+							*Weapon->FallbackPaintKit() = 416; // Doppler Sapphire
+						else if (Skin == 1)
+							*Weapon->FallbackPaintKit() = 415; // Doppler Ruby
+						else if (Skin == 2)
+							*Weapon->FallbackPaintKit() = 409; // Tiger Tooth
+						else if (Skin == 3)
+							*Weapon->FallbackPaintKit() = 558; // Lore
+					}
+					else if (Model == 2) // butter
+					{
+						*Weapon->ModelIndex() = iButterfly; // m_nModelIndex
+						*Weapon->ViewModelIndex() = iButterfly;
+						*Weapon->WorldModelIndex() = iButterfly + 1;
+						*Weapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() = 515;
 
 						if (Skin == 0)
 							*Weapon->FallbackPaintKit() = 416; // Doppler Sapphire
