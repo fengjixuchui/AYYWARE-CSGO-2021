@@ -6,9 +6,11 @@
 #include "Autowall.h"
 #include <iostream>
 #include "UTIL Functions.h"
+#include "esp.h"
 
 #define TICK_INTERVAL			( Interfaces::Globals->interval_per_tick )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
+
 
 //for load best config
 extern CGUI GUI;
@@ -170,6 +172,7 @@ void CRageBot::Move(CUserCmd *pCmd, bool &bSendPacket)
 	IClientEntity* pLocalEntity = (IClientEntity*)Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 	if (!pLocalEntity)
 		return;
+
 
 	// Master switch
 	if (!Menu::Window.RageBotTab.Active.GetState())

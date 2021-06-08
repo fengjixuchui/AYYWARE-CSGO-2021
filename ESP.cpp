@@ -155,20 +155,6 @@ void CEsp::DrawPlayer(IClientEntity* pEntity, player_info_t pinfo)
 	{
 		Color = GetPlayerColor(pEntity);
 
-		/*if (Menu::Window.VisualsTab.OptionsGlow.GetState())
-		{
-			int TeamNum = pEntity->GetTeamNum();
-
-			if (TeamNum == TEAM_CS_T)
-			{
-				DrawGlow(pEntity, 255, 0, 0, 160);
-			}
-			else if (TeamNum == TEAM_CS_CT)
-			{
-				DrawGlow(pEntity, 0, 0, 255, 160);
-			}
-		}*/
-
 		if (Menu::Window.VisualsTab.OptionsBox.GetState())
 			DrawBox(Box, Color);
 
@@ -464,6 +450,10 @@ void CEsp::DrawInfo(IClientEntity* pEntity, CEsp::ESPBox size)
 		Render::Text(size.x + size.w + 3, size.y + (i*(Size.bottom + 2)), Color(255, 255, 255, 255), Render::Fonts::ESP, Text.c_str());
 		i++;
 	}
+
+	//Draw Bullet Trace
+	CEsp::BulletTrace(pEntity, Color(0, 255, 0, 255));
+	
 }
 
 // Little cross on their heads
@@ -631,4 +621,49 @@ void CEsp::DrawSkeleton(IClientEntity* pEntity)
 			}
 		}
 	}
+}
+
+/*
+
+const QAngle& C_HL2MP_Player::EyeAngles()
+{
+	if (IsLocalPlayer())
+	{
+		return BaseClass::EyeAngles();
+	}
+	else
+	{
+		return m_angEyeAngles;
+	}
+}
+
+*/
+
+
+
+//Trace from the player's eyes to the max trace distance.
+//https://developer.valvesoftware.com/wiki/UTIL_TraceLine
+void CEsp::BulletTrace(IClientEntity* pEntity, Color color){
+
+	Vector src3D, dst3D, forward, src, dst;
+	trace_t tr;
+	Ray_t ray;
+	CTraceFilter filter;
+
+	AngleVectors(pEntity->GetEyeAngles(), &forward);
+	filter.pSkip = pEntity;
+	src3D = pEntity->GetBonePos(6) - Vector(0, 0, 0);
+
+	dst3D = src3D + (forward * MAX_TRACE_LENGTH);
+
+	ray.Init(src3D, dst3D);
+
+	Interfaces::Trace->TraceRay(ray, MASK_SHOT, &filter, &tr);
+
+	if (!Render::WorldToScreen(src3D, src) || !Render::WorldToScreen(tr.endpos, dst))
+		return;
+
+	//if enemy start AA?
+	Render::Line(src.x, src.y, dst.x, dst.y, color);
+
 }

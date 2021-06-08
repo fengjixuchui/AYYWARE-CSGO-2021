@@ -713,13 +713,12 @@ public:
 
 	QAngle* GetEyeAnglesPointer()
 	{
-		return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB380);
-		//return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
+		return (QAngle*)((DWORD)this + GET_NETVAR("DT_CSPlayer", "m_angEyeAngles"));
 	}
-	//no references
+
 	QAngle GetEyeAngles()
 	{
-		return *reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
+		return *(QAngle*)((DWORD)this + GET_NETVAR("DT_CSPlayer", "m_angEyeAngles"));
 	}
 
 	QAngle GetEyeAnglesXY()
@@ -752,16 +751,10 @@ public:
 		return GetClientClass()->m_ClassID == (int)CSGOClassID::CCSPlayer;
 	}
 
-	//no references
-	Vector GetOrigin2() {
-		return *(Vector*)((DWORD)this + 0x00000134);
-	}
-	//no references
 	Vector GetViewAngles2() {
 		return *(Vector*)((DWORD)this + 0x00000104);
 	}
 
-	//no references
 	Vector GetAbsOrigin2() {
 		__asm {
 			MOV ECX, this

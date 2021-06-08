@@ -121,6 +121,8 @@ void Hooks::Initialise()
 	VMTClient.Initialise((DWORD*)Interfaces::Client);
 	oFrameStageNotify = (FrameStageNotifyFn)VMTClient.HookMethod((DWORD)&Hooked_FrameStageNotify, 37);
 
+
+
 }
 
 void MovementCorrection(CUserCmd* pCmd)

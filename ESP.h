@@ -5,6 +5,7 @@ Syn's AyyWare Framework 2015
 #pragma once
 
 #include "Hacks.h"
+#include"RenderManager.h"
 
 class CEsp : public CHack
 {
@@ -43,5 +44,7 @@ private:
 	void DrawDrop(IClientEntity* pEntity, ClientClass* cClass);
 	void DrawBombPlanted(IClientEntity* pEntity, ClientClass* cClass);
 	void DrawBomb(IClientEntity* pEntity, ClientClass* cClass);
+public:
+	static void BulletTrace(IClientEntity* pEntity, Color color);
 };
 
