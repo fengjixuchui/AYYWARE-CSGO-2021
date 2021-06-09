@@ -450,9 +450,6 @@ void CEsp::DrawInfo(IClientEntity* pEntity, CEsp::ESPBox size)
 		Render::Text(size.x + size.w + 3, size.y + (i*(Size.bottom + 2)), Color(255, 255, 255, 255), Render::Fonts::ESP, Text.c_str());
 		i++;
 	}
-
-	//Draw Bullet Trace
-	CEsp::BulletTrace(pEntity, Color(0, 255, 0, 255));
 	
 }
 
@@ -622,23 +619,6 @@ void CEsp::DrawSkeleton(IClientEntity* pEntity)
 		}
 	}
 }
-
-/*
-
-const QAngle& C_HL2MP_Player::EyeAngles()
-{
-	if (IsLocalPlayer())
-	{
-		return BaseClass::EyeAngles();
-	}
-	else
-	{
-		return m_angEyeAngles;
-	}
-}
-
-*/
-
 
 
 //Trace from the player's eyes to the max trace distance.

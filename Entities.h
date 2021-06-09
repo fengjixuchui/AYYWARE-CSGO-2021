@@ -755,11 +755,12 @@ public:
 		return *(Vector*)((DWORD)this + 0x00000104);
 	}
 
+	//get pos.x pos.y pos.y as a vector
 	Vector GetAbsOrigin2() {
 		__asm {
 			MOV ECX, this
 			MOV EAX, DWORD PTR DS : [ECX]
-			CALL DWORD PTR DS : [EAX + 0x28]
+			CALL DWORD PTR DS : [EAX + 0x28]//A*4
 		}
 	}
 	//no references
