@@ -404,6 +404,8 @@ void CRageBotTab::Setup()
 	AntiAimPitch.SetFileId("aa_x");
 	AntiAimPitch.AddItem("None");
 	AntiAimPitch.AddItem("Down");
+	AntiAimPitch.AddItem("UP");
+	AntiAimPitch.AddItem("Random");
 	AntiAimGroup.PlaceLabledControl("Pitch", this, &AntiAimPitch);
 
 	AntiAimYaw.SetFileId("aa_y");

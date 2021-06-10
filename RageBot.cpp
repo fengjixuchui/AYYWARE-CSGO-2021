@@ -7,6 +7,7 @@
 #include <iostream>
 #include "UTIL Functions.h"
 #include "esp.h"
+#include <random>
 
 #define TICK_INTERVAL			( Interfaces::Globals->interval_per_tick )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
@@ -17,6 +18,12 @@ extern CGUI GUI;
 extern AyyWareWindow Menu::Window;
 
 Vector Globals::g_vFakeAngle;
+
+//c++17 for random float 
+//https://zh.cppreference.com/w/cpp/numeric/random
+std::random_device r;
+std::default_random_engine e1(r());
+std::uniform_real_distribution<float> uniform_dist (-89.f,89.f);
 
 enum class WeaponId : short {
 	Deagle = 1,
@@ -1430,6 +1437,14 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket)
 	case 1:
 		// Down
 		pCmd->viewangles.x = 89.0f;
+		break;
+	case 2:
+		//UP
+		pCmd->viewangles.x = -89.0f;
+		break;
+	case 3:
+		//Random
+		pCmd->viewangles.x = uniform_dist(e1);
 		break;
 	}
 
