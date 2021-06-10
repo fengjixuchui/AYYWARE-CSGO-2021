@@ -626,6 +626,7 @@ void CMiscTab::Setup()
 	OtherClantag.SetFileId("otr_clan");
 	OtherClantag.AddItem("Off");
 	OtherClantag.AddItem("Alwayslose.cc");
+	OtherClantag.AddItem("Awesome666.cc");
 	OtherGroup.PlaceLabledControl("Custom Clantag", this, &OtherClantag);
 
 	OtherTeamChat.SetFileId("otr_teamchat");

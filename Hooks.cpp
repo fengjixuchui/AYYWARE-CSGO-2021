@@ -188,7 +188,9 @@ void ClanTag()
 	break;
 	case 2:
 	{
-		
+		//add 'u8'Prefix to support unicode characters
+		SetClanTag(u8"Å£±Æ666","alwayslose");
+		break;
 	}
 	break;
 	case 3:
