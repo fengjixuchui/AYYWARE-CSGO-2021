@@ -233,6 +233,7 @@ bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime,
 		if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && pLocal && pLocal->IsAlive())
 			Hacks::MoveHacks(pCmd, bSendPacket);
 
+
 		//Movement Fix
 		//GameUtils::CL_FixMove(pCmd, origView);
 		qAimAngles.Init(0.0f, GetAutostrafeView().y, 0.0f); // if pCmd->viewangles.x > 89, set pCmd->viewangles.x instead of 0.0f on first
@@ -541,11 +542,11 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_RENDER_START)
 	{
-
+		//to see fake-ange
 		if (pLocal->IsAlive())
-		{
-			if (*(bool*)((DWORD)Interfaces::pInput + 0xA5))
-				*(Vector*)((DWORD)pLocal + 0x31C8) = LastAngleAA;
+		{	
+			if (*(bool*)((DWORD)Interfaces::pInput + 0xAD))//A5->AD 
+				*(Vector*)((DWORD)pLocal + 0x31D8) = LastAngleAA;//31C8->31D8
 		}
 
 		if ((Menu::Window.MiscTab.OtherThirdperson.GetState()) || Menu::Window.RageBotTab.AccuracyPositionAdjustment.GetState())
@@ -561,7 +562,7 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 		}
 
 		static bool rekt1 = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState() && pLocal->IsAlive() && pLocal->IsScoped() == 0)
+		if (Menu::Window.MiscTab.OtherThirdperson.GetState() && pLocal->IsAlive())
 		{
 			if (!rekt1)
 			{
@@ -575,7 +576,7 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 		}
 
 		static bool rekt = false;
-		if (!Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive() == 0 || pLocal->IsScoped())
+		if (!Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive() == 0)
 		{
 			if (!rekt)
 			{
@@ -583,23 +584,19 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 				rekt = true;
 			}
 		}
-		else if (Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive() || pLocal->IsScoped() == 0)
+		else if (Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive())
 		{
 			rekt = false;
 		}
 
 		static bool meme = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState() && pLocal->IsScoped() == 0)
+		if (Menu::Window.MiscTab.OtherThirdperson.GetState())
 		{
 			if (!meme)
 			{
 				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
 				meme = true;
 			}
-		}
-		else if (pLocal->IsScoped())
-		{
-			meme = false;
 		}
 
 		static bool kek = false;

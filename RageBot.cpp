@@ -16,6 +16,8 @@
 extern CGUI GUI;
 extern AyyWareWindow Menu::Window;
 
+Vector Globals::g_vFakeAngle;
+
 enum class WeaponId : short {
 	Deagle = 1,
 	Elite,
@@ -1481,6 +1483,11 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket)
 
 	// Angle offset
 	pCmd->viewangles.y += Menu::Window.RageBotTab.AntiAimOffset.GetValue();
+
+	Globals::g_vFakeAngle = pCmd->viewangles;
+
+
+
 }
 
 

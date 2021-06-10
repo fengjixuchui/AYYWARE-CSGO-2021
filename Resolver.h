@@ -15,4 +15,6 @@ namespace Globals
 	extern int Shots;
 	extern bool change;
 	extern int TargetID;
+	extern Vector g_vFakeAngle;
+
 }
