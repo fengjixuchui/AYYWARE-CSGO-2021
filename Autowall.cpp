@@ -60,6 +60,7 @@ void ScaleDamage(int hitgroup, IClientEntity *enemy, float weapon_armor_ratio, f
 {
 	current_damage *= GetHitgroupDamageMult(hitgroup);
 
+	//judge Armor and Helmet
 	if (enemy->ArmorValue() > 0)
 	{
 		if (hitgroup == HITGROUP_HEAD)

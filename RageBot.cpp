@@ -6,9 +6,114 @@
 #include "Autowall.h"
 #include <iostream>
 #include "UTIL Functions.h"
+#include "esp.h"
+#include <random>
 
 #define TICK_INTERVAL			( Interfaces::Globals->interval_per_tick )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
+
+
+//for load best config
+extern CGUI GUI;
+extern AyyWareWindow Menu::Window;
+
+Vector Globals::g_vFakeAngle;
+
+//c++17 for random float 
+//https://zh.cppreference.com/w/cpp/numeric/random
+std::random_device r;
+std::default_random_engine e1(r());
+std::uniform_real_distribution<float> uniform_dist (-89.f,89.f);
+
+enum class WeaponId : short {
+	Deagle = 1,
+	Elite,
+	Fiveseven,
+	Glock,
+	Ak47 = 7,
+	Aug,
+	Awp,
+	Famas,
+	G3SG1,
+	GalilAr = 13,
+	M249,
+	M4A1 = 16,
+	Mac10,
+	P90 = 19,
+	ZoneRepulsor,
+	Mp5sd = 23,
+	Ump45,
+	Xm1014,
+	Bizon,
+	Mag7,
+	Negev,
+	Sawedoff,
+	Tec9,
+	Taser,
+	Hkp2000,
+	Mp7,
+	Mp9,
+	Nova,
+	P250,
+	Shield,
+	Scar20,
+	Sg553,
+	Ssg08,
+	GoldenKnife,
+	Knife,
+	Flashbang = 43,
+	HeGrenade,
+	SmokeGrenade,
+	Molotov,
+	Decoy,
+	IncGrenade,
+	C4,
+	Healthshot = 57,
+	KnifeT = 59,
+	M4a1_s,
+	Usp_s,
+	Cz75a = 63,
+	Revolver,
+	TaGrenade = 68,
+	Axe = 75,
+	Hammer,
+	Spanner = 78,
+	GhostKnife = 80,
+	Firebomb,
+	Diversion,
+	FragGrenade,
+	Snowball,
+	BumpMine,
+	Bayonet = 500,
+	ClassicKnife = 503,
+	Flip = 505,
+	Gut,
+	Karambit,
+	M9Bayonet,
+	Huntsman,
+	Falchion = 512,
+	Bowie = 514,
+	Butterfly,
+	Daggers,
+	Paracord,
+	SurvivalKnife,
+	Ursus = 519,
+	Navaja,
+	NomadKnife,
+	Stiletto = 522,
+	Talon,
+	SkeletonKnife = 525,
+	GloveStuddedBrokenfang = 4725,
+	GloveStuddedBloodhound = 5027,
+	GloveT,
+	GloveCT,
+	GloveSporty,
+	GloveSlick,
+	GloveLeatherWrap,
+	GloveMotorcycle,
+	GloveSpecialist,
+	GloveHydra
+};
 
 
 void CRageBot::Init()
@@ -40,7 +145,6 @@ bool IsAbleToShoot(IClientEntity* pLocal)
 
 float hitchance(IClientEntity* pLocal, CBaseCombatWeapon* pWeapon)
 {
-	//	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(pLocal->GetActiveWeaponHandle());
 	float hitchance = 101;
 	if (!pWeapon) return 0;
 	if (Menu::Window.RageBotTab.AccuracyHitchance.GetValue() > 1)
@@ -77,6 +181,7 @@ void CRageBot::Move(CUserCmd *pCmd, bool &bSendPacket)
 	IClientEntity* pLocalEntity = (IClientEntity*)Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 	if (!pLocalEntity)
 		return;
+
 
 	// Master switch
 	if (!Menu::Window.RageBotTab.Active.GetState())
@@ -166,9 +271,6 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 	{
 		if (pWeapon->GetAmmoInClip() == 0 || !GameUtils::IsBallisticWeapon(pWeapon))
 		{
-			//TargetID = 0;
-			//pTarget = nullptr;
-			//HitBox = -1;
 			return;
 		}
 	}
@@ -284,7 +386,7 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 		}
 		else
 		{
-			if ((Menu::Window.RageBotTab.AccuracyHitchance.GetValue() * 1.5 <= hitchance(pLocal, pWeapon)) || Menu::Window.RageBotTab.AccuracyHitchance.GetValue() == 0 || *pWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == 64)
+			if ((Menu::Window.RageBotTab.AccuracyHitchance.GetValue() * 1.5 <= hitchance(pLocal, pWeapon)) || Menu::Window.RageBotTab.AccuracyHitchance.GetValue() == 0 || *pWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == WEAPON_REVOLVER)
 			{
 				if (AimAtPoint(pLocal, Point, pCmd, bSendPacket))
 				{
@@ -307,16 +409,6 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 		if (IsAbleToShoot(pLocal) && pCmd->buttons & IN_ATTACK)
 			Globals::Shots += 1;
 
-		// Stop and Crouch
-		if (TargetID >= 0 && pTarget)
-		{
-			if (Menu::Window.RageBotTab.AccuracyAutoStop.GetState())
-			{
-				pCmd->forwardmove = 0.f;
-				pCmd->sidemove = 0.f;
-				pCmd->buttons |= IN_DUCK;
-			}
-		}
 	}
 
 	// Auto Pistol
@@ -501,33 +593,15 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 	// Get the hitboxes to scan
 #pragma region GetHitboxesToScan
 	int HitScanMode = Menu::Window.RageBotTab.TargetHitscan.GetIndex();
-	int iSmart = Menu::Window.RageBotTab.AccuracySmart.GetValue();
 	bool AWall = Menu::Window.RageBotTab.AccuracyAutoWall.GetState();
-	//Multipoint is useless
+	
 	bool Multipoint = Menu::Window.RageBotTab.TargetMultipoint.GetState();
 
-	if (iSmart > 0 && pLocal->GetShotsFired() + 1 > iSmart)
-	{
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
-		HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
-	}
-	else
-	{
-		if (HitScanMode == 0)
+	//hellobaby:
+	//in my opinion,i prefer to use hitscan.Because you probably cant to resolve enemy's head or neck.
+	//so you can hit hisbody through scar-20
+	//
+	if (HitScanMode == 0)
 		{
 			// No Hitscan, just a single hitbox
 			switch (Menu::Window.RageBotTab.TargetHitbox.GetIndex())
@@ -539,24 +613,119 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 				HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
 				break;
 			case 2:
+				HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
 				HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
 				HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
 				break;
 			case 3:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
 				break;
 			case 4:
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
-				HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+				break;
+			case 5:
+				HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
+				HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
 				break;
 			}
 		}
-		else
+	else
+	{
+		switch (HitScanMode)
 		{
-			
+		case 1:
+
+			//just no head, sometimes win by surprise
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+			break;
+		case 2:
+			// Low
+			//hit all Hitbox that we can see
+
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftCalf);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightFoot);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftFoot);
+
+			break;
+		case 3:
+			// Normal
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Pelvis);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftThigh);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftForearm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightHand);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftHand);
+			break;
+		case 4:
+			// High
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Neck);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LowerChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::UpperChest);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Thorax);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Belly);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::RightUpperArm);
+			HitBoxesToScan.push_back((int)CSGOHitboxID::LeftUpperArm);
+			break;
+		case 5:
+			// Extreme
+			HitBoxesToScan.push_back((int)CSGOHitboxID::Head);
+			break;
 		}
+
+
 	}
+		
+		
+	
 #pragma endregion Get the list of shit to scan
 
 	// check hits
@@ -567,17 +736,13 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 		{
 			Vector Point = GetHitboxPosition(pEntity, HitBoxID);
 			float Damage = 0.f;
-			//Color c = Color(255, 255, 255, 255);
 			if (CanHit(Point, &Damage))
 			{
-				//Utilities::Log("[Debug]can hit");
-				//c = Color(0, 255, 0, 255);
 				if (Damage >= Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue())
 				{
 					return HitBoxID;
 				}
 			}
-			//Utilities::Log("[Debug]can't hit behind wall");
 		}
 		else
 		{
@@ -643,12 +808,8 @@ void CRageBot::DoNoRecoil(CUserCmd *pCmd)
 	if (pLocal)
 	{
 		Vector AimPunch = pLocal->localPlayerExclusive()->GetAimPunchAngle();
-		//Utilities::Log("%f", AimPunch.x);
-		//Utilities::Log("%f", AimPunch.y);
-		//Utilities::Log("%f", AimPunch.z);
 		if (AimPunch.Length2D() > 0 && AimPunch.Length2D() < 150)
 		{
-			//Utilities::Log("DoNoRecoil");
 			pCmd->viewangles -= AimPunch * 2.0f;
 			GameUtils::NormaliseViewAngle(pCmd->viewangles);
 		}
@@ -708,28 +869,6 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 	{
 		Interfaces::Engine->SetViewAngles(angles);
 	}
-
-	// pSilent Aim 
-	Vector Oldview = pCmd->viewangles;
-
-	/*if (Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
-	{
-		static int ChokedPackets = -1;
-		ChokedPackets++;
-
-		if (ChokedPackets < 6)
-		{
-			bSendPacket = false;
-			pCmd->viewangles = angles;
-		}
-		else
-		{
-			bSendPacket = true;
-			pCmd->viewangles = Oldview;
-			ChokedPackets = -1;
-			ReturnValue = false;
-		}
-	}*/
 
 	return ReturnValue;
 }
@@ -791,7 +930,6 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 	void FastSpin(CUserCmd *pCmd)
 	{
-		//Utilities::Log("%s",__FUNCTION__);
 
 		static int y2 = -179;
 		int spinBotSpeedFast = 100;
@@ -886,6 +1024,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 				pCmd->viewangles.y = qTmp.y;
 
+				//almost cheats set 180,so you can see that they back to enemy
 				int offset = Menu::Window.RageBotTab.AntiAimOffset.GetValue();
 
 				static int ChokedPackets = -1;
@@ -896,6 +1035,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 				}
 				else
 				{
+					//send true angle
 					bSendPacket = true;
 					pCmd->viewangles.y -= offset;
 					ChokedPackets = -1;
@@ -1153,6 +1293,8 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 		{
 			best_dist = temp_dist;
 			CalcAngle(eye_position, target_position, pCmd->viewangles);
+			//back to enemy?
+			//pCmd->viewangles.y -= 180.f;
 		}
 	}
 
@@ -1247,7 +1389,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 }
 
 // AntiAim
-void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.y = 0xFFFFF INT_MAX or idk
+void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) 
 {
 	IClientEntity* pLocal = hackManager.pLocal();
 
@@ -1255,7 +1397,7 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		return;
 	
 	// If the aimbot is doing something don't do anything
-	if ((IsAimStepping || pCmd->buttons & IN_ATTACK) && !Menu::Window.RageBotTab.AimbotPerfectSilentAim.GetState())
+	if ((IsAimStepping || pCmd->buttons & IN_ATTACK))
 		return;
 
 	// Weapon shit
@@ -1283,52 +1425,26 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		AntiAims::AimAtTarget(pCmd);
 	}
 
-	// Don't do antiaim
-	// if (DoExit) return;
-
-	//[Debug]can go there
-	//Utilities::Log("[INFO]Anti-aim in");
+	// what is bSendPacket?
+	//https://www.unknowncheats.me/forum/counterstrike-global-offensive/247182-csgo-fake-angles-demystified.html
 
 	// Anti-Aim Pitch
-	switch (Menu::Window.RageBotTab.AntiAimPitch.GetIndex()) // Magic pitch is 69.69?
+	switch (Menu::Window.RageBotTab.AntiAimPitch.GetIndex()) 
 	{
 	case 0:
 		// No Pitch AA
 		break;
 	case 1:
 		// Down
-		//AntiAims::StaticPitch(pCmd, false);
 		pCmd->viewangles.x = 89.0f;
-		if (fabsf(pCmd->sidemove) < 5.0f) {
-			if (pCmd->buttons & 4)
-				pCmd->sidemove = pCmd->tick_count & 1 ? 3.25f : -3.25f;
-			else
-				pCmd->sidemove = pCmd->tick_count & 1 ? 1.1f : -1.1f;
-		}
 		break;
 	case 2:
-		// Half Down
-		pCmd->viewangles.x = 51.f;
+		//UP
+		pCmd->viewangles.x = -89.0f;
 		break;
 	case 3:
-		// SMAC / Casual safe
-		AntiAims::JitterPitch(pCmd);
-		break;
-	case 4:
-		// Jitter
-		pCmd->viewangles.x = 179.0f;
-		break;
-	case 5:
-		// Fake Pitch
-		pCmd->viewangles.x = -181.f;
-		break;
-	case 6:
-		// Static Down
-		pCmd->viewangles.x = 1800089.0f;
-		break;
-	case 7:
-		// Static Jitter
-		pCmd->viewangles.y = -1800089.0f;
+		//Random
+		pCmd->viewangles.x = uniform_dist(e1);
 		break;
 	}
 
@@ -1380,10 +1496,211 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket) // pCmd->viewangles.
 		break;
 	}
 
-	// Edge Anti Aim
-	//AntiAims::EdgeDetect(pCmd, bSendPacket); this is broken it seems ill just remove it cuz what if it causes some crashes
-
 	// Angle offset
 	pCmd->viewangles.y += Menu::Window.RageBotTab.AntiAimOffset.GetValue();
+
+	Globals::g_vFakeAngle = pCmd->viewangles;
+
+
+
 }
 
+
+void LoadBestConfig()
+{
+	auto pBasedPlayer = hackManager.pLocal();
+
+	auto pEntity = Interfaces::EntList->GetClientEntityFromHandle(pBasedPlayer->GetActiveWeaponHandle());
+
+	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)pEntity;
+
+	WeaponId Weaponid = (WeaponId)*pWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex();
+
+	switch (Weaponid)
+	{
+	case WeaponId::Deagle:
+		break;
+	case WeaponId::Elite:
+		GUI.LoadWindowState(&Menu::Window,"brettas.cfg");
+		break;
+	case WeaponId::Fiveseven:
+		break;
+	case WeaponId::Glock:
+		break;
+	case WeaponId::Ak47:
+		break;
+	case WeaponId::Aug:
+		break;
+	case WeaponId::Awp:
+		GUI.LoadWindowState(&Menu::Window, "AWP.cfg");
+		break;
+	case WeaponId::Famas:
+		break;
+	case WeaponId::G3SG1:
+		GUI.LoadWindowState(&Menu::Window, "G3SG1.cfg");
+		break;
+	case WeaponId::GalilAr:
+		break;
+	case WeaponId::M249:
+		break;
+	case WeaponId::M4A1:
+		break;
+	case WeaponId::Mac10:
+		break;
+	case WeaponId::P90:
+		break;
+	case WeaponId::ZoneRepulsor:
+		break;
+	case WeaponId::Mp5sd:
+		break;
+	case WeaponId::Ump45:
+		break;
+	case WeaponId::Xm1014:
+		break;
+	case WeaponId::Bizon:
+		break;
+	case WeaponId::Mag7:
+		break;
+	case WeaponId::Negev:
+		break;
+	case WeaponId::Sawedoff:
+		break;
+	case WeaponId::Tec9:
+		break;
+	case WeaponId::Taser:
+		break;
+	case WeaponId::Hkp2000:
+		break;
+	case WeaponId::Mp7:
+		break;
+	case WeaponId::Mp9:
+		break;
+	case WeaponId::Nova:
+		break;
+	case WeaponId::P250:
+		break;
+	case WeaponId::Shield:
+		break;
+	case WeaponId::Scar20:
+		GUI.LoadWindowState(&Menu::Window, "G3SG1.cfg");
+		break;
+	case WeaponId::Sg553:
+		break;
+	case WeaponId::Ssg08:
+		GUI.LoadWindowState(&Menu::Window, "SSG08.cfg");
+		break;
+	case WeaponId::GoldenKnife:
+		break;
+	case WeaponId::Knife:
+		break;
+	case WeaponId::Flashbang:
+		break;
+	case WeaponId::HeGrenade:
+		break;
+	case WeaponId::SmokeGrenade:
+		break;
+	case WeaponId::Molotov:
+		break;
+	case WeaponId::Decoy:
+		break;
+	case WeaponId::IncGrenade:
+		break;
+	case WeaponId::C4:
+		break;
+	case WeaponId::Healthshot:
+		break;
+	case WeaponId::KnifeT:
+		break;
+	case WeaponId::M4a1_s:
+		break;
+	case WeaponId::Usp_s:
+		break;
+	case WeaponId::Cz75a:
+		break;
+	case WeaponId::Revolver:
+		GUI.LoadWindowState(&Menu::Window, "R8.cfg");
+		break;
+	case WeaponId::TaGrenade:
+		break;
+	case WeaponId::Axe:
+		break;
+	case WeaponId::Hammer:
+		break;
+	case WeaponId::Spanner:
+		break;
+	case WeaponId::GhostKnife:
+		break;
+	case WeaponId::Firebomb:
+		break;
+	case WeaponId::Diversion:
+		break;
+	case WeaponId::FragGrenade:
+		break;
+	case WeaponId::Snowball:
+		break;
+	case WeaponId::BumpMine:
+		break;
+	case WeaponId::Bayonet:
+		break;
+	case WeaponId::ClassicKnife:
+		break;
+	case WeaponId::Flip:
+		break;
+	case WeaponId::Gut:
+		break;
+	case WeaponId::Karambit:
+		break;
+	case WeaponId::M9Bayonet:
+		break;
+	case WeaponId::Huntsman:
+		break;
+	case WeaponId::Falchion:
+		break;
+	case WeaponId::Bowie:
+		break;
+	case WeaponId::Butterfly:
+		break;
+	case WeaponId::Daggers:
+		break;
+	case WeaponId::Paracord:
+		break;
+	case WeaponId::SurvivalKnife:
+		break;
+	case WeaponId::Ursus:
+		break;
+	case WeaponId::Navaja:
+		break;
+	case WeaponId::NomadKnife:
+		break;
+	case WeaponId::Stiletto:
+		break;
+	case WeaponId::Talon:
+		break;
+	case WeaponId::SkeletonKnife:
+		break;
+	case WeaponId::GloveStuddedBrokenfang:
+		break;
+	case WeaponId::GloveStuddedBloodhound:
+		break;
+	case WeaponId::GloveT:
+		break;
+	case WeaponId::GloveCT:
+		break;
+	case WeaponId::GloveSporty:
+		break;
+	case WeaponId::GloveSlick:
+		break;
+	case WeaponId::GloveLeatherWrap:
+		break;
+	case WeaponId::GloveMotorcycle:
+		break;
+	case WeaponId::GloveSpecialist:
+		break;
+	case WeaponId::GloveHydra:
+		break;
+	default:
+		break;
+	}
+
+	return;
+}

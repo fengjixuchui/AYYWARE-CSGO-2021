@@ -96,6 +96,11 @@ void CMiscHacks::Move(CUserCmd *pCmd, bool &bSendPacket)
 	//Fake Lag
 	if (Menu::Window.MiscTab.FakeLagEnable.GetState())
 		Fakelag(pCmd, bSendPacket);
+
+	//SlowWalk
+	if(Menu::Window.MiscTab.OtherEdgeJump.GetState())
+		SlowWalk(pCmd);
+
 }
 
 static __declspec(naked) void __cdecl Invoke_NET_SetConVar(void* pfn, const char* cvar, const char* value)
@@ -219,7 +224,7 @@ Vector GetAutostrafeView()
 	return AutoStrafeView;
 }
 
-// �e սʿ
+//
 void CMiscHacks::ChatSpamInterwebz()
 {
 	static clock_t start_t = clock();
@@ -228,19 +233,18 @@ void CMiscHacks::ChatSpamInterwebz()
 		return;
 
 	static bool wasSpamming = true;
-	//static std::string nameBackup = "INTERWEBZ";
 
 	if (wasSpamming)
 	{
 		static bool useSpace = true;
 		if (useSpace)
 		{
-			change_name ("INTERWEBZ-");
+			change_name ("[Name]");
 			useSpace = !useSpace;
 		}
 		else
 		{
-			change_name("-INTERWEBZ");
+			change_name("[Name]");
 			useSpace = !useSpace;
 		}
 	}
@@ -256,7 +260,6 @@ void CMiscHacks::ChatSpamDisperseName()
 		return;
 
 	static bool wasSpamming = true;
-	//static std::string nameBackup = "INTERWEBZ";
 
 	if (wasSpamming)
 	{
@@ -299,8 +302,9 @@ void CMiscHacks::ChatSpamName()
 	}
 
 	static bool wasSpamming = true;
-	//static std::string nameBackup = "INTERWEBZ.CC";
 
+	if(!Names.size())
+		return;
 	int randomIndex = rand() % Names.size();
 	char buffer[128];
 	sprintf_s(buffer, "%s ", Names[randomIndex].c_str());
@@ -321,6 +325,7 @@ void CMiscHacks::ChatSpamRegular()
 {
 	// Don't spam it too fast so you can still do stuff
 	static clock_t start_t = clock();
+	//SpamDelay
 	int spamtime = Menu::Window.MiscTab.OtherChatDelay.GetValue();
 	double timeSoFar = (double)(clock() - start_t) / CLOCKS_PER_SEC;
 	if (timeSoFar < spamtime)
@@ -330,11 +335,11 @@ void CMiscHacks::ChatSpamRegular()
 
 	if (Menu::Window.MiscTab.OtherTeamChat.GetState())
 	{
-		SayInTeamChat("INTERWEBZ.CC OWNS ME AND ALL");
+		SayInTeamChat("https://github.com/helloobaby/AYYWARE-CSGO-2021");
 	}
 	else
 	{
-		SayInChat("INTERWEBZ.CC OWNS ME AND ALL");
+		SayInChat("https://github.com/helloobaby/AYYWARE-CSGO-2021");
 	}
 
 	start_t = clock();
@@ -357,3 +362,51 @@ void CMiscHacks::Fakelag(CUserCmd *pCmd, bool &bSendPacket)
 		iFakeLag = -1;
 	}
 }
+
+//https://www.unknowncheats.me/forum/cs-go-releases/315876-slow-walk.html
+//i think player can press ctrl himself,so i dont want to pCmd->buttons | IN_IN_DUCK
+void CMiscHacks::SlowWalk(CUserCmd* pCmd)
+{
+	auto LocalPlayer = hackManager.pLocal();
+
+	if(!LocalPlayer)
+		return ;
+
+	if (!Interfaces::Engine->IsInGame())
+		return ;
+
+	//if hold a knife or no weapon
+	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(LocalPlayer
+		->GetActiveWeaponHandle());
+	CSWeaponInfo* pWeaponInfo = nullptr;
+	if (pWeapon)
+	{
+		pWeaponInfo = pWeapon->GetCSWpnData();
+		if (!GameUtils::IsBallisticWeapon(pWeapon))
+		return;
+	}
+	else
+		return;
+
+	//alreay press shift
+	if(pCmd->buttons & IN_WALK)
+		return;
+
+	const float MaxSpeed =  (LocalPlayer->IsScoped() ? pWeaponInfo->maxSpeedAlt : pWeaponInfo->maxSpeed) / 3;
+
+//just copy paste from Osiris
+#define M_SQRT1_2  0.707106781186547524401  // 1/sqrt(2)
+	if (pCmd->forwardmove && pCmd->sidemove) {
+		const float maxSpeedRoot = MaxSpeed * static_cast<float>(M_SQRT1_2);
+		pCmd->forwardmove = pCmd->forwardmove < 0.0f ? -maxSpeedRoot : maxSpeedRoot;
+		pCmd->sidemove = pCmd->sidemove < 0.0f ? -maxSpeedRoot : maxSpeedRoot;
+	}
+	else if (pCmd->forwardmove) {
+		pCmd->forwardmove = pCmd->forwardmove < 0.0f ? -MaxSpeed : MaxSpeed;
+	}
+	else if (pCmd->sidemove) {
+		pCmd->sidemove = pCmd->sidemove < 0.0f ? -MaxSpeed : MaxSpeed;
+	}
+
+}
+

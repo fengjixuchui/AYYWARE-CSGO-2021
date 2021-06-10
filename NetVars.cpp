@@ -79,9 +79,6 @@ const char* AlignText(int align)
 
 void CNetVar::RetrieveClasses()
 {
-#ifdef DUMP_NETVARS_TO_FILE
-	Utilities::EnableLogFile(NETVAR_FILENAME);
-#endif
 
 	ClientClass *clientClass = Interfaces::Client->GetAllClasses();
 

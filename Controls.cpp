@@ -389,6 +389,7 @@ void CButton::Draw(bool hover)
 		Render::GradientV(a.x + 2, a.y + 2, m_iWidth - 4, m_iHeight - 4, Color(8, 8, 8, 255), Color(8, 8, 8, 255));
 
 	RECT TextSize = Render::GetTextSize(Render::Fonts::MenuBold, Text.c_str());
+	//Draw at the middle
 	int TextX = a.x + (m_iWidth / 2) - (TextSize.left / 2);
 	int TextY = a.y + (m_iHeight / 2) - (TextSize.bottom / 2);
 
@@ -415,6 +416,17 @@ void CButton::OnClick()
 	if (CallBack)
 		CallBack();
 }
+
+void CButton::AddHeight(int Height)
+{
+	m_iHeight+=Height;
+}
+
+void CButton::AddWidth(int Width){
+	m_iWidth+=Width;
+}
+
+
 #pragma endregion Implementations of the Button functions
 
 #pragma region ComboBox

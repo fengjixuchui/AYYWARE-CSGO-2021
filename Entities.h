@@ -381,23 +381,23 @@ enum class CSGOHitboxID
 {
 	Head,
 	Neck,
-	Pelvis,
-	Belly,
-	Thorax,
-	LowerChest,
-	UpperChest,
-	RightThigh,
-	LeftThigh,
-	RightCalf,
-	LeftCalf,
+	Pelvis,//π«≈Ë
+	Belly,//∂«◊”
+	Thorax,//–ÿ
+	LowerChest,//œ¬–ÿ
+	UpperChest,//…œ–ÿ
+	RightThigh,//”“¥ÛÕ»
+	LeftThigh,//◊Û¥ÛÕ»
+	RightCalf,//”“–°Õ»
+	LeftCalf,//◊Û–°Õ»
 	RightFoot,
 	LeftFoot,
 	RightHand,
 	LeftHand,
 	RightUpperArm,
-	RightForearm,
+	RightForearm,//”“«∞±€
 	LeftUpperArm,
-	LeftForearm,
+	LeftForearm,//
 	Max
 };
 
@@ -470,12 +470,12 @@ enum ItemDefinitionIndex : int
 	WEAPON_BAYONET = 500,
 	WEAPON_KNIFE_FLIP = 505,
 	WEAPON_KNIFE_GUT,
-	WEAPON_KNIFE_KARAMBIT,
+	WEAPON_KNIFE_KARAMBIT,//507
 	WEAPON_KNIFE_M9_BAYONET,
 	WEAPON_KNIFE_TACTICAL,
 	WEAPON_KNIFE_FALCHION = 512,
 	WEAPON_KNIFE_SURVIVAL_BOWIE = 514,
-	WEAPON_KNIFE_BUTTERFLY,
+	WEAPON_KNIFE_BUTTERFLY,//515
 	WEAPON_KNIFE_PUSH,
 	WEAPON_KNIFE_URSUS = 519,
 	WEAPON_KNIFE_GYPSY_JACKKNIFE,
@@ -486,7 +486,7 @@ enum ItemDefinitionIndex : int
 class ScriptCreatedItem
 {
 public:
-	CPNETVAR_FUNC(int*, ItemDefinitionIndex, 0xE67AB3B8); //m_iItemDefinitionIndex
+	CPNETVAR_FUNC(short*, ItemDefinitionIndex, 0xE67AB3B8); //m_iItemDefinitionIndex
 	CPNETVAR_FUNC(int*, ItemIDHigh, 0x714778A); //m_iItemIDHigh
 	CPNETVAR_FUNC(int*, ItemIDLow, 0x3A3DFC74); //m_iItemIDLow
 };
@@ -713,13 +713,12 @@ public:
 
 	QAngle* GetEyeAnglesPointer()
 	{
-		return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB380);
-		//return reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
+		return (QAngle*)((DWORD)this + GET_NETVAR("DT_CSPlayer", "m_angEyeAngles"));
 	}
-	//no references
+
 	QAngle GetEyeAngles()
 	{
-		return *reinterpret_cast<QAngle*>((DWORD)this + (DWORD)0xB344);
+		return *(QAngle*)((DWORD)this + GET_NETVAR("DT_CSPlayer", "m_angEyeAngles"));
 	}
 
 	QAngle GetEyeAnglesXY()
@@ -752,21 +751,16 @@ public:
 		return GetClientClass()->m_ClassID == (int)CSGOClassID::CCSPlayer;
 	}
 
-	//no references
-	Vector GetOrigin2() {
-		return *(Vector*)((DWORD)this + 0x00000134);
-	}
-	//no references
 	Vector GetViewAngles2() {
 		return *(Vector*)((DWORD)this + 0x00000104);
 	}
 
-	//no references
+	//get pos.x pos.y pos.y as a vector
 	Vector GetAbsOrigin2() {
 		__asm {
 			MOV ECX, this
 			MOV EAX, DWORD PTR DS : [ECX]
-			CALL DWORD PTR DS : [EAX + 0x28]
+			CALL DWORD PTR DS : [EAX + 0x28]//A*4
 		}
 	}
 	//no references
@@ -780,8 +774,8 @@ public:
 
 
 	Vector GetEyePosition() {
-		Vector Origin = *(Vector*)((DWORD)this + 0x138);
-		Vector View = *(Vector*)((DWORD)this + 0x108);
+		Vector Origin = *(Vector*)((DWORD)this + 0x138);//m_vecOrigin
+		Vector View = *(Vector*)((DWORD)this + 0x108);//m_vecViewOffset
 		return(Origin + View);
 	}
 	//no reference

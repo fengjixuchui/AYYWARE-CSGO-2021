@@ -12,9 +12,11 @@ void AngleVectors(const Vector &angles, Vector *forward)
 
 	float	sp, sy, cp, cy;
 
+	//yaw
 	sy = sin(DEG2RAD(angles[1]));
 	cy = cos(DEG2RAD(angles[1]));
 
+	//pitch
 	sp = sin(DEG2RAD(angles[0]));
 	cp = cos(DEG2RAD(angles[0]));
 

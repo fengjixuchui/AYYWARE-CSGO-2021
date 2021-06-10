@@ -77,9 +77,6 @@ namespace GameUtils
 	bool IsPistol(void* weapon);
 	bool IsSniper(void* weapon);
 	bool IsScopedWeapon(void* weapon);
-	int GetPlayerCompRank(IClientEntity* pEntity);
-	extern void ServerRankRevealAll();
-	unsigned short UTIL_GetAchievementEventMask();
 };
 
 // Trace Line Memes

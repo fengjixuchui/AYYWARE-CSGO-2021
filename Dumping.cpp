@@ -1,13 +1,10 @@
 
 #include "Dumping.h"
 
-#define DUMPIDTOFILE
 
 void Dump::DumpClassIds()
 {
-#ifdef DUMPIDTOFILE
-	Utilities::EnableLogFile("ClassID.txt");
-#endif
+
 	ClientClass* cClass = Interfaces::Client->GetAllClasses();
 	while (cClass)
 	{

@@ -13,6 +13,8 @@ Syn's AyyWare Framework 2015
 
 AyyWareWindow Menu::Window;
 
+extern void LoadBestConfig();
+
 void SaveCallbk()
 {
 	GUI.SaveWindowState(&Menu::Window, "ayyconfig.cfg");
@@ -39,7 +41,7 @@ void AyyWareWindow::Setup()
 {
 	SetPosition(350, 50);
 	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-	SetTitle("Whip");
+	SetTitle("Solo King");
 
 	RegisterTab(&LegitBotTab);
 	RegisterTab(&RageBotTab);
@@ -61,13 +63,15 @@ void AyyWareWindow::Setup()
 	SaveButton.SetCallback(SaveCallbk);
 	SaveButton.SetPosition(16, Client.bottom - 42);
 
-	LoadButton.SetText("Load Configuration");
+	LoadButton.SetText("Load Config(default)");
 	LoadButton.SetCallback(LoadCallbk);
 	LoadButton.SetPosition(203, Client.bottom - 42);
 	
-	UnloadButton.SetText("Complete Unload");
-	UnloadButton.SetCallback(UnLoadCallbk);
+	UnloadButton.SetText("Load best config for current weapon");
+	UnloadButton.SetCallback(LoadBestConfig);
 	UnloadButton.SetPosition(396, Client.bottom - 42);
+	UnloadButton.AddWidth(80);
+	
 
 	LegitBotTab.RegisterControl(&SaveButton);
 	RageBotTab.RegisterControl(&SaveButton);
@@ -324,15 +328,17 @@ void CRageBotTab::Setup()
 	TargetHitbox.AddItem("Chest");
 	TargetHitbox.AddItem("Stomach");
 	TargetHitbox.AddItem("Shins");
+	TargetHitbox.AddItem("Foot");
 	TargetGroup.PlaceLabledControl("Hitbox", this, &TargetHitbox);
 
 	TargetHitscan.SetFileId("tgt_hitscan");
 	TargetHitscan.AddItem("Off"); //0
+	TargetHitscan.AddItem("NoHead");
 	TargetHitscan.AddItem("Low"); // 1
 	TargetHitscan.AddItem("Medium"); // 2
 	TargetHitscan.AddItem("High"); // 3
 	TargetHitscan.AddItem("Extreme"); // 4
-	TargetGroup.PlaceLabledControl("Dont Use", this, &TargetHitscan);
+	TargetGroup.PlaceLabledControl("HitScanPos", this, &TargetHitscan);
 
 	TargetMultipoint.SetFileId("tgt_multipoint");
 	TargetGroup.PlaceLabledControl("Multipoint", this, &TargetMultipoint);
@@ -361,7 +367,7 @@ void CRageBotTab::Setup()
 	AccuracyGroup.PlaceLabledControl("Autowall Damage", this, &AccuracyMinimumDamage);
 
 	AccuracyAutoStop.SetFileId("acc_stop");
-	AccuracyGroup.PlaceLabledControl("Auto Stop / Crouch", this, &AccuracyAutoStop);
+	AccuracyGroup.PlaceLabledControl("Dont Use", this, &AccuracyAutoStop);
 
 	AccuracyAutoScope.SetFileId("acc_scope");
 	AccuracyGroup.PlaceLabledControl("Auto Scope", this, &AccuracyAutoScope);
@@ -398,12 +404,8 @@ void CRageBotTab::Setup()
 	AntiAimPitch.SetFileId("aa_x");
 	AntiAimPitch.AddItem("None");
 	AntiAimPitch.AddItem("Down");
-	AntiAimPitch.AddItem("SMAC Safe");
-	AntiAimPitch.AddItem("Jitter");
-	AntiAimPitch.AddItem("Static");
-	AntiAimPitch.AddItem("Fake Down");
-	AntiAimPitch.AddItem("Lisp Down");
-	AntiAimPitch.AddItem("Lisp Up");
+	AntiAimPitch.AddItem("UP");
+	AntiAimPitch.AddItem("Random");
 	AntiAimGroup.PlaceLabledControl("Pitch", this, &AntiAimPitch);
 
 	AntiAimYaw.SetFileId("aa_y");
@@ -573,6 +575,7 @@ void CMiscTab::Setup()
 	KnifeModel.SetFileId("knife_model");
 	KnifeModel.AddItem("Karam");
 	KnifeModel.AddItem("Bayo");
+	KnifeModel.AddItem("Butterfly");
 	KnifeGroup.PlaceLabledControl("Knife", this, &KnifeModel);
 
 	KnifeSkin.SetFileId("knife_skin");
@@ -600,7 +603,7 @@ void CMiscTab::Setup()
 	OtherGroup.PlaceLabledControl("Auto Jump", this, &OtherAutoJump);
 
 	OtherEdgeJump.SetFileId("otr_edgejump");
-	OtherGroup.PlaceLabledControl("Edge Jump", this, &OtherEdgeJump);
+	OtherGroup.PlaceLabledControl("Slow Walk",this, &OtherEdgeJump);
 
 	OtherAutoStrafe.SetFileId("otr_strafe");
 	OtherAutoStrafe.AddItem("Off");
@@ -620,12 +623,9 @@ void CMiscTab::Setup()
 	OtherChatSpam.AddItem("Disperse Name");
 	OtherGroup.PlaceLabledControl("Chat Spam", this, &OtherChatSpam);
 
-	OtherClantag.SetFileId("otr_spam");
+	OtherClantag.SetFileId("otr_clan");
 	OtherClantag.AddItem("Off");
-	OtherClantag.AddItem("pasteware");
-	OtherClantag.AddItem("skeet.cc");
-	OtherClantag.AddItem("Blank");
-	OtherClantag.AddItem("ValveAntiCheat");
+	OtherClantag.AddItem("Alwayslose.cc");
 	OtherGroup.PlaceLabledControl("Custom Clantag", this, &OtherClantag);
 
 	OtherTeamChat.SetFileId("otr_teamchat");
@@ -637,7 +637,7 @@ void CMiscTab::Setup()
 	OtherGroup.PlaceLabledControl("Spam Delay", this, &OtherChatDelay);
 
 	OtherAirStuck.SetFileId("otr_astuck");
-	OtherGroup.PlaceLabledControl("Air Stuck", this, &OtherAirStuck);
+	OtherGroup.PlaceLabledControl("Dont Use", this, &OtherAirStuck);
 
 	OtherSpectators.SetFileId("otr_speclist");
 	OtherGroup.PlaceLabledControl("Spectators List", this, &OtherSpectators);
@@ -676,7 +676,7 @@ void CMiscTab::Setup()
 #pragma region Teleport
 	TeleportGroup.SetPosition(16, 316);
 	TeleportGroup.SetSize(360, 75);
-	TeleportGroup.SetText("Teleport");
+	TeleportGroup.SetText("Dont Use");
 	RegisterControl(&TeleportGroup);
 
 	TeleportEnable.SetFileId("teleport_enable");

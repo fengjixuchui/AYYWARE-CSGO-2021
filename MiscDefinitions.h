@@ -66,6 +66,8 @@ enum source_lifestates
 };
 
 // Player Controls for CS:GO
+//ref
+//https://www.unknowncheats.me/forum/counterstrike-global-offensive/228258-entity-flags-cusercmd-buttons-bitwise-flags.html
 enum playercontrols
 {
 	IN_ATTACK = (1 << 0),

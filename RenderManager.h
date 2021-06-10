@@ -10,6 +10,9 @@ Syn's AyyWare Framework 2015
 
 void Quad();
 
+#define MAX_COORD_INTEGER			(16384)
+#define COORD_EXTENT (2*MAX_COORD_INTEGER)
+#define MAX_TRACE_LENGTH ( 1.732050807569 * COORD_EXTENT )
 
 namespace Render
 {
