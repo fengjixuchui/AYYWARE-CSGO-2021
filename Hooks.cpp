@@ -541,16 +541,31 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 	DWORD eyeangles = NetVar.GetNetVar(0xBFEA4E7B);
 	IClientEntity *pLocal = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 
+	do{
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_RENDER_START)
 	{
-		//to see fake-ange
+		static int tick1 = 0;
+		int tick2 = pLocal->GetTickBase();
+
+		//64tick 1/4second
+		if((tick2 - tick1) < 16){
+			break;
+		}
+
+		tick1 = tick2;
+
+			//to see fake-ange
 		if (pLocal->IsAlive())
 		{	
 			if (*(bool*)((DWORD)Interfaces::pInput + 0xAD))//A5->AD 
 				*(Vector*)((DWORD)pLocal + 0x31D8) = LastAngleAA;//31C8->31D8
 		}
 
-		if ((Menu::Window.MiscTab.OtherThirdperson.GetState()) || Menu::Window.RageBotTab.AccuracyPositionAdjustment.GetState())
+		int Key = Menu::Window.MiscTab.OtherThirdperson.GetKey();
+		bool KeyState = GUI.GetKeyState(Key);
+		static bool bIsThirdPerson = false;
+
+		if ((KeyState && (Key >=0 )) || Menu::Window.RageBotTab.AccuracyPositionAdjustment.GetState())
 		{
 			static bool rekt = false;
 			if (!rekt)
@@ -562,58 +577,23 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 			}
 		}
 
-		static bool rekt1 = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState() && pLocal->IsAlive())
+		if ((KeyState && (Key >= 0)) && pLocal->IsAlive())
 		{
-			if (!rekt1)
+			if(!bIsThirdPerson)
 			{
 				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
-				rekt1 = true;
+				bIsThirdPerson = true;
 			}
-		}
-		else if (!Menu::Window.MiscTab.OtherThirdperson.GetState())
-		{
-			rekt1 = false;
-		}
-
-		static bool rekt = false;
-		if (!Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive() == 0)
-		{
-			if (!rekt)
+			else
 			{
 				Interfaces::Engine->ClientCmd_Unrestricted("firstperson");
-				rekt = true;
+				bIsThirdPerson = false;
 			}
-		}
-		else if (Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive())
-		{
-			rekt = false;
-		}
-
-		static bool meme = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState())
-		{
-			if (!meme)
-			{
-				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
-				meme = true;
-			}
-		}
-
-		static bool kek = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState() && pLocal->IsAlive())
-		{
-			if (!kek)
-			{
-				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
-				kek = true;
-			}
-		}
-		else if (pLocal->IsAlive() == 0)
-		{
-			kek = false;
 		}
 	}
+	//make sure dont into dead cycle
+	break;
+	}while(1);
 
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_NET_UPDATE_POSTDATAUPDATE_START)
 	{

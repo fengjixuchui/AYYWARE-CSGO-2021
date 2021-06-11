@@ -875,72 +875,9 @@ bool CRageBot::AimAtPoint(IClientEntity* pLocal, Vector point, CUserCmd *pCmd, b
 
 namespace AntiAims // CanOpenFire checks for fake anti aims?
 {
-	// Pitches
-	void JitterPitch(CUserCmd *pCmd)
-	{
-	
-		static bool up = true;
-		if (up)
-			if (up)
-			{
-				pCmd->viewangles.x = 45;
-				up = !up;
-			}
-			else
-			{
-				pCmd->viewangles.x = 89;
-				up = !up;
-			}
 
-	}
-
-	void FakePitch(CUserCmd *pCmd, bool &bSendPacket)
-	{	
-		static int ChokedPackets = -1;
-		ChokedPackets++;
-		if (ChokedPackets < 1)
-		{
-			bSendPacket = false;
-			pCmd->viewangles.x = 89;
-		}
-		else
-		{
-			bSendPacket = true;
-			pCmd->viewangles.x = 51;
-			ChokedPackets = -1;
-		}
-	}
-
-	void StaticJitter(CUserCmd *pCmd)
-	{
-		static bool down = true;
-		if (down)
-		{
-			pCmd->viewangles.x = 179.0f;
-			down = !down;
-		}
-		else
-		{
-			pCmd->viewangles.x = 89.0f;
-			down = !down;
-		}
-	}
 
 	// Yaws
-
-	void FastSpin(CUserCmd *pCmd)
-	{
-
-		static int y2 = -179;
-		int spinBotSpeedFast = 100;
-
-		y2 += spinBotSpeedFast;
-
-		if (y2 >= 179)
-			y2 = -179;
-
-		pCmd->viewangles.y = y2;
-	}
 
 	void FakeEdge(CUserCmd *pCmd, bool &bSendPacket)
 	{
@@ -1024,7 +961,6 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 				pCmd->viewangles.y = qTmp.y;
 
-				//almost cheats set 180,so you can see that they back to enemy
 				int offset = Menu::Window.RageBotTab.AntiAimOffset.GetValue();
 
 				static int ChokedPackets = -1;
@@ -1293,8 +1229,6 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 		{
 			best_dist = temp_dist;
 			CalcAngle(eye_position, target_position, pCmd->viewangles);
-			//back to enemy?
-			//pCmd->viewangles.y -= 180.f;
 		}
 	}
 
@@ -1498,10 +1432,6 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket)
 
 	// Angle offset
 	pCmd->viewangles.y += Menu::Window.RageBotTab.AntiAimOffset.GetValue();
-
-	Globals::g_vFakeAngle = pCmd->viewangles;
-
-
 
 }
 

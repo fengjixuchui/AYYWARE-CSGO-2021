@@ -191,7 +191,7 @@ public:
 	CKeyBind  OtherAirStuck;
 	CKeyBind  OtherLagSwitch;
 	CCheckBox OtherSpectators;
-	CCheckBox OtherThirdperson;
+	CKeyBind OtherThirdperson;
 	//CCheckBox OtherAutoAccept;
 	CCheckBox OtherWalkbot;
 	CComboBox OtherClantag;

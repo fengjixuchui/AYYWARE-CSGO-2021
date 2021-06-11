@@ -646,6 +646,7 @@ void CMiscTab::Setup()
 	OtherThirdperson.SetFileId("aa_thirdpsr");
 	OtherGroup.PlaceLabledControl("Thirdperson", this, &OtherThirdperson);
 
+
 #pragma endregion other random options
 
 #pragma region FakeLag
