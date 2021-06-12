@@ -54,33 +54,9 @@ namespace Hooks
 	Utilities::Memory::VMTManager VMTRenderView;
 };
 
-/*// Initialise all our hooks
-void Hooks::Initialise()
-{
-// Panel hooks for drawing to the screen via surface functions
-VMTPanel.Initialise((DWORD*)Interfaces::Panels);
-oPaintTraverse = (PaintTraverse_)VMTPanel.HookMethod((DWORD)&PaintTraverse_Hooked, Offsets::VMT::Panel_PaintTraverse);
-//Utilities::Log("Paint Traverse Hooked");
 
-// No Visual Recoil
-VMTPrediction.Initialise((DWORD*)Interfaces::Prediction);
-VMTPrediction.HookMethod((DWORD)&Hooked_InPrediction, 14);
-//Utilities::Log("InPrediction Hooked");
+bool bIsThirdPerson = false;
 
-// Chams
-VMTModelRender.Initialise((DWORD*)Interfaces::ModelRender);
-oDrawModelExecute = (DrawModelEx_)VMTModelRender.HookMethod((DWORD)&Hooked_DrawModelExecute, Offsets::VMT::ModelRender_DrawModelExecute);
-//Utilities::Log("DrawModelExecute Hooked");
-
-// Setup ClientMode Hooks
-//VMTClientMode.Initialise((DWORD*)Interfaces::ClientMode);
-//VMTClientMode.HookMethod((DWORD)&CreateMoveClient_Hooked, 24);
-//Utilities::Log("ClientMode CreateMove Hooked");
-
-// Setup client hooks
-VMTClient.Initialise((DWORD*)Interfaces::Client);
-oCreateMove = (CreateMoveFn)VMTClient.HookMethod((DWORD)&hkCreateMove, 21);
-}*/
 
 //fix: No Need To Unload,dont call this function
 void Hooks::UndoHooks()
@@ -320,10 +296,12 @@ void __fastcall PaintTraverse_Hooked(PVOID pPanels, int edx, unsigned int vguiPa
 	}
 	else if (FocusOverlayPanel == vguiPanel)
 	{
-		//Render::GradientV(8, 8, 160, 18, Color(0, 0, 0, 0), Color(7, 39, 17, 255));
 		Render::Text(10, 10, Color(255, 255, 255, 220), Render::Fonts::Menu, "CHEAT[ON]");
 		if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame())
 			Hacks::DrawHacks();
+
+		//Draw Cheat Status
+		Menu::UICheatStatus();
 
 		// Update and draw the menu
 		Menu::DoUIFrame();
@@ -561,7 +539,7 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 
 		int Key = Menu::Window.MiscTab.OtherThirdperson.GetKey();
 		bool KeyState = GUI.GetKeyState(Key);
-		static bool bIsThirdPerson = false;
+		
 
 		if ((KeyState && (Key >=0 )) || Menu::Window.RageBotTab.AccuracyPositionAdjustment.GetState())
 		{

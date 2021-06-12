@@ -230,6 +230,7 @@ namespace Menu
 {
 	void SetupMenu();
 	void DoUIFrame();
+	void UICheatStatus();
 
 	extern AyyWareWindow Window;
 };

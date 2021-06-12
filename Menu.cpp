@@ -7,6 +7,7 @@ Syn's AyyWare Framework 2015
 #include "Hooks.h" // for the unload meme
 #include "Interfaces.h"
 #include "CRC32.h"
+#include "RenderManager.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 630
@@ -890,4 +891,19 @@ void Menu::DoUIFrame()
 	
 }
 
+extern bool bIsThirdPerson;
+extern bool bIsSlowWalk;
 
+void Menu::UICheatStatus()
+{
+	int width = 0;
+	int height = 0;
+	Interfaces::Engine->GetScreenSize(width,height);
+	Render::Textf(100, height/3+50, Color(255, 255, 255, 220), Render::Fonts::Menu, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
+
+	Render::Textf(100, height / 3+100, Color(255, 255, 255, 220), Render::Fonts::Menu, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
+
+	Render::Text(100,height/3+150, Color(255, 255, 255, 220), Render::Fonts::Menu, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
+
+
+}

@@ -8,6 +8,8 @@
 
 #include <time.h>
 
+bool bIsSlowWalk = false;
+
 template<class T, class U>
 inline T clamp(T in, U low, U high)
 {
@@ -100,7 +102,6 @@ void CMiscHacks::Move(CUserCmd *pCmd, bool &bSendPacket)
 	//SlowWalk
 	int Key = Menu::Window.MiscTab.OtherSlowWalk.GetKey();
 	bool KeyState = GUI.GetKeyState(Key);
-	static bool bIsSlowWalk = false;
 	if(Key>=0 && KeyState){
 		bIsSlowWalk = !bIsSlowWalk;
 	}
