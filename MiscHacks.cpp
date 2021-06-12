@@ -98,8 +98,15 @@ void CMiscHacks::Move(CUserCmd *pCmd, bool &bSendPacket)
 		Fakelag(pCmd, bSendPacket);
 
 	//SlowWalk
-	if(Menu::Window.MiscTab.OtherEdgeJump.GetState())
+	int Key = Menu::Window.MiscTab.OtherSlowWalk.GetKey();
+	bool KeyState = GUI.GetKeyState(Key);
+	static bool bIsSlowWalk = false;
+	if(Key>=0 && KeyState){
+		bIsSlowWalk = !bIsSlowWalk;
+	}
+	if (bIsSlowWalk)
 		SlowWalk(pCmd);
+
 
 }
 
@@ -410,3 +417,20 @@ void CMiscHacks::SlowWalk(CUserCmd* pCmd)
 
 }
 
+float CGlobalVarsBase::serverTime(UserCmd* cmd) noexcept{
+
+	static int tick;
+	static UserCmd* lastCmd;
+
+	auto localPlayer = hackManager.pLocal();
+
+	if (cmd) {
+		if (localPlayer && (!lastCmd || lastCmd->hasbeenpredicted))
+			tick = localPlayer->GetTickBase();
+		else
+			tick++;
+		lastCmd = cmd;
+	}
+	return tick * intervalPerTick;
+
+}

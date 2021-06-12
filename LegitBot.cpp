@@ -427,7 +427,7 @@ bool ShouldFire()
 
 	CBaseCombatWeapon* entwep = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(pLocalEntity->GetActiveWeaponHandle());
 
-	float flServerTime = (float)pLocalEntity->GetTickBase() * Interfaces::Globals->interval_per_tick;
+	float flServerTime = (float)pLocalEntity->GetTickBase() * Interfaces::Globals->intervalPerTick;
 	float flNextPrimaryAttack = entwep->GetNextPrimaryAttack();
 
 	std::cout << flServerTime << " " << flNextPrimaryAttack << std::endl;

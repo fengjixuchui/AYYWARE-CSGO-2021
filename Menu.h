@@ -182,7 +182,7 @@ public:
 	// Other Settings
 	CGroupBox OtherGroup;
 	CComboBox OtherAutoJump;
-	CCheckBox OtherEdgeJump;
+	CKeyBind OtherSlowWalk;
 	CComboBox OtherAutoStrafe;
 	CCheckBox OtherSafeMode;
 	CComboBox OtherChatSpam;

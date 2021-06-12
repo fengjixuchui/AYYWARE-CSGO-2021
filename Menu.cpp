@@ -602,8 +602,8 @@ void CMiscTab::Setup()
 	OtherAutoJump.AddItem("Normal");
 	OtherGroup.PlaceLabledControl("Auto Jump", this, &OtherAutoJump);
 
-	OtherEdgeJump.SetFileId("otr_edgejump");
-	OtherGroup.PlaceLabledControl("Slow Walk",this, &OtherEdgeJump);
+	OtherSlowWalk.SetFileId("otr_slowwalk");
+	OtherGroup.PlaceLabledControl("Slow Walk",this, &OtherSlowWalk);
 
 	OtherAutoStrafe.SetFileId("otr_strafe");
 	OtherAutoStrafe.AddItem("Off");

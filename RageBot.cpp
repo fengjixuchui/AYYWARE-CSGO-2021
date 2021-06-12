@@ -138,7 +138,7 @@ bool IsAbleToShoot(IClientEntity* pLocal)
 	if (!pWeapon)
 		return false;
 
-	float flServerTime = pLocal->GetTickBase() * Interfaces::Globals->interval_per_tick;
+	float flServerTime = pLocal->GetTickBase() * Interfaces::Globals->intervalPerTick;
 
 	return (!(pWeapon->GetNextPrimaryAttack() > flServerTime));
 }
@@ -168,7 +168,7 @@ bool CanOpenFire() // Creds to untrusted guy
 
 	CBaseCombatWeapon* entwep = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(pLocalEntity->GetActiveWeaponHandle());
 
-	float flServerTime = (float)pLocalEntity->GetTickBase() * Interfaces::Globals->interval_per_tick;
+	float flServerTime = (float)pLocalEntity->GetTickBase() * Interfaces::Globals->intervalPerTick;
 	float flNextPrimaryAttack = entwep->GetNextPrimaryAttack();
 
 	std::cout << flServerTime << " " << flNextPrimaryAttack << std::endl;
@@ -756,49 +756,7 @@ int CRageBot::HitScan(IClientEntity* pEntity)
 
 void CRageBot::PositionAdjustment(CUserCmd* pCmd)
 {
-	static ConVar* cvar_cl_interp = Interfaces::CVar->FindVar("cl_interp");
-	static ConVar* cvar_cl_updaterate = Interfaces::CVar->FindVar("cl_updaterate");
-	static ConVar* cvar_sv_maxupdaterate = Interfaces::CVar->FindVar("sv_maxupdaterate");
-	static ConVar* cvar_sv_minupdaterate = Interfaces::CVar->FindVar("sv_minupdaterate");
-	static ConVar* cvar_cl_interp_ratio = Interfaces::CVar->FindVar("cl_interp_ratio");
-
-	IClientEntity* pLocal = hackManager.pLocal();
-
-	if (!pLocal)
-		return;
-
-	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
-	if (!pWeapon)
-		return;
-
-	float cl_interp = cvar_cl_interp->GetFloat();
-	int cl_updaterate = cvar_cl_updaterate->GetInt();
-	int sv_maxupdaterate = cvar_sv_maxupdaterate->GetInt();
-	int sv_minupdaterate = cvar_sv_minupdaterate->GetInt();
-	int cl_interp_ratio = cvar_cl_interp_ratio->GetInt();
-
-	if (sv_maxupdaterate <= cl_updaterate)
-		cl_updaterate = sv_maxupdaterate;
-
-	if (sv_minupdaterate > cl_updaterate)
-		cl_updaterate = sv_minupdaterate;
-
-	float new_interp = (float)cl_interp_ratio / (float)cl_updaterate;
-
-	if (new_interp > cl_interp)
-		cl_interp = new_interp;
-
-	float flSimTime = pLocal->GetSimulationTime();
-	float flOldAnimTime = pLocal->GetAnimTime();
-
-	int iTargetTickDiff = (int)(0.5f + (flSimTime - flOldAnimTime) / Interfaces::Globals->interval_per_tick);
-
-	int result = (int)floorf(TIME_TO_TICKS(cl_interp)) + (int)floorf(TIME_TO_TICKS(pLocal->GetSimulationTime()));
-
-	if ((result - pCmd->tick_count) >= -50)
-	{
-		pCmd->tick_count = result;
-	}
+	
 }
 
 void CRageBot::DoNoRecoil(CUserCmd *pCmd)

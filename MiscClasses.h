@@ -10,6 +10,7 @@ Syn's AyyWare Framework 2015
 #include "Vector.h"
 #include "bspflags.h"
 #include "winwindef.h"
+#include<cstddef>
 
 // Entity List
 class IClientModeShared
@@ -424,26 +425,57 @@ public:
 	}
 };
 
+
+struct UserCmd {
+	enum {
+		IN_ATTACK = 1 << 0,
+		IN_JUMP = 1 << 1,
+		IN_DUCK = 1 << 2,
+		IN_FORWARD = 1 << 3,
+		IN_BACK = 1 << 4,
+		IN_USE = 1 << 5,
+		IN_MOVELEFT = 1 << 9,
+		IN_MOVERIGHT = 1 << 10,
+		IN_ATTACK2 = 1 << 11,
+		IN_SCORE = 1 << 16,
+		IN_BULLRUSH = 1 << 22
+	};
+	void* vmt;
+	int commandNumber;
+	int tickCount;
+	Vector viewangles;
+	Vector aimdirection;
+	float forwardmove;
+	float sidemove;
+	float upmove;
+	int buttons;
+	char impulse;
+	int weaponselect;
+	int weaponsubtype;
+	int randomSeed;
+	short mousedx;
+	short mousedy;
+	bool hasbeenpredicted;
+};
+
 class CGlobalVarsBase
 {
 public:
-	float    realtime;
-	int      framecount;
-	float    absoluteframetime;
-	float    absoluteframestarttimestddev;
-	float    curtime;
-	float    frametime;
-	int      maxClients;
-	int      tickcount;
-	float    interval_per_tick;
-	float    interpolation_amount;
-	int      simTicksThisFrame;
-	int      network_protocol;
-	void*    pSaveData;
-	bool     m_bClient;
-	int      nTimestampNetworkingBase;
-	int      nTimestampRandomizeWindow;
+	const float realtime;
+	const int framecount;
+	const float absoluteFrameTime;
+	const std::byte pad[4];
+	float currenttime;
+	float frametime;
+	const int maxClients;
+	const int tickCount;
+	const float intervalPerTick;
+
+	float serverTime(UserCmd* = nullptr) noexcept;
 };
+
+
+
 
 struct Ray_t
 {

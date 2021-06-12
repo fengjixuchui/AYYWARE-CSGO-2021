@@ -155,7 +155,7 @@ void ClanTag()
 	case 1:
 	{
 		static int motion = 0;
-		int ServerTime = (float)Interfaces::Globals->interval_per_tick * hackManager.pLocal()->GetTickBase() * 2.5;
+		int ServerTime = (float)Interfaces::Globals->intervalPerTick * hackManager.pLocal()->GetTickBase() * 2.5;
 
 		if (counter % 48 == 0)
 			motion++;
@@ -544,22 +544,20 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 	do{
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_RENDER_START)
 	{
-		static int tick1 = 0;
-		int tick2 = pLocal->GetTickBase();
-
-		//64tick 1/4second
-		if((tick2 - tick1) < 16){
-			break;
-		}
-
-		tick1 = tick2;
-
 			//to see fake-ange
 		if (pLocal->IsAlive())
 		{	
 			if (*(bool*)((DWORD)Interfaces::pInput + 0xAD))//A5->AD 
 				*(Vector*)((DWORD)pLocal + 0x31D8) = LastAngleAA;//31C8->31D8
 		}
+
+		static float time1 = 0;
+		float time2 = Interfaces::Globals->realtime;
+
+		if(time2 - time1 < 0.1f)
+			break;
+
+		time1 = time2;
 
 		int Key = Menu::Window.MiscTab.OtherThirdperson.GetKey();
 		bool KeyState = GUI.GetKeyState(Key);
@@ -591,7 +589,6 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 			}
 		}
 	}
-	//make sure dont into dead cycle
 	break;
 	}while(1);
 
