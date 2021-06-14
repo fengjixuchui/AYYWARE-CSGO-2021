@@ -9,6 +9,8 @@ Syn's AyyWare Framework 2015
 #include "offsets.h"
 #include "Vector.h"
 #include"Pad.h"
+#include"AnimState.h"
+#include<algorithm>
 
 #define IS_WIN32() true
 
@@ -26,6 +28,9 @@ class IClientThinkable;
 class IClientEntity;
 class CSWeaponInfo;
 struct WeaponInfo_t;
+
+inline float MaxDesyncAngle;
+
 
 class CHudTexture
 {
@@ -793,7 +798,33 @@ public:
 		return call_vfunc<Original>(Networkable, 2)(Networkable);
 	}
 	HANDLE GetWeaponHandle() {
-		//return *(HANDLE*)((DWORD)this + 0x00002EE8
+		//m_hActiveWeapon 
 		return *(HANDLE*)((DWORD)this + 0x00002EF8);
+	}
+
+	//class C_HL2MP_Player : public C_BaseHLPlayer
+	//CPlayerAnimState m_PlayerAnimState;
+	AnimState* getAnimstate() noexcept
+	{
+		return *(AnimState**)((DWORD)this + 0x3914);
+	}
+	
+
+	//always return -58.0f
+	float getMaxDesyncAngle() noexcept
+	{
+		const auto animState = getAnimstate();
+
+		if (!animState)
+			return 0.0f;
+
+		float yawModifier = (animState->stopToFullRunningFraction * -0.3f - 0.2f) * std::clamp(animState->footSpeed, 0.0f, 1.0f) + 1.0f;
+
+		if (animState->duckAmount > 0.0f)
+			yawModifier += (animState->duckAmount * std::clamp(animState->footSpeed2, 0.0f, 1.0f) * (0.5f - yawModifier));
+
+		MaxDesyncAngle = animState->velocitySubtractY* yawModifier;//can be annotated code
+
+		return animState->velocitySubtractY * yawModifier;
 	}
 };

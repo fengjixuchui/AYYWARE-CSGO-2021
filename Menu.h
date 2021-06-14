@@ -223,7 +223,6 @@ public:
 
 	CButton SaveButton;
 	CButton LoadButton;
-	CButton UnloadButton;
 };
 
 namespace Menu
@@ -231,6 +230,7 @@ namespace Menu
 	void SetupMenu();
 	void DoUIFrame();
 	void UICheatStatus();
+	void InitConfig();
 
 	extern AyyWareWindow Window;
 };

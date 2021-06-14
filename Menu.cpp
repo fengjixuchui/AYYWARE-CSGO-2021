@@ -8,28 +8,95 @@ Syn's AyyWare Framework 2015
 #include "Interfaces.h"
 #include "CRC32.h"
 #include "RenderManager.h"
+#include<windows.h>
+#include<ShlObj_core.h>
+#include<string>
+#include<memory>
+#include<future>
+#include<thread>
+
+#pragma comment(lib,"Comctl32.lib");
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 630
 
 AyyWareWindow Menu::Window;
 
-extern void LoadBestConfig();
+using std::string;
+using std::wstring;
 
+extern float MaxDesyncAngle;
+
+static wstring g_documentPath;
+static wstring g_configPath;
+
+
+
+wstring ChoostConfigPath();
+wstring string2wstring(string str);
+string wstring2string(wstring wstr);
+
+
+
+wstring string2wstring(string str)
+{
+	wstring result;
+	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
+	TCHAR* buffer = new TCHAR[len + 1]; 
+	MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), (LPWSTR)buffer, len);
+	buffer[len] = '\0';
+	result.append((WCHAR*)buffer);
+	delete[] buffer;
+	return result;
+}
+
+string wstring2string(wstring wstr)
+{
+	string result;  
+	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+	char* buffer = new char[len + 1];
+	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
+	buffer[len] = '\0';
+	result.append(buffer);
+	delete[] buffer;
+	return result;
+}
+
+//https://docs.microsoft.com/en-us/windows/win32/api/shlobj_core/nf-shlobj_core-shgetknownfolderpath
 void SaveCallbk()
 {
-	GUI.SaveWindowState(&Menu::Window, "ayyconfig.cfg");
+	GUI.SaveWindowState(&Menu::Window, wstring2string(g_configPath));
 }
 
 void LoadCallbk()
 {
-	GUI.LoadWindowState(&Menu::Window, "ayyconfig.cfg");
+	std::thread tempThread([](){
+		std::future<wstring> configPath = std::async(std::launch::async, ChoostConfigPath);
+		GUI.LoadWindowState(&Menu::Window, wstring2string(configPath.get().c_str()));
+		});
+	tempThread.detach();
 }
 
-void UnLoadCallbk()
+wstring ChoostConfigPath()
 {
-	DoUnload = true;
+	wstring configPath;
+	configPath.reserve(MAX_PATH);
+
+	OPENFILENAMEW ofn = { 0 };
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = NULL;
+	ofn.lpstrFilter = L"*.cfg\0"; 
+	ofn.lpstrInitialDir = g_configPath.c_str();
+	ofn.lpstrFile = (LPWSTR)configPath.c_str();
+	ofn.nMaxFile = MAX_PATH;
+	ofn.nFilterIndex = 0;
+	ofn.Flags = NULL;
+
+	GetOpenFileNameW(&ofn);
+
+	return configPath;
 }
+
 
 void KnifeApplyCallbk()
 {
@@ -64,16 +131,10 @@ void AyyWareWindow::Setup()
 	SaveButton.SetCallback(SaveCallbk);
 	SaveButton.SetPosition(16, Client.bottom - 42);
 
-	LoadButton.SetText("Load Config(default)");
+	LoadButton.SetText("Load Configuration");
 	LoadButton.SetCallback(LoadCallbk);
 	LoadButton.SetPosition(203, Client.bottom - 42);
 	
-	UnloadButton.SetText("Load best config for current weapon");
-	UnloadButton.SetCallback(LoadBestConfig);
-	UnloadButton.SetPosition(396, Client.bottom - 42);
-	UnloadButton.AddWidth(80);
-	
-
 	LegitBotTab.RegisterControl(&SaveButton);
 	RageBotTab.RegisterControl(&SaveButton);
 	VisualsTab.RegisterControl(&SaveButton);
@@ -86,11 +147,6 @@ void AyyWareWindow::Setup()
 	MiscTab.RegisterControl(&LoadButton);
 	//Playerlist.RegisterControl(&LoadButton);
 
-	LegitBotTab.RegisterControl(&UnloadButton);
-	RageBotTab.RegisterControl(&UnloadButton);
-	VisualsTab.RegisterControl(&UnloadButton);
-	MiscTab.RegisterControl(&UnloadButton);
-	//Playerlist.RegisterControl(&UnloadButton);
 
 #pragma endregion Setting up the settings buttons
 }
@@ -410,7 +466,7 @@ void CRageBotTab::Setup()
 	AntiAimGroup.PlaceLabledControl("Pitch", this, &AntiAimPitch);
 
 	AntiAimYaw.SetFileId("aa_y");
-	AntiAimYaw.AddItem("None");
+	AntiAimYaw.AddItem("Test");
 	AntiAimYaw.AddItem("Fake Edge");
 	AntiAimYaw.AddItem("Fake Sideways");
 	AntiAimYaw.AddItem("Fake Static");
@@ -870,6 +926,8 @@ void Menu::SetupMenu()
 
 	GUI.RegisterWindow(&Window);
 	GUI.BindWindow(VK_INSERT, &Window);
+
+	InitConfig();
 }
 
 void Menu::DoUIFrame()
@@ -905,5 +963,32 @@ void Menu::UICheatStatus()
 
 	Render::Text(100,height/3+150, Color(255, 255, 255, 220), Render::Fonts::Menu, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
 
+	//*********Developer test********************
 
+	IClientEntity* localPlayer = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
+
+	Render::Textf(300, height / 3 + 50, Color(255, 255, 255, 220), Render::Fonts::Menu,"LocalPlayer = 0x%x",localPlayer);
+
+	Render::Textf(300, height / 3 + 100, Color(255, 255, 255, 220), Render::Fonts::Menu, "MaxDesyncAngle = %f",MaxDesyncAngle);
+
+	if(localPlayer)
+	Render::Textf(300, height / 3 + 150,Color(255,255,255,220),Render::Fonts::Menu,"LocalPlayer->Velocity = %f",
+		localPlayer->GetVelocity().Length());
+
+	//*******************************************
+}
+
+void Menu::InitConfig()
+{
+	PWSTR pathToDocuments;
+	SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, (PWSTR*)&pathToDocuments);
+	if (!g_documentPath.size())
+		g_documentPath = pathToDocuments;
+
+	g_configPath = g_documentPath;
+
+	//ERROR_ALREADY_EXISTS  ERROR_PATH_NOT_FOUND
+	CreateDirectoryW(g_configPath.append(L"\\Alwayslose").c_str(), NULL);
+
+	g_configPath.append(L"\\Al_Default.cfg");
 }

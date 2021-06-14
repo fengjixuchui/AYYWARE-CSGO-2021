@@ -9,6 +9,9 @@ Syn's AyyWare Framework 2015
 class CRageBot : public CHack
 {
 public:
+	static float get_curtime(CUserCmd* ucmd);
+	static bool next_lby_update(CUserCmd* cmd);
+
 	void Init();
 	void Draw();
 	void Move(CUserCmd *pCmd, bool &bSendPacket);
@@ -31,6 +34,7 @@ private:
 	void DoAntiAim(CUserCmd *pCmd, bool&bSendPacket);
 	//bool EdgeAntiAim(IClientEntity* pLocalBaseEntity, CUserCmd* cmd, float flWall, float flCornor);
 	//bool bEdge;
+
 
 	// AimStep
 	bool IsAimStepping;
