@@ -68,7 +68,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>pasta</TargetName>
+    <TargetName>onetapv5</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimState.h" />
     <ClInclude Include="AntiAntiAim.h" />
     <ClInclude Include="Autowall.h" />
     <ClInclude Include="BaseClient.h" />

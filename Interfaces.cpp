@@ -107,7 +107,7 @@ void Interfaces::Initialise()
 304F0C2B          | 83C4 0C             | add esp,C                                             |
 304F0C2E          | A3 D0B8FE30         | mov dword ptr ds:[30FEB8D0],eax           	gpGlobals = pGlobals;            |
 	*/
-	Globals = **(CGlobalVarsBase * **)((*(DWORD * *)Interfaces::Client)[0] + 0x1F); //psilent fix
+	Globals = **(CGlobalVarsBase * **)((*(DWORD * *)Interfaces::Client)[11] + 10); 
 
 	//Client vtable
 	PDWORD pdwClientVMT = *(PDWORD*)Client;

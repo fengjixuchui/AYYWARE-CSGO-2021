@@ -5,8 +5,11 @@
 #include "MiscHacks.h"
 #include "Interfaces.h"
 #include "RenderManager.h"
+#include "resolver.h"
 
 #include <time.h>
+
+bool bIsSlowWalk = false;
 
 template<class T, class U>
 inline T clamp(T in, U low, U high)
@@ -98,8 +101,13 @@ void CMiscHacks::Move(CUserCmd *pCmd, bool &bSendPacket)
 		Fakelag(pCmd, bSendPacket);
 
 	//SlowWalk
-	if(Menu::Window.MiscTab.OtherEdgeJump.GetState())
+	int Key = Menu::Window.MiscTab.OtherSlowWalk.GetKey();
+	EnterKeyJudge(Key);
+	bIsSlowWalk = !bIsSlowWalk;
+	EndKeyJudge;
+	if (bIsSlowWalk)
 		SlowWalk(pCmd);
+
 
 }
 
@@ -410,3 +418,20 @@ void CMiscHacks::SlowWalk(CUserCmd* pCmd)
 
 }
 
+float CGlobalVarsBase::serverTime(UserCmd* cmd) noexcept{
+
+	static int tick;
+	static UserCmd* lastCmd;
+
+	auto localPlayer = hackManager.pLocal();
+
+	if (cmd) {
+		if (localPlayer && (!lastCmd || lastCmd->hasbeenpredicted))
+			tick = localPlayer->GetTickBase();
+		else
+			tick++;
+		lastCmd = cmd;
+	}
+	return tick * intervalPerTick;
+
+}

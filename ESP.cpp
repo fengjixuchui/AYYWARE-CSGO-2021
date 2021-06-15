@@ -524,7 +524,7 @@ void CEsp::DrawBombPlanted(IClientEntity* pEntity, ClientClass* cClass)
 	if (Render::WorldToScreen(vOrig, vScreen))
 	{
 		float flBlow = Bomb->GetC4BlowTime();
-		float TimeRemaining = flBlow - (Interfaces::Globals->interval_per_tick * hackManager.pLocal()->GetTickBase());
+		float TimeRemaining = flBlow - (Interfaces::Globals->intervalPerTick * hackManager.pLocal()->GetTickBase());
 		char buffer[64];
 		sprintf_s(buffer, "Bomb: %.1f", TimeRemaining);
 		Render::Text(vScreen.x, vScreen.y, Color(250, 42, 42, 255), Render::Fonts::ESP, buffer);

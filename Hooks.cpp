@@ -13,6 +13,7 @@
 #include <intrin.h>
 Vector LastAngleAA;
 
+
 // Funtion Typedefs
 typedef void(__thiscall* DrawModelEx_)(void*, void*, void*, const ModelRenderInfo_t&, matrix3x4*);
 typedef void(__thiscall* PaintTraverse_)(PVOID, unsigned int, bool, bool);
@@ -54,33 +55,9 @@ namespace Hooks
 	Utilities::Memory::VMTManager VMTRenderView;
 };
 
-/*// Initialise all our hooks
-void Hooks::Initialise()
-{
-// Panel hooks for drawing to the screen via surface functions
-VMTPanel.Initialise((DWORD*)Interfaces::Panels);
-oPaintTraverse = (PaintTraverse_)VMTPanel.HookMethod((DWORD)&PaintTraverse_Hooked, Offsets::VMT::Panel_PaintTraverse);
-//Utilities::Log("Paint Traverse Hooked");
 
-// No Visual Recoil
-VMTPrediction.Initialise((DWORD*)Interfaces::Prediction);
-VMTPrediction.HookMethod((DWORD)&Hooked_InPrediction, 14);
-//Utilities::Log("InPrediction Hooked");
+bool bIsThirdPerson = false;
 
-// Chams
-VMTModelRender.Initialise((DWORD*)Interfaces::ModelRender);
-oDrawModelExecute = (DrawModelEx_)VMTModelRender.HookMethod((DWORD)&Hooked_DrawModelExecute, Offsets::VMT::ModelRender_DrawModelExecute);
-//Utilities::Log("DrawModelExecute Hooked");
-
-// Setup ClientMode Hooks
-//VMTClientMode.Initialise((DWORD*)Interfaces::ClientMode);
-//VMTClientMode.HookMethod((DWORD)&CreateMoveClient_Hooked, 24);
-//Utilities::Log("ClientMode CreateMove Hooked");
-
-// Setup client hooks
-VMTClient.Initialise((DWORD*)Interfaces::Client);
-oCreateMove = (CreateMoveFn)VMTClient.HookMethod((DWORD)&hkCreateMove, 21);
-}*/
 
 //fix: No Need To Unload,dont call this function
 void Hooks::UndoHooks()
@@ -155,7 +132,7 @@ void ClanTag()
 	case 1:
 	{
 		static int motion = 0;
-		int ServerTime = (float)Interfaces::Globals->interval_per_tick * hackManager.pLocal()->GetTickBase() * 2.5;
+		int ServerTime = (float)Interfaces::Globals->intervalPerTick * hackManager.pLocal()->GetTickBase() * 2.5;
 
 		if (counter % 48 == 0)
 			motion++;
@@ -188,7 +165,9 @@ void ClanTag()
 	break;
 	case 2:
 	{
-		
+		//add 'u8'Prefix to support unicode characters
+		SetClanTag(u8"Å£±Æ666","alwayslose");
+		break;
 	}
 	break;
 	case 3:
@@ -318,10 +297,12 @@ void __fastcall PaintTraverse_Hooked(PVOID pPanels, int edx, unsigned int vguiPa
 	}
 	else if (FocusOverlayPanel == vguiPanel)
 	{
-		//Render::GradientV(8, 8, 160, 18, Color(0, 0, 0, 0), Color(7, 39, 17, 255));
 		Render::Text(10, 10, Color(255, 255, 255, 220), Render::Fonts::Menu, "CHEAT[ON]");
 		if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame())
 			Hacks::DrawHacks();
+
+		//Draw Cheat Status
+		Menu::UICheatStatus();
 
 		// Update and draw the menu
 		Menu::DoUIFrame();
@@ -541,14 +522,20 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_RENDER_START)
 	{
-		//to see fake-ange
+			//to see fake-ange
 		if (pLocal->IsAlive())
 		{	
 			if (*(bool*)((DWORD)Interfaces::pInput + 0xAD))//A5->AD 
 				*(Vector*)((DWORD)pLocal + 0x31D8) = LastAngleAA;//31C8->31D8
 		}
 
-		if ((Menu::Window.MiscTab.OtherThirdperson.GetState()) || Menu::Window.RageBotTab.AccuracyPositionAdjustment.GetState())
+		int Key = Menu::Window.MiscTab.OtherThirdperson.GetKey();
+
+		EnterKeyJudge(Key);
+		bIsThirdPerson = !bIsThirdPerson;
+		EndKeyJudge;
+
+		if ((KeyState && (Key >=0 )))
 		{
 			static bool rekt = false;
 			if (!rekt)
@@ -560,57 +547,14 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 			}
 		}
 
-		static bool rekt1 = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState() && pLocal->IsAlive())
+		if(pLocal->IsAlive())
 		{
-			if (!rekt1)
-			{
+			if(bIsThirdPerson)
 				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
-				rekt1 = true;
-			}
-		}
-		else if (!Menu::Window.MiscTab.OtherThirdperson.GetState())
-		{
-			rekt1 = false;
-		}
-
-		static bool rekt = false;
-		if (!Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive() == 0)
-		{
-			if (!rekt)
-			{
+			else
 				Interfaces::Engine->ClientCmd_Unrestricted("firstperson");
-				rekt = true;
-			}
-		}
-		else if (Menu::Window.MiscTab.OtherThirdperson.GetState() || pLocal->IsAlive())
-		{
-			rekt = false;
 		}
 
-		static bool meme = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState())
-		{
-			if (!meme)
-			{
-				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
-				meme = true;
-			}
-		}
-
-		static bool kek = false;
-		if (Menu::Window.MiscTab.OtherThirdperson.GetState() && pLocal->IsAlive())
-		{
-			if (!kek)
-			{
-				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
-				kek = true;
-			}
-		}
-		else if (pLocal->IsAlive() == 0)
-		{
-			kek = false;
-		}
 	}
 
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_NET_UPDATE_POSTDATAUPDATE_START)

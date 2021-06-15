@@ -182,7 +182,7 @@ public:
 	// Other Settings
 	CGroupBox OtherGroup;
 	CComboBox OtherAutoJump;
-	CCheckBox OtherEdgeJump;
+	CKeyBind OtherSlowWalk;
 	CComboBox OtherAutoStrafe;
 	CCheckBox OtherSafeMode;
 	CComboBox OtherChatSpam;
@@ -191,7 +191,7 @@ public:
 	CKeyBind  OtherAirStuck;
 	CKeyBind  OtherLagSwitch;
 	CCheckBox OtherSpectators;
-	CCheckBox OtherThirdperson;
+	CKeyBind OtherThirdperson;
 	//CCheckBox OtherAutoAccept;
 	CCheckBox OtherWalkbot;
 	CComboBox OtherClantag;
@@ -223,13 +223,14 @@ public:
 
 	CButton SaveButton;
 	CButton LoadButton;
-	CButton UnloadButton;
 };
 
 namespace Menu
 {
 	void SetupMenu();
 	void DoUIFrame();
+	void UICheatStatus();
+	void InitConfig();
 
 	extern AyyWareWindow Window;
 };
