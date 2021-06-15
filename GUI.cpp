@@ -54,7 +54,6 @@ void CGUI::Update()
 	std::copy(keys, keys + 255, oldKeys);
 	for (int x = 0; x < 255; x++)
 	{
-		//oldKeys[x] = oldKeys[x] & keys[x];
 		keys[x] = (GetAsyncKeyState(x));
 	}
 

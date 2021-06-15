@@ -13,6 +13,7 @@
 #include <intrin.h>
 Vector LastAngleAA;
 
+
 // Funtion Typedefs
 typedef void(__thiscall* DrawModelEx_)(void*, void*, void*, const ModelRenderInfo_t&, matrix3x4*);
 typedef void(__thiscall* PaintTraverse_)(PVOID, unsigned int, bool, bool);
@@ -519,7 +520,6 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 	DWORD eyeangles = NetVar.GetNetVar(0xBFEA4E7B);
 	IClientEntity *pLocal = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 
-	do{
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_RENDER_START)
 	{
 			//to see fake-ange
@@ -529,19 +529,13 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 				*(Vector*)((DWORD)pLocal + 0x31D8) = LastAngleAA;//31C8->31D8
 		}
 
-		static float time1 = 0;
-		float time2 = Interfaces::Globals->realtime;
-
-		if(time2 - time1 < 0.1f)
-			break;
-
-		time1 = time2;
-
 		int Key = Menu::Window.MiscTab.OtherThirdperson.GetKey();
-		bool KeyState = GUI.GetKeyState(Key);
-		
 
-		if ((KeyState && (Key >=0 )) || Menu::Window.RageBotTab.AccuracyPositionAdjustment.GetState())
+		EnterKeyJudge(Key);
+		bIsThirdPerson = !bIsThirdPerson;
+		EndKeyJudge;
+
+		if ((KeyState && (Key >=0 )))
 		{
 			static bool rekt = false;
 			if (!rekt)
@@ -553,22 +547,15 @@ void  __stdcall Hooked_FrameStageNotify(ClientFrameStage_t curStage)
 			}
 		}
 
-		if ((KeyState && (Key >= 0)) && pLocal->IsAlive())
+		if(pLocal->IsAlive())
 		{
-			if(!bIsThirdPerson)
-			{
+			if(bIsThirdPerson)
 				Interfaces::Engine->ClientCmd_Unrestricted("thirdperson");
-				bIsThirdPerson = true;
-			}
 			else
-			{
 				Interfaces::Engine->ClientCmd_Unrestricted("firstperson");
-				bIsThirdPerson = false;
-			}
 		}
+
 	}
-	break;
-	}while(1);
 
 	if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && curStage == FRAME_NET_UPDATE_POSTDATAUPDATE_START)
 	{

@@ -5,6 +5,7 @@
 #include "MiscHacks.h"
 #include "Interfaces.h"
 #include "RenderManager.h"
+#include "resolver.h"
 
 #include <time.h>
 
@@ -101,10 +102,9 @@ void CMiscHacks::Move(CUserCmd *pCmd, bool &bSendPacket)
 
 	//SlowWalk
 	int Key = Menu::Window.MiscTab.OtherSlowWalk.GetKey();
-	bool KeyState = GUI.GetKeyState(Key);
-	if(Key>=0 && KeyState){
-		bIsSlowWalk = !bIsSlowWalk;
-	}
+	EnterKeyJudge(Key);
+	bIsSlowWalk = !bIsSlowWalk;
+	EndKeyJudge;
 	if (bIsSlowWalk)
 		SlowWalk(pCmd);
 
