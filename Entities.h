@@ -600,7 +600,10 @@ public:
 	virtual bool					UsesFullFrameBufferTexture() = 0;
 	virtual void					GetShadowHandle() const = 0;
 	virtual void*					RenderHandle() = 0;
-	virtual const model_t*				GetModel() const = 0;
+	virtual const model_t*				GetModel(){
+		typedef const model_t*(__thiscall* oGetModel)(PVOID);
+		return call_vfunc<oGetModel>(this,8)(this);
+	}
 	virtual int						DrawModel(int flags) = 0;
 	virtual int						GetBody() = 0;
 	virtual void					ComputeFxBlend() = 0;

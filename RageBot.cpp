@@ -17,6 +17,7 @@ extern AyyWareWindow Menu::Window;
 
 Vector Globals::g_vFakeAngle;
 
+
 //c++17 for random float 
 //https://zh.cppreference.com/w/cpp/numeric/random
 std::random_device r;
@@ -409,20 +410,6 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 
 	}
 
-	// Auto Pistol
-	if (GameUtils::IsPistol(pWeapon) && Menu::Window.RageBotTab.AimbotAutoPistol.GetState())
-	{
-		if (pCmd->buttons & IN_ATTACK)
-		{
-			static bool WasFiring = false;
-			WasFiring = !WasFiring;
-			
-			if (WasFiring)
-			{
-				pCmd->buttons &= ~IN_ATTACK;
-			}
-		}
-	}
 }
 
 bool CRageBot::TargetMeetsRequirements(IClientEntity* pEntity)

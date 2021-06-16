@@ -315,6 +315,15 @@ void __fastcall PaintTraverse_Hooked(PVOID pPanels, int edx, unsigned int vguiPa
 //
 bool __stdcall Hooked_InPrediction()
 {
+	IClientEntity* oldEsi = nullptr;
+	float* oldEbx;
+
+	_asm mov oldEsi,esi
+	_asm mov oldEbx,ebx
+
+	if(oldEsi != hackManager.pLocal())
+		;//DebugBreak();
+
 	bool result;
 	//mov     eax, g_Prediction_vtable
 	//mov     eax, [eax+38h]  38h/4 = 14
@@ -322,19 +331,22 @@ bool __stdcall Hooked_InPrediction()
 	static DWORD *ecxVal = Interfaces::Prediction;
 	result = origFunc(ecxVal);
 
+
 	// If we are in the right place where the player view is calculated
 	// Calculate the change in the view and get rid of it
 	if (Menu::Window.VisualsTab.OtherNoVisualRecoil.GetState() && (DWORD)(_ReturnAddress()) == Offsets::Functions::dwCalcPlayerView)//C_BasePlayer::CalcPlayerView
 	{
-		IClientEntity* pLocalEntity = NULL;
+		IClientEntity* pLocalEntity = oldEsi;
 
-		float* m_LocalViewAngles = NULL;
+		float* m_LocalViewAngles = oldEbx;
 
-		__asm
-		{
-			MOV pLocalEntity, ESI	
-			MOV m_LocalViewAngles, EBX
-		}
+		/*
+47E7D31D 8B 0D 5C 6F EE 47    mov         ecx,dword ptr [_tls_index (47EE6F5Ch)]
+47E7D323 8B 34 88             mov         esi,dword ptr [eax+ecx*4]
+		
+		*/
+
+
 
 		//CNetworkVarEmbedded( CPlayerLocalData, m_Local );
 

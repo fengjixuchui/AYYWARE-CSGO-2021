@@ -15,7 +15,7 @@ Syn's AyyWare Framework 2015
 #include<future>
 #include<thread>
 
-#pragma comment(lib,"Comctl32.lib");
+#pragma comment(lib,"Comctl32.lib")
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 630
@@ -29,6 +29,8 @@ extern float MaxDesyncAngle;
 
 static wstring g_documentPath;
 static wstring g_configPath;
+
+
 
 
 
@@ -185,7 +187,7 @@ void CLegitBotTab::Setup()
 	AimbotGroup.PlaceLabledControl("Key Bind", this, &AimbotKeyBind);
 	
 	AimbotAutoPistol.SetFileId("aim_apistol");
-	AimbotGroup.PlaceLabledControl("Auto Pistol", this, &AimbotAutoPistol);
+	AimbotGroup.PlaceLabledControl("Dont Use", this, &AimbotAutoPistol);
 
 #pragma endregion Aimbot shit
 
@@ -971,9 +973,21 @@ void Menu::UICheatStatus()
 
 	Render::Textf(300, height / 3 + 100, Color(255, 255, 255, 220), Render::Fonts::Menu, "MaxDesyncAngle = %f",MaxDesyncAngle);
 
-	if(localPlayer)
+	if(localPlayer){
 	Render::Textf(300, height / 3 + 150,Color(255,255,255,220),Render::Fonts::Menu,"LocalPlayer->Velocity = %f",
 		localPlayer->GetVelocity().Length());
+
+	auto eyeAngle = localPlayer->GetEyeAngles();
+
+	Render::Textf(300, height / 3 + 200, Color(255, 255, 255, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesX = %f",
+		eyeAngle.x);
+
+	Render::Textf(300, height / 3 + 250, Color(255, 255, 255, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesY = %f",
+		eyeAngle.y);
+
+	Render::Textf(300, height / 3 + 300, Color(255, 255, 255, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesZ = %f",
+		eyeAngle.z);
+	}
 
 	//*******************************************
 }
