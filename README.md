@@ -1,8 +1,6 @@
-![image](https://github.com/helloobaby/alwayslose/blob/master/spinbot.gif)
+CSGO cheat
 
+https://www.youtube.com/watch?v=QDpyX3ebtBw
 
-Tips:
-	
-If you want to compile this project, make sure do not open the inline function extension due to the over-potimize.
-
-
+Complie tool: Visual Studio 2019
+c++ standard : c++17

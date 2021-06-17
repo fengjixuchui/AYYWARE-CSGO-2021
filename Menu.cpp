@@ -974,7 +974,7 @@ void Menu::UICheatStatus()
 #define Developer
 	//*********Developer test********************
 
-#undef Developer
+//#undef Developer
 #ifdef Developer
 
 
@@ -985,6 +985,7 @@ void Menu::UICheatStatus()
 	Render::Textf(300, height / 4 + 100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "MaxDesyncAngle = %f",MaxDesyncAngle);
 
 	if(localPlayer){
+		//fields belong to localPlayer
 	Render::Textf(300, height / 4 + 150, Color(148, 43, 226, 220),Render::Fonts::UiCheat,"LocalPlayer->Velocity = %f",
 		localPlayer->GetVelocity().Length());
 
@@ -1007,11 +1008,18 @@ void Menu::UICheatStatus()
 
 	//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
 
-	Render::Textf(300, height / 4 + 450, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "gpGlobals->currentime = %f",
+	Render::Textf(300, height / 4 + 400, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "gpGlobals->currentime = %f",
 		Interfaces::Globals->currenttime);
+	
+	//---------------------------------------------------------------------
+	if(currentWeapon)
+	{//fieds belong to localPlayer
 
-	Render::Textf(300, height / 4 + 500, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "currentWeapon->NextPrimaryAttack = %f",
+	Render::Textf(300, height / 4 + 450, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "currentWeapon->NextPrimaryAttack = %f",
 		currentWeapon->GetNextPrimaryAttack());
+	}
+	//---------------------------------------------------------------------
+	
 	}
 
 #endif
