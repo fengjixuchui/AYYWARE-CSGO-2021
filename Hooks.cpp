@@ -75,17 +75,14 @@ void Hooks::Initialise()
 	// Panel hooks for drawing to the screen via surface functions
 	VMTPanel.Initialise((DWORD*)Interfaces::Panels);
 	oPaintTraverse = (PaintTraverse_)VMTPanel.HookMethod((DWORD)&PaintTraverse_Hooked, Offsets::VMT::Panel_PaintTraverse);
-	//Utilities::Log("Paint Traverse Hooked");
 
 	// No Visual Recoi	l
 	VMTPrediction.Initialise((DWORD*)Interfaces::Prediction);
 	VMTPrediction.HookMethod((DWORD)&Hooked_InPrediction, 14);
-	//Utilities::Log("InPrediction Hooked");
 
 	// Chams
 	VMTModelRender.Initialise((DWORD*)Interfaces::ModelRender);
 	oDrawModelExecute = (DrawModelEx_)VMTModelRender.HookMethod((DWORD)&Hooked_DrawModelExecute, Offsets::VMT::ModelRender_DrawModelExecute);
-	//Utilities::Log("DrawModelExecute Hooked");
 
 	// Setup ClientMode Hooks
 	VMTClientMode.Initialise((DWORD*)Interfaces::ClientMode);
@@ -179,11 +176,6 @@ void ClanTag()
 
 bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime, CUserCmd* pCmd)
 {
-	static bool log_once = 0;
-	if (!log_once)
-		Utilities::Log("%s", __FUNCTION__);
-	log_once = 1;
-
 
 	if (!pCmd->command_number)
 		return true;
