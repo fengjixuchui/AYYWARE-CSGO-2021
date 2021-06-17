@@ -959,35 +959,53 @@ void Menu::UICheatStatus()
 	int width = 0;
 	int height = 0;
 	Interfaces::Engine->GetScreenSize(width,height);
-	Render::Textf(100, height/3+50, Color(255, 255, 255, 220), Render::Fonts::Menu, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
+	Render::Textf(100, height/3+50, Color(148, 43, 226, 220), Render::Fonts::Menu, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
 
-	Render::Textf(100, height / 3+100, Color(255, 255, 255, 220), Render::Fonts::Menu, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
+	Render::Textf(100, height / 3+100, Color(148, 43, 226, 220), Render::Fonts::Menu, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
 
-	Render::Text(100,height/3+150, Color(255, 255, 255, 220), Render::Fonts::Menu, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
+	Render::Text(100,height/3+150, Color(148, 43, 226, 220), Render::Fonts::Menu, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
 
+#define Developer
 	//*********Developer test********************
+
+#ifdef Developer
+
 
 	IClientEntity* localPlayer = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 
-	Render::Textf(300, height / 3 + 50, Color(255, 255, 255, 220), Render::Fonts::Menu,"LocalPlayer = 0x%x",localPlayer);
+	Render::Textf(300, height / 3 + 50, Color(148, 43, 226, 220), Render::Fonts::Menu,"LocalPlayer = 0x%x",localPlayer);
 
-	Render::Textf(300, height / 3 + 100, Color(255, 255, 255, 220), Render::Fonts::Menu, "MaxDesyncAngle = %f",MaxDesyncAngle);
+	Render::Textf(300, height / 3 + 100, Color(148, 43, 226, 220), Render::Fonts::Menu, "MaxDesyncAngle = %f",MaxDesyncAngle);
 
 	if(localPlayer){
-	Render::Textf(300, height / 3 + 150,Color(255,255,255,220),Render::Fonts::Menu,"LocalPlayer->Velocity = %f",
+	Render::Textf(300, height / 3 + 150, Color(148, 43, 226, 220),Render::Fonts::Menu,"LocalPlayer->Velocity = %f",
 		localPlayer->GetVelocity().Length());
 
 	auto eyeAngle = localPlayer->GetEyeAngles();
 
-	Render::Textf(300, height / 3 + 200, Color(255, 255, 255, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesX = %f",
+	CBaseCombatWeapon* currentWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(localPlayer->GetActiveWeaponHandle());
+	
+
+	Render::Textf(300, height / 4 + 200, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesX = %f",
 		eyeAngle.x);
 
-	Render::Textf(300, height / 3 + 250, Color(255, 255, 255, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesY = %f",
+	Render::Textf(300, height / 4 + 250, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesY = %f",
 		eyeAngle.y);
 
-	Render::Textf(300, height / 3 + 300, Color(255, 255, 255, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesZ = %f",
+	Render::Textf(300, height / 4 + 300, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesZ = %f",
 		eyeAngle.z);
+
+	Render::Textf(300, height / 4 + 350, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->m_nTickBase = %d",
+		localPlayer->GetTickBase());
+
+	Render::Textf(300, height / 4 + 400, Color(148, 43, 226, 220), Render::Fonts::Menu, "gpGloabls->currettime = %f",
+		Interfaces::Globals->currenttime);
+
+	Render::Textf(300, height / 4 + 450, Color(148, 43, 226, 220), Render::Fonts::Menu, "currentWeapon->NextPrimaryAttack = %f",
+		currentWeapon->GetNextPrimaryAttack());
 	}
+
+#endif
 
 	//*******************************************
 }

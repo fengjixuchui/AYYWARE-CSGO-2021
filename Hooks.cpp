@@ -84,6 +84,7 @@ void Hooks::Initialise()
 	VMTModelRender.Initialise((DWORD*)Interfaces::ModelRender);
 	oDrawModelExecute = (DrawModelEx_)VMTModelRender.HookMethod((DWORD)&Hooked_DrawModelExecute, Offsets::VMT::ModelRender_DrawModelExecute);
 
+//C:\Users\sbb\Desktop\source-sdk-2013-master\mp\src\game\client\clientmode_shared.h
 	// Setup ClientMode Hooks
 	VMTClientMode.Initialise((DWORD*)Interfaces::ClientMode);
 	VMTClientMode.HookMethod((DWORD)CreateMoveClient_Hooked, 24);
@@ -174,7 +175,9 @@ void ClanTag()
 	}
 }
 
-bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime, CUserCmd* pCmd)
+//https://www.unknowncheats.me/forum/1453101-post8.html
+//https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/game/client/clientmode_shared.cpp#L408
+bool __stdcall CreateMoveClient_Hooked(float frametime, CUserCmd* pCmd)
 {
 
 	if (!pCmd->command_number)
@@ -229,41 +232,12 @@ bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime,
 		pCmd->sidemove = DotProduct(forward * vForwardNorm, aimright) + DotProduct(right * vRightNorm, aimright) + DotProduct(up * vUpNorm, aimright);
 		pCmd->upmove = DotProduct(forward * vForwardNorm, aimup) + DotProduct(right * vRightNorm, aimup) + DotProduct(up * vUpNorm, aimup);
 
-		// Angle normalisation
-		if (Menu::Window.MiscTab.OtherSafeMode.GetState())
-		{
-			GameUtils::NormaliseViewAngle(pCmd->viewangles);
-
-			if (pCmd->viewangles.z != 0.0f)
-			{
-				pCmd->viewangles.z = 0.00;
-			}
-
-			if (pCmd->viewangles.x < -89 || pCmd->viewangles.x > 89 || pCmd->viewangles.y < -180 || pCmd->viewangles.y > 180)
-			{
-				Utilities::Log("Having to re-normalise!");
-				GameUtils::NormaliseViewAngle(pCmd->viewangles);
-				if (pCmd->viewangles.x < -89 || pCmd->viewangles.x > 89 || pCmd->viewangles.y < -180 || pCmd->viewangles.y > 180)
-				{
-					pCmd->viewangles = origView;
-					pCmd->sidemove = right;
-					pCmd->forwardmove = forward;
-				}
-			}
-		}
-
-		if (pCmd->viewangles.x > 90)
-		{
-			pCmd->forwardmove = -pCmd->forwardmove;
-		}
-
-		if (pCmd->viewangles.x < -90)
-		{
-			pCmd->forwardmove = -pCmd->forwardmove;
-		}
-
 		if (bSendPacket)
 			LastAngleAA = pCmd->viewangles;
+
+
+
+
 	}
 
 	return false;
