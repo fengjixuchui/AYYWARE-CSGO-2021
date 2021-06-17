@@ -17,6 +17,12 @@ Syn's AyyWare Framework 2015
 
 #pragma comment(lib,"Comctl32.lib")
 
+#define TICK_INTERVAL			(Interfaces::Globals->intervalPerTick)
+#define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
+#define TICKS_TO_TIME( t )		( TICK_INTERVAL *( t ) )
+#define ROUND_TO_TICKS( t )		( TICK_INTERVAL * TIME_TO_TICKS( t ) )
+#define TICK_NEVER_THINK		(-1)
+
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 630
 
@@ -959,26 +965,27 @@ void Menu::UICheatStatus()
 	int width = 0;
 	int height = 0;
 	Interfaces::Engine->GetScreenSize(width,height);
-	Render::Textf(100, height/3+50, Color(148, 43, 226, 220), Render::Fonts::Menu, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
+	Render::Textf(50, height/3+50, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
 
-	Render::Textf(100, height / 3+100, Color(148, 43, 226, 220), Render::Fonts::Menu, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
+	Render::Textf(50, height / 3+100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
 
-	Render::Text(100,height/3+150, Color(148, 43, 226, 220), Render::Fonts::Menu, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
+	Render::Text(50,height/3+150, Color(148, 43, 226, 220), Render::Fonts::UiCheat, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
 
 #define Developer
 	//*********Developer test********************
 
+#undef Developer
 #ifdef Developer
 
 
 	IClientEntity* localPlayer = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 
-	Render::Textf(300, height / 3 + 50, Color(148, 43, 226, 220), Render::Fonts::Menu,"LocalPlayer = 0x%x",localPlayer);
+	Render::Textf(300, height / 4 + 50, Color(148, 43, 226, 220), Render::Fonts::UiCheat,"LocalPlayer = 0x%x",localPlayer);
 
-	Render::Textf(300, height / 3 + 100, Color(148, 43, 226, 220), Render::Fonts::Menu, "MaxDesyncAngle = %f",MaxDesyncAngle);
+	Render::Textf(300, height / 4 + 100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "MaxDesyncAngle = %f",MaxDesyncAngle);
 
 	if(localPlayer){
-	Render::Textf(300, height / 3 + 150, Color(148, 43, 226, 220),Render::Fonts::Menu,"LocalPlayer->Velocity = %f",
+	Render::Textf(300, height / 4 + 150, Color(148, 43, 226, 220),Render::Fonts::UiCheat,"LocalPlayer->Velocity = %f",
 		localPlayer->GetVelocity().Length());
 
 	auto eyeAngle = localPlayer->GetEyeAngles();
@@ -986,22 +993,24 @@ void Menu::UICheatStatus()
 	CBaseCombatWeapon* currentWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(localPlayer->GetActiveWeaponHandle());
 	
 
-	Render::Textf(300, height / 4 + 200, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesX = %f",
+	Render::Textf(300, height / 4 + 200, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesX = %f",
 		eyeAngle.x);
 
-	Render::Textf(300, height / 4 + 250, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesY = %f",
+	Render::Textf(300, height / 4 + 250, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesY = %f",
 		eyeAngle.y);
 
-	Render::Textf(300, height / 4 + 300, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->ViewAnglesZ = %f",
+	Render::Textf(300, height / 4 + 300, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesZ = %f",
 		eyeAngle.z);
 
-	Render::Textf(300, height / 4 + 350, Color(148, 43, 226, 220), Render::Fonts::Menu, "LocalPlayer->m_nTickBase = %d",
+	Render::Textf(300, height / 4 + 350, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->m_nTickBase = %d",
 		localPlayer->GetTickBase());
 
-	Render::Textf(300, height / 4 + 400, Color(148, 43, 226, 220), Render::Fonts::Menu, "gpGloabls->currettime = %f",
+	//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
+
+	Render::Textf(300, height / 4 + 450, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "gpGlobals->currentime = %f",
 		Interfaces::Globals->currenttime);
 
-	Render::Textf(300, height / 4 + 450, Color(148, 43, 226, 220), Render::Fonts::Menu, "currentWeapon->NextPrimaryAttack = %f",
+	Render::Textf(300, height / 4 + 500, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "currentWeapon->NextPrimaryAttack = %f",
 		currentWeapon->GetNextPrimaryAttack());
 	}
 

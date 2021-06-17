@@ -19,6 +19,7 @@ namespace Render
 		DWORD MenuBold;
 		DWORD ESP;
 		DWORD MenuText;
+		DWORD UiCheat;
 	};
 };
 
@@ -49,6 +50,7 @@ void Render::Initialise()
 	Fonts::MenuBold = Interfaces::Surface->FontCreate();
 	Fonts::ESP = Interfaces::Surface->FontCreate();
 	Fonts::MenuText = Interfaces::Surface->FontCreate();
+	Fonts::UiCheat = Interfaces::Surface->FontCreate();
 
 	Interfaces::Surface->SetFontGlyphSet(Fonts::Menu, "DINPro-Regular", 14, 500, 0, 0, FONTFLAG_ANTIALIAS);
 	Interfaces::Surface->SetFontGlyphSet(Fonts::MenuBold, "DINPro-Regular", 14, 900, 0, 0, FONTFLAG_ANTIALIAS);
@@ -56,6 +58,8 @@ void Render::Initialise()
 	// Interfaces::Surface->SetFontGlyphSet(Fonts::MenuBold, "Visitor TT2 BRK", 14, 550, 0, 0, FONTFLAG_ANTIALIAS);
 	Interfaces::Surface->SetFontGlyphSet(Fonts::ESP, "Calibri", 14, 500, 0, 0, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW);
 	Interfaces::Surface->SetFontGlyphSet(Fonts::MenuText, "Calibri", 16, 500, 0, 0, FONTFLAG_ANTIALIAS);
+	Interfaces::Surface->SetFontGlyphSet(Fonts::UiCheat, "Calibri", 23, 500, 0, 0, FONTFLAG_ADDITIVE);
+
 
 	Utilities::Log("Render System Ready");
 }
