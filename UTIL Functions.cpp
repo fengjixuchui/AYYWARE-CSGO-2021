@@ -107,6 +107,7 @@ bool TraceToExit(Vector& end, trace_t& tr, Vector start, Vector vEnd, trace_t* t
 	return pUTIL_GetAchievementEventMask();
 }*/
 
+//C:\Users\sbb\Desktop\source-sdk-2013-master\mp\src\game\client\cdll_util.cpp
 void GameUtils::NormaliseViewAngle(Vector &angle)
 {
 	if (!Menu::Window.MiscTab.OtherSafeMode.GetState())
@@ -115,6 +116,7 @@ void GameUtils::NormaliseViewAngle(Vector &angle)
 	}
 	else
 	{
+		//Normalize angles to -180 to 180 range
 		while (angle.y <= -180) angle.y += 360;
 		while (angle.y > 180) angle.y -= 360;
 		while (angle.x <= -180) angle.x += 360;

@@ -232,6 +232,9 @@ bool __stdcall CreateMoveClient_Hooked(float frametime, CUserCmd* pCmd)
 		pCmd->sidemove = DotProduct(forward * vForwardNorm, aimright) + DotProduct(right * vRightNorm, aimright) + DotProduct(up * vUpNorm, aimright);
 		pCmd->upmove = DotProduct(forward * vForwardNorm, aimup) + DotProduct(right * vRightNorm, aimup) + DotProduct(up * vUpNorm, aimup);
 
+		//clamp angles
+		GameUtils::NormaliseViewAngle(pCmd->viewangles);
+
 		if (bSendPacket)
 			LastAngleAA = pCmd->viewangles;
 
