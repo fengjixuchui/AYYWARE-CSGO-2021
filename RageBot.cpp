@@ -8,7 +8,8 @@
 #include "UTIL Functions.h"
 #include "esp.h"
 #include <random>
-#define TICK_INTERVAL			( Interfaces::Globals->interval_per_tick )
+
+#define TICK_INTERVAL			( Interfaces::Globals->intervalPerTick )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 
 
@@ -394,8 +395,8 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 						pCmd->buttons |= IN_ATTACK;
 					}
 					else
-					{
 						return;
+					{
 					}
 				}
 				else if (Menu::Window.RageBotTab.AimbotAutoFire.GetState() && !(pCmd->buttons & IN_ATTACK))

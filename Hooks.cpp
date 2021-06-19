@@ -11,19 +11,27 @@
 #include "CRC32.h"
 #include "Resolver.h"
 #include <intrin.h>
+
 Vector LastAngleAA;
 
+namespace ClientStates{
 
+extern DWORD offset_m_nChokedCommands;
+extern DWORD offset_m_nLastOutgoingCommand;
+
+}
 // Funtion Typedefs
 typedef void(__thiscall* DrawModelEx_)(void*, void*, void*, const ModelRenderInfo_t&, matrix3x4*);
 typedef void(__thiscall* PaintTraverse_)(PVOID, unsigned int, bool, bool);
 typedef bool(__thiscall* InPrediction_)(PVOID);
 typedef void(__stdcall *FrameStageNotifyFn)(ClientFrameStage_t);
 typedef void(__thiscall* RenderViewFn)(void*, CViewSetup&, CViewSetup&, int, int);
+typedef bool (__fastcall* WriteUsercmdDeltaToBufferFn)(void* ecx, void*, int slot, bf_write* buf, int from, int to, bool isnewcommand);
 
 using OverrideViewFn = void(__fastcall*)(void*, void*, CViewSetup*);
 typedef float(__stdcall *oGetViewModelFOV)();
 
+typedef void (__stdcall *WriteUsercmdFn)(bf_write* buf, CInput::CUserCmd* to, CInput::CUserCmd* from);
 
 // Function Pointers to the originals
 PaintTraverse_ oPaintTraverse;
@@ -31,6 +39,8 @@ DrawModelEx_ oDrawModelExecute;
 FrameStageNotifyFn oFrameStageNotify;
 OverrideViewFn oOverrideView;
 RenderViewFn oRenderView;
+WriteUsercmdDeltaToBufferFn oWriteUsercmdDeltaToBuffer;
+
 
 // Hook function prototypes
 void __fastcall PaintTraverse_Hooked(PVOID pPanels, int edx, unsigned int vguiPanel, bool forceRepaint, bool allowForce);
@@ -58,7 +68,11 @@ namespace Hooks
 
 bool bIsThirdPerson = false;
 
+int Globals::m_nTickbaseShift;
 
+namespace Interfaces{
+extern uintptr_t gpClientState;
+}
 //fix: No Need To Unload,dont call this function
 void Hooks::UndoHooks()
 {
@@ -95,6 +109,7 @@ void Hooks::Initialise()
 	// Setup client hooks
 	VMTClient.Initialise((DWORD*)Interfaces::Client);
 	oFrameStageNotify = (FrameStageNotifyFn)VMTClient.HookMethod((DWORD)&Hooked_FrameStageNotify, 37);
+	oWriteUsercmdDeltaToBuffer = (WriteUsercmdDeltaToBufferFn)VMTClient.HookMethod((DWORD)&Hooked_WriteUsercmdDeltaToBuffer,24);
 
 
 
@@ -207,6 +222,23 @@ bool __stdcall CreateMoveClient_Hooked(float frametime, CUserCmd* pCmd)
 		if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && pLocal && pLocal->IsAlive())
 			Hacks::MoveHacks(pCmd, bSendPacket);
 
+		if(pCmd->buttons & IN_ATTACK){
+		if (Menu::Window.RageBotTab.DoubleTap.GetState())
+		{
+			static int lastDoubleTapInTickcount = 0;
+
+			int doubletapTickcountDelta = TIME_TO_TICKS(Interfaces::Globals->currenttime) - lastDoubleTapInTickcount;
+
+			if (doubletapTickcountDelta >= TIME_TO_TICKS(2.0f)) {
+
+				lastDoubleTapInTickcount = TIME_TO_TICKS(Interfaces::Globals->currenttime);
+				bSendPacket = true;
+				Globals::m_nTickbaseShift = 14;
+
+			}
+
+		}
+		}
 
 		//Movement Fix
 		//GameUtils::CL_FixMove(pCmd, origView);
@@ -686,3 +718,81 @@ void __fastcall Hooked_RenderView(void* ecx, void* edx, CViewSetup &setup, CView
 		CALL oRenderView
 	}
 } //hooked for no reason yay
+
+//https://www.unknowncheats.me/forum/counterstrike-global-offensive/418290-hooking-writeusercmddeltatobuffer.html
+
+//char __fastcall CInput__WriteUsercmdDeltaToBuffer(_DWORD *a1, int a2, int a3, int a4, int a5, int a6, int a7)
+bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
+	[[maybe_unused]] void*nouse,
+	int slot,
+	bf_write* buf,
+	int from, 
+	int to,
+	bool isnewcommand)
+{
+	//retn should not be zero
+	static auto retn = GameUtils::FindPattern1("engine.dll", "84 C0 74 04 B0 01 EB 02 32 C0 8B FE 46 3B F3 7E C9 84 C0 0F 84 ? ? ? ?");
+
+
+	if(retn != 0 && _ReturnAddress() != (void*)retn && oWriteUsercmdDeltaToBuffer)
+	return oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, isnewcommand);
+
+	if(Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame())
+	{
+		if(Globals::m_nTickbaseShift <= 0)
+		return oWriteUsercmdDeltaToBuffer(ecx, nouse, slot, buf, from, to, isnewcommand);
+		
+		if(from != -1)
+			return true;
+
+		int* pNumBackupCommands = (int*)((uintptr_t)buf - 0x30);
+		int* pNumNewCommands = (int*)((uintptr_t)buf - 0x2C);
+		int32_t new_commands = *pNumNewCommands;
+
+		//IDA CL_Move
+		//if ( *(gClientStates + 0x108) == 6 )
+		//nextcommandnr = *(gClientStates + 0x4D2C) + 1 + *(gClientStates + 0x4D30);
+		auto m_nChokedCommands = *(int*)(Interfaces::gpClientState + ClientStates::offset_m_nChokedCommands);
+		auto m_nLastOutgoingCommand = *(int*)(Interfaces::gpClientState + ClientStates::offset_m_nLastOutgoingCommand);
+
+		int32_t next_cmdnr = m_nLastOutgoingCommand + m_nChokedCommands + 1;
+		int32_t total_new_commands = min(Globals::m_nTickbaseShift, 17);
+		Globals::m_nTickbaseShift -= total_new_commands;
+
+		from = -1;
+		*pNumBackupCommands = total_new_commands;
+		*pNumBackupCommands = 0;
+
+		for (to = next_cmdnr - new_commands + 1; to <= next_cmdnr; to++) {
+			if (!oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, true))
+				return false;
+
+			from = to;
+		}
+
+		CInput::CUserCmd* last_realCmd = Interfaces::pInput->GetUserCmd(slot, from);
+		CInput::CUserCmd fromCmd;
+
+		if (last_realCmd)
+			fromCmd = *last_realCmd;
+
+		CInput::CUserCmd toCmd = fromCmd;
+		toCmd.command_number++;
+		toCmd.tick_count++;
+
+		static WriteUsercmdFn pWriteUsercmdFn = (WriteUsercmdFn)GameUtils::FindPattern1("client.dll",
+			"55 8B EC 83 E4 F8 51 53 56 8B D9");
+
+		for (int i = new_commands; i <= total_new_commands; i++) {
+			pWriteUsercmdFn(buf, &toCmd, &fromCmd);
+			fromCmd = toCmd;
+			toCmd.command_number++;
+			toCmd.tick_count++;
+		}
+
+		return true;
+	}
+	else
+	return oWriteUsercmdDeltaToBuffer(ecx, nouse, slot, buf, from, to, isnewcommand);
+
+}

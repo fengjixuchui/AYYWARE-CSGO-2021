@@ -291,20 +291,6 @@ void CLegitBot::DoTrigger(CUserCmd *pCmd)
 		}
 	}
 
-	// Auto Pistol
-	if (GameUtils::IsPistol(pWeapon) && Menu::Window.LegitBotTab.AimbotAutoPistol.GetState())
-	{
-		if (pCmd->buttons & IN_ATTACK)
-		{
-			static bool WasFiring = false;
-			WasFiring = !WasFiring;
-
-			if (WasFiring)
-			{
-				pCmd->buttons &= ~IN_ATTACK;
-			}
-		}
-	}
 }
 
 bool CLegitBot::TargetMeetsRequirements(IClientEntity* pEntity)

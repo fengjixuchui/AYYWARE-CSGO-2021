@@ -192,7 +192,7 @@ void CLegitBotTab::Setup()
 	AimbotKeyBind.SetFileId("aim_key");
 	AimbotGroup.PlaceLabledControl("Key Bind", this, &AimbotKeyBind);
 	
-	AimbotAutoPistol.SetFileId("aim_apistol");
+	AimbotAutoPistol.SetFileId("double_tap");
 	AimbotGroup.PlaceLabledControl("Dont Use", this, &AimbotAutoPistol);
 
 #pragma endregion Aimbot shit
@@ -431,8 +431,8 @@ void CRageBotTab::Setup()
 	AccuracyMinimumDamage.SetValue(1.f);
 	AccuracyGroup.PlaceLabledControl("Autowall Damage", this, &AccuracyMinimumDamage);
 
-	AccuracyAutoStop.SetFileId("acc_stop");
-	AccuracyGroup.PlaceLabledControl("Dont Use", this, &AccuracyAutoStop);
+	DoubleTap.SetFileId("double_tap");
+	AccuracyGroup.PlaceLabledControl("DoubleTap", this, &DoubleTap);
 
 	AccuracyAutoScope.SetFileId("acc_scope");
 	AccuracyGroup.PlaceLabledControl("Auto Scope", this, &AccuracyAutoScope);

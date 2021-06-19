@@ -201,6 +201,9 @@
     <ClInclude Include="AnimState.h">
       <Filter>Header Files\Hacks</Filter>
     </ClInclude>
+    <ClInclude Include="C_CSGameRules.h">
+      <Filter>Header Files\Hacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLMain.cpp">

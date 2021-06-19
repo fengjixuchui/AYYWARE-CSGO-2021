@@ -421,7 +421,7 @@ public:
 	CUserCmd* GetUserCmd(int slot, int seq)
 	{
 		typedef CUserCmd* (__thiscall* OriginalFn)(PVOID, int, int);
-		return call_vfunc<OriginalFn>(this, 9)(this, slot, seq);
+		return call_vfunc<OriginalFn>(this, 8)(this, slot, seq);
 	}
 };
 

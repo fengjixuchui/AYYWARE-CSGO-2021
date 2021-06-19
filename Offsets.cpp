@@ -7,6 +7,12 @@ Syn's AyyWare Framework 2015
 
 #define strenc( s ) ( s )
 
+namespace ClientStates
+{
+	DWORD offset_m_nChokedCommands;
+	DWORD offset_m_nLastOutgoingCommand;
+}
+
 void Offsets::Initialise()
 {
 	// Modules
@@ -123,6 +129,39 @@ void Offsets::Initialise()
 	//Utilities::Log("Functions::dwGetPlayerCompRank %x", Functions::dwGetPlayerCompRank);
 	//Utilities::Log("Functions::dwIsReady %x", Functions::dwIsReady);
 
+
+	ClientStates::offset_m_nChokedCommands = GameUtils::FindPattern1("engine.dll",
+		"41 03 C1 B9 ?? ?? ?? ?? 89 45 ?? A1 ?? ?? ?? ?? 6A ?? 8B 40 ?? FF D0 84 C0 75 ??");
+
+	if(ClientStates::offset_m_nChokedCommands)
+	{
+		using namespace ClientStates;
+		auto p = offset_m_nChokedCommands - 0xC;
+
+		offset_m_nChokedCommands = *(DWORD*)(p+2);
+		offset_m_nLastOutgoingCommand = *(DWORD*)(p+8);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	Utilities::Log("[INFO]Offsets/Indexes Up to Date");
 }
 
@@ -233,5 +272,6 @@ namespace Offsets
 		DWORD dwGetPlayerCompRank;
 		//DWORD dwIsReady;
 	};
+
 
 };

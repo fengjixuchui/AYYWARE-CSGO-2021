@@ -97,7 +97,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -140,6 +140,7 @@
     <ClInclude Include="CommonIncludes.h" />
     <ClInclude Include="Controls.h" />
     <ClInclude Include="CRC32.h" />
+    <ClInclude Include="C_CSGameRules.h" />
     <ClInclude Include="decals.h" />
     <ClInclude Include="DLLMain.h" />
     <ClInclude Include="Dumping.h" />

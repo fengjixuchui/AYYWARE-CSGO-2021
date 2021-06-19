@@ -43,7 +43,7 @@ public:
 	CCheckBox AccuracyRecoil;
 	CCheckBox AccuracyAutoWall;
 	CSlider	  AccuracyMinimumDamage;
-	CCheckBox AccuracyAutoStop;
+	CCheckBox DoubleTap;
 	CCheckBox AccuracyAutoCrouch;
 	CCheckBox AccuracyAutoScope;
 	CSlider   AccuracyHitchance;

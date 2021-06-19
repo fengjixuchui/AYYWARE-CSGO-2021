@@ -80,7 +80,7 @@ int InitialThread()
 	//--------------------------------------------------------------
 
 #ifdef AYY_DEBUG
-	Utilities::OpenConsole("AyyWare");
+	//Utilities::OpenConsole("AyyWare");
 #endif
 	// Intro banner with info
 	PrintMetaHeader();

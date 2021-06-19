@@ -49,4 +49,6 @@ namespace Globals
 	extern int TargetID;
 	extern Vector g_vFakeAngle;
 
+	extern int m_nTickbaseShift;
+
 }
