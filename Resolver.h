@@ -2,6 +2,7 @@
 
 #include "Interfaces.h"
 #include "Hacks.h"
+#include <algorithm>
 
 namespace R
 {
@@ -48,7 +49,27 @@ namespace Globals
 	extern bool change;
 	extern int TargetID;
 	extern Vector g_vFakeAngle;
+	
+	namespace Tick
+	{
+		inline int maxUsercmdProcessticks{0};
+		inline int ticksAllowedForProcessing{0};
+		inline int chokedPackets{ 0 };
+		inline int fakeLag{ 0 };
+		inline int tickshift{ 0 };
+		inline int tickbase{ 0 };
+		inline int commandNumber{ 0 };
+		inline int ticks{ 0 };
+		inline int lastShift{0};
 
-	extern int m_nTickbaseShift;
+		inline void recalculateTicks();
 
+
+		void shiftTicks(int ticks, CUserCmd* cmd, bool shiftAnyways);
+
+		bool canShift(int ticks, bool shiftAnyways);
+	
+		void run(CUserCmd* cmd, bool& sendPacket);
+	}
 }
+

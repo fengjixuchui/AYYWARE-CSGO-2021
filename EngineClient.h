@@ -8,6 +8,7 @@ Syn's AyyWare Framework 2015
 #include "ClientRecvProps.h"
 #include "offsets.h"
 #include "Vector.h"
+#include "NetworkChannel.h"
 
 // EngineClient
 //mp/src/public/cdll_int.h/IVEngineClient013
@@ -70,4 +71,11 @@ public:
 		typedef void(__thiscall * oClientCmdUnres)(PVOID, const char*, char);
 		return call_vfunc<oClientCmdUnres>(this, 114)(this, cmd, 0);
 	}
+
+	NetworkChannel* getNetworkChannel()
+	{
+		typedef NetworkChannel* (__thiscall * ogetNetworkChannel)(PVOID);
+		return call_vfunc<ogetNetworkChannel>(this,78)(this);
+	}
+
 };

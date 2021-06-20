@@ -204,6 +204,9 @@
     <ClInclude Include="C_CSGameRules.h">
       <Filter>Header Files\Hacks</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkChannel.h">
+      <Filter>Header Files\Source Engine\Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLMain.cpp">

@@ -149,6 +149,7 @@
     <ClInclude Include="ESP.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hacks.h" />
+    <ClInclude Include="NetworkChannel.h" />
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="winwindef.h" />

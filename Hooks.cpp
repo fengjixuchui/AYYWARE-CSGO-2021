@@ -12,8 +12,100 @@
 #include "Resolver.h"
 #include <intrin.h>
 #include "C_CSGameRules.h"
+#include "MiscClasses.h"
 
 Vector LastAngleAA;
+
+enum class WeaponId : short {
+	Deagle = 1,
+	Elite,
+	Fiveseven,
+	Glock,
+	Ak47 = 7,
+	Aug,
+	Awp,
+	Famas,
+	G3SG1,
+	GalilAr = 13,
+	M249,
+	M4A1 = 16,
+	Mac10,
+	P90 = 19,
+	ZoneRepulsor,
+	Mp5sd = 23,
+	Ump45,
+	Xm1014,
+	Bizon,
+	Mag7,
+	Negev,
+	Sawedoff,
+	Tec9,
+	Taser,
+	Hkp2000,
+	Mp7,
+	Mp9,
+	Nova,
+	P250,
+	Shield,
+	Scar20,
+	Sg553,
+	Ssg08,
+	GoldenKnife,
+	Knife,
+	Flashbang = 43,
+	HeGrenade,
+	SmokeGrenade,
+	Molotov,
+	Decoy,
+	IncGrenade,
+	C4,
+	Healthshot = 57,
+	KnifeT = 59,
+	M4a1_s,
+	Usp_s,
+	Cz75a = 63,
+	Revolver,
+	TaGrenade = 68,
+	Axe = 75,
+	Hammer,
+	Spanner = 78,
+	GhostKnife = 80,
+	Firebomb,
+	Diversion,
+	FragGrenade,
+	Snowball,
+	BumpMine,
+	Bayonet = 500,
+	ClassicKnife = 503,
+	Flip = 505,
+	Gut,
+	Karambit,
+	M9Bayonet,
+	Huntsman,
+	Falchion = 512,
+	Bowie = 514,
+	Butterfly,
+	Daggers,
+	Paracord,
+	SurvivalKnife,
+	Ursus = 519,
+	Navaja,
+	NomadKnife,
+	Stiletto = 522,
+	Talon,
+	SkeletonKnife = 525,
+	GloveStuddedBrokenfang = 4725,
+	GloveStuddedBloodhound = 5027,
+	GloveT,
+	GloveCT,
+	GloveSporty,
+	GloveSlick,
+	GloveLeatherWrap,
+	GloveMotorcycle,
+	GloveSpecialist,
+	GloveHydra
+};
+
 
 namespace ClientStates{
 
@@ -69,7 +161,6 @@ namespace Hooks
 
 bool bIsThirdPerson = false;
 
-int Globals::m_nTickbaseShift;
 
 namespace Interfaces{
 extern uintptr_t gpClientState;
@@ -228,24 +319,9 @@ bool __stdcall CreateMoveClient_Hooked(float frametime, CUserCmd* pCmd)
 		if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && pLocal && pLocal->IsAlive())
 			Hacks::MoveHacks(pCmd, bSendPacket);
 
-		if(pCmd->buttons & IN_ATTACK){
-		if (Menu::Window.RageBotTab.DoubleTap.GetState())
-		{
+		Globals::Tick::run(pCmd,bSendPacket);
 
-			static int lastDoubleTapInTickcount = 0;
-
-			int doubletapTickcountDelta = TIME_TO_TICKS(Interfaces::Globals->currenttime) - lastDoubleTapInTickcount;
-
-			if (doubletapTickcountDelta >= TIME_TO_TICKS(2.0f)) {
-
-				lastDoubleTapInTickcount = TIME_TO_TICKS(Interfaces::Globals->currenttime);
-				bSendPacket = true;
-				Globals::m_nTickbaseShift = 14;
-
-			}
-
-		}
-		}
+		//---------------------------------------------------------------------------------------------
 
 		//Movement Fix
 		//GameUtils::CL_FixMove(pCmd, origView);
@@ -746,7 +822,7 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 
 	if(Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame())
 	{
-		if(Globals::m_nTickbaseShift <= 0)
+		if(Globals::Tick::tickshift <= 0)
 		return oWriteUsercmdDeltaToBuffer(ecx, nouse, slot, buf, from, to, isnewcommand);
 		
 		if(from != -1)
@@ -763,8 +839,10 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 		auto m_nLastOutgoingCommand = *(int*)(Interfaces::gpClientState + ClientStates::offset_m_nLastOutgoingCommand);
 
 		int32_t next_cmdnr = m_nLastOutgoingCommand + m_nChokedCommands + 1;
-		int32_t total_new_commands = min(Globals::m_nTickbaseShift, 17);
-		Globals::m_nTickbaseShift -= total_new_commands;
+		//maxUsercmdProcessticks is 8 ticks on valve servers
+		int32_t total_new_commands = min(Globals::Tick::tickshift, Globals::Tick::maxUsercmdProcessticks);
+		//m_TickbaseShift = 0
+		Globals::Tick::tickshift = 0;
 
 		from = -1;
 		*pNumBackupCommands = total_new_commands;
@@ -785,7 +863,7 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 
 		CInput::CUserCmd toCmd = fromCmd;
 		toCmd.command_number++;
-		toCmd.tick_count++;
+		toCmd.tick_count += 200;
 
 		static WriteUsercmdFn pWriteUsercmdFn = (WriteUsercmdFn)GameUtils::FindPattern1("client.dll",
 			"55 8B EC 83 E4 F8 51 53 56 8B D9");
@@ -802,4 +880,113 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 	else
 	return oWriteUsercmdDeltaToBuffer(ecx, nouse, slot, buf, from, to, isnewcommand);
 
+}
+
+void Globals::Tick::shiftTicks(int ticks, CUserCmd* cmd, bool shiftAnyways = false)
+{
+	using namespace Globals::Tick;
+	auto localPlayer = hackManager.pLocal();
+	if (!localPlayer || !localPlayer->IsAlive())
+		return;
+
+	if (!canShift(ticks, shiftAnyways))
+		return;
+
+	commandNumber = cmd->command_number;
+	tickbase = localPlayer->GetTickBase();
+	tickshift = ticks;
+	lastShift = cmd->command_number;
+
+}
+
+void Globals::Tick::recalculateTicks()
+{
+	using namespace Globals::Tick;
+	chokedPackets = std::clamp(chokedPackets, 0, maxUsercmdProcessticks);
+	ticksAllowedForProcessing = maxUsercmdProcessticks - chokedPackets;
+	ticksAllowedForProcessing = std::clamp(ticksAllowedForProcessing, 0, maxUsercmdProcessticks);
+}
+
+bool Globals::Tick::canShift(int ticks, bool shiftAnyways = false)
+{
+	using namespace Globals::Tick;
+	
+	auto localPlayer = hackManager.pLocal();
+	CBaseCombatWeapon* activeWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(localPlayer->GetActiveWeaponHandle());
+	if (!localPlayer || !localPlayer->IsAlive() || ticks <= 0)
+		return false;
+
+	if (shiftAnyways)
+		return true;
+
+	if ((ticksAllowedForProcessing - ticks) < 0)
+		return false;
+
+	if (activeWeapon->GetNextPrimaryAttack() > Interfaces::Globals->realtime)
+		return false;
+
+	if (!activeWeapon || !activeWeapon->GetAmmoInClip())// 
+		return false;
+
+	if (GameUtils::IsBallisticWeapon(activeWeapon)
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Revolver
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Awp
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Ssg08
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Taser
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)(WeaponId::Revolver))
+		return false;
+
+	float shiftTime = (localPlayer->GetTickBase() - ticks) * Interfaces::Globals->intervalPerTick;
+
+	if (shiftTime < activeWeapon->GetNextPrimaryAttack())
+		return false;
+
+	return true;
+
+
+}
+
+void Globals::Tick::run(CUserCmd* cmd, bool& sendPacket)
+{
+	static void* oldNetwork = nullptr;
+	auto localPlayer = hackManager.pLocal();
+
+	if (cmd->buttons & IN_ATTACK) {
+		if (Menu::Window.RageBotTab.DoubleTap.GetState())
+		{
+			static void* oldNetwork = nullptr;
+
+			if (auto network = Interfaces::Engine->getNetworkChannel(); network && oldNetwork != network)
+			{
+				oldNetwork = network;
+				Globals::Tick::ticksAllowedForProcessing = Globals::Tick::maxUsercmdProcessticks;
+				Globals::Tick::chokedPackets = 0;
+			}
+
+			if (auto network = Interfaces::Engine->getNetworkChannel(); network && network->chokedPackets > Globals::Tick::chokedPackets)
+				Globals::Tick::chokedPackets = network->chokedPackets;
+
+
+			recalculateTicks();
+
+			ticks = cmd->tick_count;
+
+			if (!localPlayer || !localPlayer->IsAlive())
+				return;
+
+			//speed
+			auto ticksspedd = 12;
+
+			shiftTicks(ticksspedd, cmd);
+
+			if (tickshift <= 0 && ticksAllowedForProcessing < (maxUsercmdProcessticks - fakeLag) && (cmd->command_number - lastShift) >= maxUsercmdProcessticks)
+			{
+				sendPacket = true;
+				cmd->tick_count = INT_MAX; //recharge
+				chokedPackets--;
+			}
+
+			recalculateTicks();
+		}
+	}
 }
