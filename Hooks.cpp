@@ -11,6 +11,7 @@
 #include "CRC32.h"
 #include "Resolver.h"
 #include <intrin.h>
+#include "C_CSGameRules.h"
 
 Vector LastAngleAA;
 
@@ -73,6 +74,11 @@ int Globals::m_nTickbaseShift;
 namespace Interfaces{
 extern uintptr_t gpClientState;
 }
+
+extern CGameRules* g_pGameRules;
+
+
+
 //fix: No Need To Unload,dont call this function
 void Hooks::UndoHooks()
 {
@@ -225,6 +231,7 @@ bool __stdcall CreateMoveClient_Hooked(float frametime, CUserCmd* pCmd)
 		if(pCmd->buttons & IN_ATTACK){
 		if (Menu::Window.RageBotTab.DoubleTap.GetState())
 		{
+
 			static int lastDoubleTapInTickcount = 0;
 
 			int doubletapTickcountDelta = TIME_TO_TICKS(Interfaces::Globals->currenttime) - lastDoubleTapInTickcount;

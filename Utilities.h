@@ -89,6 +89,9 @@ namespace Utilities
 			DWORD	GetOriginalFunction(int Index);
 		};
 	};
+
+	uintptr_t GetMoveTarget(PVOID* addr);
+
 };
 
 template<typename T>
@@ -98,3 +101,4 @@ FORCEINLINE T GetMethod(const void* instance, size_t index)
 
 	return (T)vmt[index];
 }
+

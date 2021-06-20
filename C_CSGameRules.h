@@ -1,3 +1,4 @@
+#pragma once
 #include"NetVars.h"
 
 class CGameRules

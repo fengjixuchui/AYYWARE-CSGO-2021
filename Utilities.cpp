@@ -279,3 +279,13 @@ DWORD	Utilities::Memory::VMTManager::GetOriginalFunction(int Index)
 {
 	return OriginalTable[Index];
 }
+
+//only for x86 relative addressing 
+uintptr_t Utilities::GetMoveTarget(PVOID* addr)
+{
+	//.text:00351786 8B 0D EC 32 2C 05                             mov     ecx, gpGameRules
+	//get gpGameRules
+
+	return *(uintptr_t*)((char*)addr+2);
+
+}
