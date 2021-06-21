@@ -5,6 +5,9 @@ Syn's AyyWare Framework 2015
 #include "Interfaces.h"
 #include "Utilities.h"
 #include "C_CSGameRules.h"
+#include "ChatLog.h"
+
+
 
 //SDK Specific Definitions
 typedef void* (__cdecl* CreateInterface_t)(const char*, int*);
@@ -45,8 +48,11 @@ namespace Interfaces
 	CInput* pInput = nullptr;
 	IInputSystem* InputSystem = nullptr;
 	uintptr_t gpClientState = (uintptr_t)nullptr;
+	CBaseHudChat* gpChat = nullptr;
 
 };
+
+
 
 void Interfaces::Initialise()
 {
@@ -150,6 +156,8 @@ void Interfaces::Initialise()
 
 	gpClientState= **(uintptr_t**)(Utilities::Memory::FindPattern("engine.dll", (PBYTE)"\x8B\x3D\x00\x00\x00\x00\x8A\xF9", "xx????xx") + 2);
 
+	gpChat = ClientMode->GetChatElement();
+	
 	Utilities::Log("Interfaces Ready");
 }
 

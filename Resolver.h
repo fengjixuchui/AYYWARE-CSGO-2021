@@ -52,7 +52,7 @@ namespace Globals
 	
 	namespace Tick
 	{
-		inline int maxUsercmdProcessticks{0};
+		inline int maxUsercmdProcessticks{16};
 		inline int ticksAllowedForProcessing{0};
 		inline int chokedPackets{ 0 };
 		inline int fakeLag{ 0 };

@@ -34,6 +34,18 @@ template< typename Function > Function call_vfunc(PVOID Base, DWORD Index)
 	return (Function)((DWORD)dwAddress);
 }
 
+template < typename T >
+T GetVFunc(void* pTable, int Index)
+{
+	auto table = *reinterpret_cast<uint32_t**>(pTable);
+
+	if (IsBadCodePtr((FARPROC)table) != 0)
+		return 0;
+
+	return reinterpret_cast<T>(table[Index]);
+}
+
+
 // Netvar shit
 #define dwThis (DWORD)this
 #define NETVAR(type,offset) *(type*)(dwThis + offset)

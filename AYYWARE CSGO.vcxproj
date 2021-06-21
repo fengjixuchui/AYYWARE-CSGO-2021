@@ -97,7 +97,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -182,6 +182,7 @@
     <ClCompile Include="AntiAntiAim.cpp" />
     <ClCompile Include="Autowall.cpp" />
     <ClCompile Include="Chams.cpp" />
+    <ClCompile Include="ChatLog.h" />
     <ClCompile Include="Controls.cpp" />
     <ClCompile Include="CRC32.cpp" />
     <ClCompile Include="DLLMain.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="MathFunctions.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MetaInfo.cpp" />
+    <ClCompile Include="MiscClasses.cpp" />
     <ClCompile Include="MiscHacks.cpp" />
     <ClCompile Include="NetVarManager.cpp" />
     <ClCompile Include="NetVars.cpp" />

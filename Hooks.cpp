@@ -928,7 +928,7 @@ bool Globals::Tick::canShift(int ticks, bool shiftAnyways = false)
 	if (!activeWeapon || !activeWeapon->GetAmmoInClip())// 
 		return false;
 
-	if (GameUtils::IsBallisticWeapon(activeWeapon)
+	if (!GameUtils::IsBallisticWeapon(activeWeapon)
 		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Revolver
 		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Awp
 		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Ssg08
@@ -956,14 +956,19 @@ void Globals::Tick::run(CUserCmd* cmd, bool& sendPacket)
 		{
 			static void* oldNetwork = nullptr;
 
-			if (auto network = Interfaces::Engine->getNetworkChannel(); network && oldNetwork != network)
+			NetworkChannel* network = Interfaces::Engine->getNetworkChannel();
+
+			if(g_pGameRules->IsValveServer())
+				Globals::Tick::maxUsercmdProcessticks = 8;
+
+			if (network && oldNetwork != network)
 			{
 				oldNetwork = network;
 				Globals::Tick::ticksAllowedForProcessing = Globals::Tick::maxUsercmdProcessticks;
 				Globals::Tick::chokedPackets = 0;
 			}
 
-			if (auto network = Interfaces::Engine->getNetworkChannel(); network && network->chokedPackets > Globals::Tick::chokedPackets)
+			if (network && network->chokedPackets > Globals::Tick::chokedPackets)
 				Globals::Tick::chokedPackets = network->chokedPackets;
 
 
@@ -975,7 +980,7 @@ void Globals::Tick::run(CUserCmd* cmd, bool& sendPacket)
 				return;
 
 			//speed
-			auto ticksspedd = 12;
+			auto ticksspedd = 6;
 
 			shiftTicks(ticksspedd, cmd);
 
