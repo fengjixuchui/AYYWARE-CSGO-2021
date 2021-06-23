@@ -9,10 +9,23 @@ extern bool DoUnload;
 
 #include "Utilities.h"
 
+
+
+class bf_write
+{
+public:
+
+};
+
+
 namespace Hooks
 {
+	
+
 	void Initialise();
 	void UndoHooks();
+
+	bool __fastcall Hooked_WriteUsercmdDeltaToBuffer(void* ecx, void*, int slot, bf_write* buf, int from, int to, bool isnewcommand);
 
 	// VMT Managers
 	extern Utilities::Memory::VMTManager VMTPanel; // Hooking drawing functions

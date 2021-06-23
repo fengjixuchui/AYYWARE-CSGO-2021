@@ -1,19 +1,8 @@
-# Ayyware-2021
+CSGO cheat
 
-This project is based on Ayyware that for learn
+Complie tool: Visual Studio 2019
 
-All functions have tested on official server.
-
-![image](https://github.com/helloobaby/alwayslose/blob/master/spinbot.gif)
+Cpp standard : c++17
 
 
-Useage:ReflectiveInject this Dll
 
-if you don't have injector
-
-see https://github.com/helloobaby/AYYWARE-injector
-
-
-Give me a Star
-
-Thx!

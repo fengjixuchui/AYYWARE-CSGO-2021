@@ -4,10 +4,15 @@ Syn's AyyWare Framework 2015
 
 #include "Interfaces.h"
 #include "Utilities.h"
+#include "C_CSGameRules.h"
+#include "ChatLog.h"
+#include "GameEventListener.h"
+
 
 //SDK Specific Definitions
 typedef void* (__cdecl* CreateInterface_t)(const char*, int*);
 typedef void* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
+
 
 //Some globals for later
 CreateInterface_t EngineFactory = NULL; // These are used to store the individual
@@ -18,6 +23,35 @@ CreateInterface_t MatFactory = NULL;
 CreateInterface_t PhysFactory = NULL;
 CreateInterface_t StdFactory = NULL;
 CreateInterface_t InputSystemPointer = NULL;
+
+CGameRules* g_pGameRules;
+
+// Namespace to contain all the valve interfaces
+namespace Interfaces
+{
+	IBaseClientDLL* Client = nullptr;
+	IVEngineClient* Engine = nullptr;
+	IPanel* Panels = nullptr;
+	IClientEntityList* EntList = nullptr;
+	ISurface* Surface = nullptr;
+	IVDebugOverlay* DebugOverlay = nullptr;
+	IClientModeShared* ClientMode = nullptr;
+	CGlobalVarsBase* Globals = nullptr;
+	DWORD* Prediction = nullptr;
+	CMaterialSystem* MaterialSystem = nullptr;
+	CVRenderView* RenderView = nullptr;
+	IVModelRender* ModelRender = nullptr;
+	CModelInfo* ModelInfo = nullptr;
+	IEngineTrace* Trace = nullptr;
+	IPhysicsSurfaceProps* PhysProps = nullptr;
+	ICVar* CVar = nullptr;
+	CInput* pInput = nullptr;
+	IInputSystem* InputSystem = nullptr;
+	uintptr_t gpClientState = (uintptr_t)nullptr;
+	CBaseHudChat* gpChat = nullptr;
+};
+
+
 
 void Interfaces::Initialise()
 {
@@ -49,6 +83,10 @@ void Interfaces::Initialise()
 	char* EngineTraceInterfaceName = (char*)Utilities::Memory::FindTextPattern("engine.dll", "EngineTraceClient0");
 	char* PhysPropsInterfaces = (char*)Utilities::Memory::FindTextPattern("client.dll", "VPhysicsSurfaceProps0");
 	char* VEngineCvarName = (char*)Utilities::Memory::FindTextPattern("engine.dll", "VEngineCvar00");
+	//.rdata:0049F0A8	00000015	C	GAMEEVENTSMANAGER002
+	//.rdata:0049F5D0	00000015	C	GAMEEVENTSMANAGER001
+	//001 is old version,dont use
+	char* GameEventName = (char*)Utilities::Memory::FindTextPattern("engine.dll","GAMEEVENTSMANAGER002");
 
 	Utilities::Log("CHLClientInterfaceName Base %x", CHLClientInterfaceName);
 	Utilities::Log("VGUI2PanelsInterfaceName Base %x", VGUI2PanelsInterfaceName);
@@ -84,12 +122,18 @@ void Interfaces::Initialise()
 	PhysProps = (IPhysicsSurfaceProps*)PhysFactory(PhysPropsInterfaces, NULL);
 	CVar = (ICVar*)StdFactory(VEngineCvarName, NULL);
 	ClientMode = **(IClientModeShared***)((*(DWORD**)Interfaces::Client)[10] + 0x5);
+	GameEventManager = (IGameEventManager2*)EngineFactory(GameEventName,NULL);
+	
 
 	Utilities::Log("Interface Create Complete");
 
 	// Get ClientMode Pointer
 	DWORD p = Utilities::Memory::FindPattern("client.dll", (BYTE*)"\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\xA8\x01\x75\x1A\x83\xC8\x01\xA3\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x68\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x83\xC4\x04\xA1\x00\x00\x00\x00\xB9\x00\x00\x00\x00\x56", "xx????????xxxxxxxx????x????x????x????xxxx????x????x");
 	InputSystem = (IInputSystem*)InputSystemPointer("InputSystemVersion001", NULL);
+
+	g_pGameRules = (CGameRules*)(*(DWORD*)((char*)Utilities::Memory::FindPattern("client.dll",(BYTE*)"\x8B\x0D\x00\x00\x00\x00\xFF\xB3\x00\x00\x00\x00\xFF\x77\x08","xx????xx??xxxxx")+2));
+
+	Utilities::Log("g_pGameRules at %p", g_pGameRules);
 
 	// Search through the first entry of the Client VTable
 	// The initializer contains a pointer to the 'GlobalsVariables' Table
@@ -115,30 +159,12 @@ void Interfaces::Initialise()
 
 	Utilities::Log("pInput Base %x", pInput);
 
+	gpClientState= **(uintptr_t**)(Utilities::Memory::FindPattern("engine.dll", (PBYTE)"\x8B\x3D\x00\x00\x00\x00\x8A\xF9", "xx????xx") + 2);
+
+	gpChat = ClientMode->GetChatElement();
+	
+	CGameEventListener* PlayerHurtListener = new CGameEventListener(("player_hurt"), GameEvent_PlayerHurt, false);
 
 	Utilities::Log("Interfaces Ready");
 }
 
-// Namespace to contain all the valve interfaces
-namespace Interfaces
-{
-	IBaseClientDLL* Client = nullptr;
-	IVEngineClient* Engine = nullptr;
-	IPanel* Panels = nullptr;
-	IClientEntityList* EntList = nullptr;
-	ISurface* Surface = nullptr;
-	IVDebugOverlay* DebugOverlay = nullptr;
-	IClientModeShared* ClientMode = nullptr;
-	CGlobalVarsBase *Globals = nullptr;
-	DWORD *Prediction = nullptr;
-	CMaterialSystem* MaterialSystem = nullptr;
-	CVRenderView* RenderView = nullptr;
-	IVModelRender* ModelRender = nullptr;
-	CModelInfo* ModelInfo = nullptr;
-	IEngineTrace* Trace = nullptr;
-	IPhysicsSurfaceProps* PhysProps = nullptr;
-	ICVar *CVar = nullptr;
-	CInput* pInput = nullptr;
-	IInputSystem* InputSystem = nullptr;
-
-};

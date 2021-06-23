@@ -7,6 +7,7 @@ Syn's AyyWare Framework
 // Includes
 #include "CommonIncludes.h"
 #include <time.h>
+#include<string>
 
 
 
@@ -89,6 +90,9 @@ namespace Utilities
 			DWORD	GetOriginalFunction(int Index);
 		};
 	};
+
+	uintptr_t GetMoveTarget(PVOID* addr);
+
 };
 
 template<typename T>
@@ -97,4 +101,22 @@ FORCEINLINE T GetMethod(const void* instance, size_t index)
 	uintptr_t* vmt = *(uintptr_t**)instance;
 
 	return (T)vmt[index];
+}
+
+
+namespace shash
+{
+	//https://cp-algorithms.com/string/string-hashing.html
+	constexpr long long compute_hash(const std::string_view s)
+	{
+		const int p = 31;
+		const int m = 1e9 + 9;
+		long long hash_value = 0;
+		long long p_pow = 1;
+		for (char c : s) {
+			hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
+			p_pow = (p_pow * p) % m;
+		}
+		return hash_value;
+	}
 }

@@ -31,8 +31,20 @@ template< typename Function > Function call_vfunc(PVOID Base, DWORD Index)
 	PDWORD* VTablePointer = (PDWORD*)Base;
 	PDWORD VTableFunctionBase = *VTablePointer;
 	DWORD dwAddress = VTableFunctionBase[Index];
-	return (Function)(dwAddress);
+	return (Function)((DWORD)dwAddress);
 }
+
+template < typename T >
+T GetVFunc(void* pTable, int Index)
+{
+	auto table = *reinterpret_cast<uint32_t**>(pTable);
+
+	if (IsBadCodePtr((FARPROC)table) != 0)
+		return 0;
+
+	return reinterpret_cast<T>(table[Index]);
+}
+
 
 // Netvar shit
 #define dwThis (DWORD)this
@@ -117,12 +129,23 @@ GetModuleInformation
 class player_info_t
 {
 public:
-	char pad_0x0000[0x10]; //0x0000
-	char name[64]; //0x0010 
-	char pad_0x0050[0x40]; //0x0050
-	__int32 userID; //0x0090 
-	char guid[32]; //0x0094 
-	char pad_0x00B4[0x180]; //0x00B4
+	std::uint64_t version;
+	union {
+		std::uint64_t xuid;
+		struct {
+			std::uint32_t xuidLow;
+			std::uint32_t xuidHigh;
+		};
+	};
+	char name[128];
+	int userId;
+	char guid[33];
+	std::uint32_t friendsId;
+	char friendsName[128];
+	bool fakeplayer;
+	bool hltv;
+	int customfiles[4];
+	unsigned char filesDownloaded;
 };
 
 enum SolidType_t

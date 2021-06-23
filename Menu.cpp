@@ -15,7 +15,13 @@ Syn's AyyWare Framework 2015
 #include<future>
 #include<thread>
 
-#pragma comment(lib,"Comctl32.lib");
+#pragma comment(lib,"Comctl32.lib")
+
+#define TICK_INTERVAL			(Interfaces::Globals->intervalPerTick)
+#define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
+#define TICKS_TO_TIME( t )		( TICK_INTERVAL *( t ) )
+#define ROUND_TO_TICKS( t )		( TICK_INTERVAL * TIME_TO_TICKS( t ) )
+#define TICK_NEVER_THINK		(-1)
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 630
@@ -29,6 +35,8 @@ extern float MaxDesyncAngle;
 
 static wstring g_documentPath;
 static wstring g_configPath;
+
+
 
 
 
@@ -184,8 +192,8 @@ void CLegitBotTab::Setup()
 	AimbotKeyBind.SetFileId("aim_key");
 	AimbotGroup.PlaceLabledControl("Key Bind", this, &AimbotKeyBind);
 	
-	AimbotAutoPistol.SetFileId("aim_apistol");
-	AimbotGroup.PlaceLabledControl("Auto Pistol", this, &AimbotAutoPistol);
+	AimbotAutoPistol.SetFileId("double_tap");
+	AimbotGroup.PlaceLabledControl("Dont Use", this, &AimbotAutoPistol);
 
 #pragma endregion Aimbot shit
 
@@ -423,8 +431,8 @@ void CRageBotTab::Setup()
 	AccuracyMinimumDamage.SetValue(1.f);
 	AccuracyGroup.PlaceLabledControl("Autowall Damage", this, &AccuracyMinimumDamage);
 
-	AccuracyAutoStop.SetFileId("acc_stop");
-	AccuracyGroup.PlaceLabledControl("Dont Use", this, &AccuracyAutoStop);
+	DoubleTap.SetFileId("double_tap");
+	AccuracyGroup.PlaceLabledControl("DoubleTap", this, &DoubleTap);
 
 	AccuracyAutoScope.SetFileId("acc_scope");
 	AccuracyGroup.PlaceLabledControl("Auto Scope", this, &AccuracyAutoScope);
@@ -957,23 +965,69 @@ void Menu::UICheatStatus()
 	int width = 0;
 	int height = 0;
 	Interfaces::Engine->GetScreenSize(width,height);
-	Render::Textf(100, height/3+50, Color(255, 255, 255, 220), Render::Fonts::Menu, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
 
-	Render::Textf(100, height / 3+100, Color(255, 255, 255, 220), Render::Fonts::Menu, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
+	Render::Line(0,height/3-50,50,height/3+50, Color(148, 43, 226, 220));
+	Render::Line(50,height/3+50,200,height/3+50,Color(148,43,226,220));
+	Render::Text(50+25, height / 3+50, Color(148, 43, 226, 220) ,Render::Fonts::UiCheat,L"keyBinds");
 
-	Render::Text(100,height/3+150, Color(255, 255, 255, 220), Render::Fonts::Menu, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
+	Render::Textf(50, height/3+100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
 
+	Render::Textf(50, height / 3+150, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
+
+	Render::Text(50,height/3+200, Color(148, 43, 226, 220), Render::Fonts::UiCheat, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
+
+#define Developer
 	//*********Developer test********************
+
+//#undef Developer
+#ifdef Developer
+
 
 	IClientEntity* localPlayer = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 
-	Render::Textf(300, height / 3 + 50, Color(255, 255, 255, 220), Render::Fonts::Menu,"LocalPlayer = 0x%x",localPlayer);
+	Render::Textf(300, height / 4 + 50, Color(148, 43, 226, 220), Render::Fonts::UiCheat,"LocalPlayer = 0x%x",localPlayer);
 
-	Render::Textf(300, height / 3 + 100, Color(255, 255, 255, 220), Render::Fonts::Menu, "MaxDesyncAngle = %f",MaxDesyncAngle);
+	Render::Textf(300, height / 4 + 100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "MaxDesyncAngle = %f",MaxDesyncAngle);
 
-	if(localPlayer)
-	Render::Textf(300, height / 3 + 150,Color(255,255,255,220),Render::Fonts::Menu,"LocalPlayer->Velocity = %f",
+	if(localPlayer){
+		//fields belong to localPlayer
+	Render::Textf(300, height / 4 + 150, Color(148, 43, 226, 220),Render::Fonts::UiCheat,"LocalPlayer->Velocity = %f",
 		localPlayer->GetVelocity().Length());
+
+	auto eyeAngle = localPlayer->GetEyeAngles();
+
+	CBaseCombatWeapon* currentWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(localPlayer->GetActiveWeaponHandle());
+	
+
+	Render::Textf(300, height / 4 + 200, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesX = %f",
+		eyeAngle.x);
+
+	Render::Textf(300, height / 4 + 250, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesY = %f",
+		eyeAngle.y);
+
+	Render::Textf(300, height / 4 + 300, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesZ = %f",
+		eyeAngle.z);
+
+	Render::Textf(300, height / 4 + 350, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->m_nTickBase = %d",
+		localPlayer->GetTickBase());
+
+	//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
+
+	Render::Textf(300, height / 4 + 400, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "gpGlobals->currentime = %f",
+		Interfaces::Globals->currenttime);
+	
+	//---------------------------------------------------------------------
+	if(currentWeapon)
+	{//fieds belong to localPlayer
+
+	Render::Textf(300, height / 4 + 450, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "currentWeapon->NextPrimaryAttack = %f",
+		currentWeapon->GetNextPrimaryAttack());
+	}
+	//---------------------------------------------------------------------
+	
+	}
+
+#endif
 
 	//*******************************************
 }

@@ -8,7 +8,8 @@
 #include "UTIL Functions.h"
 #include "esp.h"
 #include <random>
-#define TICK_INTERVAL			( Interfaces::Globals->interval_per_tick )
+
+#define TICK_INTERVAL			( Interfaces::Globals->intervalPerTick )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 
 
@@ -16,6 +17,7 @@ extern CGUI GUI;
 extern AyyWareWindow Menu::Window;
 
 Vector Globals::g_vFakeAngle;
+
 
 //c++17 for random float 
 //https://zh.cppreference.com/w/cpp/numeric/random
@@ -393,8 +395,8 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 						pCmd->buttons |= IN_ATTACK;
 					}
 					else
-					{
 						return;
+					{
 					}
 				}
 				else if (Menu::Window.RageBotTab.AimbotAutoFire.GetState() && !(pCmd->buttons & IN_ATTACK))
@@ -409,20 +411,6 @@ void CRageBot::DoAimbot(CUserCmd *pCmd,bool &bSendPacket) // Creds to encore1337
 
 	}
 
-	// Auto Pistol
-	if (GameUtils::IsPistol(pWeapon) && Menu::Window.RageBotTab.AimbotAutoPistol.GetState())
-	{
-		if (pCmd->buttons & IN_ATTACK)
-		{
-			static bool WasFiring = false;
-			WasFiring = !WasFiring;
-			
-			if (WasFiring)
-			{
-				pCmd->buttons &= ~IN_ATTACK;
-			}
-		}
-	}
 }
 
 bool CRageBot::TargetMeetsRequirements(IClientEntity* pEntity)
@@ -1284,10 +1272,8 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 	}
 
 	void AntiAimTest(CUserCmd* pCmd, bool& bSendPacket){
-	
-		//read out your lby, ur fakeand desync away from it
 
-		pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle();
+		/*pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle();
 
 		if (CRageBot::next_lby_update(pCmd))
 		{
@@ -1298,7 +1284,10 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 		if (!bSendPacket) {
 			pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle()*2.f;
-		}
+		}*/
+
+		EdgeDetect(pCmd,bSendPacket);
+
 	}
 
 }

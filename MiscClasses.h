@@ -11,12 +11,37 @@ Syn's AyyWare Framework 2015
 #include "bspflags.h"
 #include "winwindef.h"
 #include<cstddef>
+#include"Entities.h"
+
+#define ChatLogStuff(str) gpChat->ChatPrintf(0,0,u8" \x10" str);
+
+//https://www.unknowncheats.me/wiki/Counter_Strike_Global_Offensive:Printing_text_to_chat
+class CBaseHudChat
+{
+public:
+
+	template<typename... T>
+	void ChatPrintf(int iPlayerIndex, int iFilter, const char* fmt, T... args)
+	{
+		return GetVFunc<void(__cdecl*)(void*, int, int, const char*, ...)>(this, 27)(this, iPlayerIndex, iFilter, fmt, args...);
+	};
+
+	//dont work well
+	template<typename... T>
+	void ChatPrintfW(int iPlayerIndex, int iFilter, const wchar_t* fmt, T... args)
+	{
+		return GetVFunc<void(__cdecl*)(void*, int, int, const wchar_t*, ...)>(this, 28)(this, iPlayerIndex, iFilter, fmt, args...);
+	};
+
+};
 
 // Entity List
 class IClientModeShared
 {
 public:
+	CBaseHudChat* GetChatElement();
 };
+
 //CClientEntityList
 class IClientEntityList
 {
@@ -54,6 +79,7 @@ public:
 						call_vfunc<OriginalFn>(this,8);
 	
 	}
+
 };
 
 struct CViewSetup
@@ -421,7 +447,7 @@ public:
 	CUserCmd* GetUserCmd(int slot, int seq)
 	{
 		typedef CUserCmd* (__thiscall* OriginalFn)(PVOID, int, int);
-		return call_vfunc<OriginalFn>(this, 9)(this, slot, seq);
+		return call_vfunc<OriginalFn>(this, 8)(this, slot, seq);
 	}
 };
 
@@ -1221,3 +1247,4 @@ inline int IInputSystem::ButtonCodeToVirtualKey(ButtonCode_t code)
 	typedef int(__thiscall * OriginalFn)(void*, ButtonCode_t);
 	return call_vfunc<OriginalFn>(this, 45)(this, code);
 }
+

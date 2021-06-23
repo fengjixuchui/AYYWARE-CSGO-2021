@@ -4,6 +4,8 @@
 #include "Interfaces.h"
 #include "RenderManager.h"
 
+#include<Windows.h>
+
 void CEsp::Init()
 {
 	BombCarrier = nullptr;
@@ -33,7 +35,7 @@ void CEsp::Draw()
 	}
 
 	// Loop through all active entitys
-	for (int i = 0; i < Interfaces::EntList->GetHighestEntityIndex(); i++)
+	for (int i = 0; i < Interfaces::Engine->GetMaxClients(); i++)
 	{
 		// Get the entity
 		IClientEntity *pEntity = Interfaces::EntList->GetClientEntity(i);
@@ -102,7 +104,7 @@ void CEsp::SpecList()
 	int ayy = 0;
 
 	// Loop through all active entitys
-	for (int i = 0; i < Interfaces::EntList->GetHighestEntityIndex(); i++)
+	for (int i = 0; i < Interfaces::Engine->GetMaxClients(); i++)
 	{
 		// Get the entity
 		IClientEntity *pEntity = Interfaces::EntList->GetClientEntity(i);
@@ -142,13 +144,14 @@ void CEsp::SpecList()
 //  Yeah m8
 void CEsp::DrawPlayer(IClientEntity* pEntity, player_info_t pinfo)
 {
-
-
 	ESPBox Box;
 	Color Color;
 
 	// Show own team false? well gtfo teammate lol
 	if (Menu::Window.VisualsTab.FiltersEnemiesOnly.GetState() && (pEntity->GetTeamNum() == hackManager.pLocal()->GetTeamNum()))
+		return;
+
+	if(pEntity->GetHealth() < 0 || pEntity->GetHealth() > 100)
 		return;
 
 	if (GetBox(pEntity, Box))
@@ -362,10 +365,6 @@ void CEsp::DrawName(player_info_t pinfo, CEsp::ESPBox size)
 // Draw a health bar. For Tf2 when a bar is bigger than max health a second bar is displayed
 void CEsp::DrawHealth(IClientEntity* pEntity, CEsp::ESPBox size)
 {
-	static bool log_once = 0;
-	if (!log_once)
-		Utilities::Log("%s", __FUNCTION__);
-	log_once = 1;
 
 	ESPBox HealthBar = size;
 	HealthBar.y += (HealthBar.h + 6);
@@ -493,11 +492,6 @@ void CEsp::DrawDrop(IClientEntity* pEntity, ClientClass* cClass)
 // Draws a chicken
 void CEsp::DrawChicken(IClientEntity* pEntity, ClientClass* cClass)
 {
-	static bool log_once = 0;
-	if (!log_once)
-		Utilities::Log("%s", __FUNCTION__);
-	log_once = 1;
-
 	ESPBox Box;
 
 	if (GetBox(pEntity, Box))

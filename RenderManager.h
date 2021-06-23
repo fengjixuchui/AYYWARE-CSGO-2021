@@ -39,6 +39,7 @@ namespace Render
 		extern DWORD MenuBold;
 		extern DWORD ESP;
 		extern DWORD MenuText;
+		extern DWORD UiCheat;
 	};
 
 	void Text(int x, int y, Color color, DWORD font, const char* text);

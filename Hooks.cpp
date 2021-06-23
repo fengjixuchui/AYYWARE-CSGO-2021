@@ -11,19 +11,121 @@
 #include "CRC32.h"
 #include "Resolver.h"
 #include <intrin.h>
+#include "C_CSGameRules.h"
+#include "MiscClasses.h"
+#include "ChatLog.h"
+
 Vector LastAngleAA;
 
+enum class WeaponId : short {
+	Deagle = 1,
+	Elite,
+	Fiveseven,
+	Glock,
+	Ak47 = 7,
+	Aug,
+	Awp,
+	Famas,
+	G3SG1,
+	GalilAr = 13,
+	M249,
+	M4A1 = 16,
+	Mac10,
+	P90 = 19,
+	ZoneRepulsor,
+	Mp5sd = 23,
+	Ump45,
+	Xm1014,
+	Bizon,
+	Mag7,
+	Negev,
+	Sawedoff,
+	Tec9,
+	Taser,
+	Hkp2000,
+	Mp7,
+	Mp9,
+	Nova,
+	P250,
+	Shield,
+	Scar20,
+	Sg553,
+	Ssg08,
+	GoldenKnife,
+	Knife,
+	Flashbang = 43,
+	HeGrenade,
+	SmokeGrenade,
+	Molotov,
+	Decoy,
+	IncGrenade,
+	C4,
+	Healthshot = 57,
+	KnifeT = 59,
+	M4a1_s,
+	Usp_s,
+	Cz75a = 63,
+	Revolver,
+	TaGrenade = 68,
+	Axe = 75,
+	Hammer,
+	Spanner = 78,
+	GhostKnife = 80,
+	Firebomb,
+	Diversion,
+	FragGrenade,
+	Snowball,
+	BumpMine,
+	Bayonet = 500,
+	ClassicKnife = 503,
+	Flip = 505,
+	Gut,
+	Karambit,
+	M9Bayonet,
+	Huntsman,
+	Falchion = 512,
+	Bowie = 514,
+	Butterfly,
+	Daggers,
+	Paracord,
+	SurvivalKnife,
+	Ursus = 519,
+	Navaja,
+	NomadKnife,
+	Stiletto = 522,
+	Talon,
+	SkeletonKnife = 525,
+	GloveStuddedBrokenfang = 4725,
+	GloveStuddedBloodhound = 5027,
+	GloveT,
+	GloveCT,
+	GloveSporty,
+	GloveSlick,
+	GloveLeatherWrap,
+	GloveMotorcycle,
+	GloveSpecialist,
+	GloveHydra
+};
 
+
+namespace ClientStates{
+
+extern DWORD offset_m_nChokedCommands;
+extern DWORD offset_m_nLastOutgoingCommand;
+
+}
 // Funtion Typedefs
 typedef void(__thiscall* DrawModelEx_)(void*, void*, void*, const ModelRenderInfo_t&, matrix3x4*);
 typedef void(__thiscall* PaintTraverse_)(PVOID, unsigned int, bool, bool);
 typedef bool(__thiscall* InPrediction_)(PVOID);
 typedef void(__stdcall *FrameStageNotifyFn)(ClientFrameStage_t);
 typedef void(__thiscall* RenderViewFn)(void*, CViewSetup&, CViewSetup&, int, int);
+typedef bool (__fastcall* WriteUsercmdDeltaToBufferFn)(void* ecx, void*, int slot, bf_write* buf, int from, int to, bool isnewcommand);
 
 using OverrideViewFn = void(__fastcall*)(void*, void*, CViewSetup*);
 typedef float(__stdcall *oGetViewModelFOV)();
 
+typedef void (__stdcall *WriteUsercmdFn)(bf_write* buf, CInput::CUserCmd* to, CInput::CUserCmd* from);
 
 // Function Pointers to the originals
 PaintTraverse_ oPaintTraverse;
@@ -31,6 +133,8 @@ DrawModelEx_ oDrawModelExecute;
 FrameStageNotifyFn oFrameStageNotify;
 OverrideViewFn oOverrideView;
 RenderViewFn oRenderView;
+WriteUsercmdDeltaToBufferFn oWriteUsercmdDeltaToBuffer;
+
 
 // Hook function prototypes
 void __fastcall PaintTraverse_Hooked(PVOID pPanels, int edx, unsigned int vguiPanel, bool forceRepaint, bool allowForce);
@@ -59,6 +163,14 @@ namespace Hooks
 bool bIsThirdPerson = false;
 
 
+namespace Interfaces{
+extern uintptr_t gpClientState;
+}
+
+extern CGameRules* g_pGameRules;
+
+
+
 //fix: No Need To Unload,dont call this function
 void Hooks::UndoHooks()
 {
@@ -75,18 +187,16 @@ void Hooks::Initialise()
 	// Panel hooks for drawing to the screen via surface functions
 	VMTPanel.Initialise((DWORD*)Interfaces::Panels);
 	oPaintTraverse = (PaintTraverse_)VMTPanel.HookMethod((DWORD)&PaintTraverse_Hooked, Offsets::VMT::Panel_PaintTraverse);
-	//Utilities::Log("Paint Traverse Hooked");
 
 	// No Visual Recoi	l
 	VMTPrediction.Initialise((DWORD*)Interfaces::Prediction);
 	VMTPrediction.HookMethod((DWORD)&Hooked_InPrediction, 14);
-	//Utilities::Log("InPrediction Hooked");
 
 	// Chams
 	VMTModelRender.Initialise((DWORD*)Interfaces::ModelRender);
 	oDrawModelExecute = (DrawModelEx_)VMTModelRender.HookMethod((DWORD)&Hooked_DrawModelExecute, Offsets::VMT::ModelRender_DrawModelExecute);
-	//Utilities::Log("DrawModelExecute Hooked");
 
+//C:\Users\sbb\Desktop\source-sdk-2013-master\mp\src\game\client\clientmode_shared.h
 	// Setup ClientMode Hooks
 	VMTClientMode.Initialise((DWORD*)Interfaces::ClientMode);
 	VMTClientMode.HookMethod((DWORD)CreateMoveClient_Hooked, 24);
@@ -97,6 +207,7 @@ void Hooks::Initialise()
 	// Setup client hooks
 	VMTClient.Initialise((DWORD*)Interfaces::Client);
 	oFrameStageNotify = (FrameStageNotifyFn)VMTClient.HookMethod((DWORD)&Hooked_FrameStageNotify, 37);
+	oWriteUsercmdDeltaToBuffer = (WriteUsercmdDeltaToBufferFn)VMTClient.HookMethod((DWORD)&Hooked_WriteUsercmdDeltaToBuffer,24);
 
 
 
@@ -177,13 +288,10 @@ void ClanTag()
 	}
 }
 
-bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime, CUserCmd* pCmd)
+//https://www.unknowncheats.me/forum/1453101-post8.html
+//https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/game/client/clientmode_shared.cpp#L408
+bool __stdcall CreateMoveClient_Hooked(float frametime, CUserCmd* pCmd)
 {
-	static bool log_once = 0;
-	if (!log_once)
-		Utilities::Log("%s", __FUNCTION__);
-	log_once = 1;
-
 
 	if (!pCmd->command_number)
 		return true;
@@ -212,6 +320,9 @@ bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime,
 		if (Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame() && pLocal && pLocal->IsAlive())
 			Hacks::MoveHacks(pCmd, bSendPacket);
 
+		Globals::Tick::run(pCmd,bSendPacket);
+
+		//---------------------------------------------------------------------------------------------
 
 		//Movement Fix
 		//GameUtils::CL_FixMove(pCmd, origView);
@@ -237,41 +348,15 @@ bool __stdcall CreateMoveClient_Hooked(/*void* self, int edx,*/ float frametime,
 		pCmd->sidemove = DotProduct(forward * vForwardNorm, aimright) + DotProduct(right * vRightNorm, aimright) + DotProduct(up * vUpNorm, aimright);
 		pCmd->upmove = DotProduct(forward * vForwardNorm, aimup) + DotProduct(right * vRightNorm, aimup) + DotProduct(up * vUpNorm, aimup);
 
-		// Angle normalisation
-		if (Menu::Window.MiscTab.OtherSafeMode.GetState())
-		{
-			GameUtils::NormaliseViewAngle(pCmd->viewangles);
-
-			if (pCmd->viewangles.z != 0.0f)
-			{
-				pCmd->viewangles.z = 0.00;
-			}
-
-			if (pCmd->viewangles.x < -89 || pCmd->viewangles.x > 89 || pCmd->viewangles.y < -180 || pCmd->viewangles.y > 180)
-			{
-				Utilities::Log("Having to re-normalise!");
-				GameUtils::NormaliseViewAngle(pCmd->viewangles);
-				if (pCmd->viewangles.x < -89 || pCmd->viewangles.x > 89 || pCmd->viewangles.y < -180 || pCmd->viewangles.y > 180)
-				{
-					pCmd->viewangles = origView;
-					pCmd->sidemove = right;
-					pCmd->forwardmove = forward;
-				}
-			}
-		}
-
-		if (pCmd->viewangles.x > 90)
-		{
-			pCmd->forwardmove = -pCmd->forwardmove;
-		}
-
-		if (pCmd->viewangles.x < -90)
-		{
-			pCmd->forwardmove = -pCmd->forwardmove;
-		}
+		//clamp angles
+		GameUtils::NormaliseViewAngle(pCmd->viewangles);
 
 		if (bSendPacket)
 			LastAngleAA = pCmd->viewangles;
+
+
+
+
 	}
 
 	return false;
@@ -315,6 +400,15 @@ void __fastcall PaintTraverse_Hooked(PVOID pPanels, int edx, unsigned int vguiPa
 //
 bool __stdcall Hooked_InPrediction()
 {
+	IClientEntity* oldEsi = nullptr;
+	float* oldEbx;
+
+	_asm mov oldEsi,esi
+	_asm mov oldEbx,ebx
+
+	if(oldEsi != hackManager.pLocal())
+		;//DebugBreak();
+
 	bool result;
 	//mov     eax, g_Prediction_vtable
 	//mov     eax, [eax+38h]  38h/4 = 14
@@ -322,19 +416,22 @@ bool __stdcall Hooked_InPrediction()
 	static DWORD *ecxVal = Interfaces::Prediction;
 	result = origFunc(ecxVal);
 
+
 	// If we are in the right place where the player view is calculated
 	// Calculate the change in the view and get rid of it
 	if (Menu::Window.VisualsTab.OtherNoVisualRecoil.GetState() && (DWORD)(_ReturnAddress()) == Offsets::Functions::dwCalcPlayerView)//C_BasePlayer::CalcPlayerView
 	{
-		IClientEntity* pLocalEntity = NULL;
+		IClientEntity* pLocalEntity = oldEsi;
 
-		float* m_LocalViewAngles = NULL;
+		float* m_LocalViewAngles = oldEbx;
 
-		__asm
-		{
-			MOV pLocalEntity, ESI	
-			MOV m_LocalViewAngles, EBX
-		}
+		/*
+47E7D31D 8B 0D 5C 6F EE 47    mov         ecx,dword ptr [_tls_index (47EE6F5Ch)]
+47E7D323 8B 34 88             mov         esi,dword ptr [eax+ecx*4]
+		
+		*/
+
+
 
 		//CNetworkVarEmbedded( CPlayerLocalData, m_Local );
 
@@ -705,3 +802,197 @@ void __fastcall Hooked_RenderView(void* ecx, void* edx, CViewSetup &setup, CView
 		CALL oRenderView
 	}
 } //hooked for no reason yay
+
+//https://www.unknowncheats.me/forum/counterstrike-global-offensive/418290-hooking-writeusercmddeltatobuffer.html
+
+//char __fastcall CInput__WriteUsercmdDeltaToBuffer(_DWORD *a1, int a2, int a3, int a4, int a5, int a6, int a7)
+bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
+	[[maybe_unused]] void*nouse,
+	int slot,
+	bf_write* buf,
+	int from, 
+	int to,
+	bool isnewcommand)
+{
+	//retn should not be zero
+	static auto retn = GameUtils::FindPattern1("engine.dll", "84 C0 74 04 B0 01 EB 02 32 C0 8B FE 46 3B F3 7E C9 84 C0 0F 84 ? ? ? ?");
+
+
+	if(retn != 0 && _ReturnAddress() != (void*)retn && oWriteUsercmdDeltaToBuffer)
+	return oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, isnewcommand);
+
+	if(Interfaces::Engine->IsConnected() && Interfaces::Engine->IsInGame())
+	{
+		if(Globals::Tick::tickshift <= 0)
+		return oWriteUsercmdDeltaToBuffer(ecx, nouse, slot, buf, from, to, isnewcommand);
+		
+		if(from != -1)
+			return true;
+
+		int* pNumBackupCommands = (int*)((uintptr_t)buf - 0x30);
+		int* pNumNewCommands = (int*)((uintptr_t)buf - 0x2C);
+		int32_t new_commands = *pNumNewCommands;
+
+		//IDA CL_Move
+		//if ( *(gClientStates + 0x108) == 6 )
+		//nextcommandnr = *(gClientStates + 0x4D2C) + 1 + *(gClientStates + 0x4D30);
+		auto m_nChokedCommands = *(int*)(Interfaces::gpClientState + ClientStates::offset_m_nChokedCommands);
+		auto m_nLastOutgoingCommand = *(int*)(Interfaces::gpClientState + ClientStates::offset_m_nLastOutgoingCommand);
+
+		int32_t next_cmdnr = m_nLastOutgoingCommand + m_nChokedCommands + 1;
+		//maxUsercmdProcessticks is 8 ticks on valve servers
+		int32_t total_new_commands = min(Globals::Tick::tickshift, Globals::Tick::maxUsercmdProcessticks);
+		//m_TickbaseShift = 0
+		Globals::Tick::tickshift = 0;
+
+		from = -1;
+		*pNumBackupCommands = total_new_commands;
+		*pNumBackupCommands = 0;
+
+		for (to = next_cmdnr - new_commands + 1; to <= next_cmdnr; to++) {
+			if (!oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, true))
+				return false;
+
+			from = to;
+		}
+
+		CInput::CUserCmd* last_realCmd = Interfaces::pInput->GetUserCmd(slot, from);
+		CInput::CUserCmd fromCmd;
+
+		if (last_realCmd)
+			fromCmd = *last_realCmd;
+
+		CInput::CUserCmd toCmd = fromCmd;
+		toCmd.command_number++;
+		toCmd.tick_count += 200;
+
+		static WriteUsercmdFn pWriteUsercmdFn = (WriteUsercmdFn)GameUtils::FindPattern1("client.dll",
+			"55 8B EC 83 E4 F8 51 53 56 8B D9");
+
+		for (int i = new_commands; i <= total_new_commands; i++) {
+			pWriteUsercmdFn(buf, &toCmd, &fromCmd);
+			fromCmd = toCmd;
+			toCmd.command_number++;
+			toCmd.tick_count++;
+		}
+
+		return true;
+	}
+	else
+	return oWriteUsercmdDeltaToBuffer(ecx, nouse, slot, buf, from, to, isnewcommand);
+
+}
+
+void Globals::Tick::shiftTicks(int ticks, CUserCmd* cmd, bool shiftAnyways = false)
+{
+	using namespace Globals::Tick;
+	auto localPlayer = hackManager.pLocal();
+	if (!localPlayer || !localPlayer->IsAlive())
+		return;
+
+	if (!canShift(ticks, shiftAnyways))
+		return;
+
+	commandNumber = cmd->command_number;
+	tickbase = localPlayer->GetTickBase();
+	tickshift = ticks;
+	lastShift = cmd->command_number;
+
+}
+
+void Globals::Tick::recalculateTicks()
+{
+	using namespace Globals::Tick;
+	chokedPackets = std::clamp(chokedPackets, 0, maxUsercmdProcessticks);
+	ticksAllowedForProcessing = maxUsercmdProcessticks - chokedPackets;
+	ticksAllowedForProcessing = std::clamp(ticksAllowedForProcessing, 0, maxUsercmdProcessticks);
+}
+
+bool Globals::Tick::canShift(int ticks, bool shiftAnyways = false)
+{
+	using namespace Globals::Tick;
+	
+	auto localPlayer = hackManager.pLocal();
+	CBaseCombatWeapon* activeWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(localPlayer->GetActiveWeaponHandle());
+	if (!localPlayer || !localPlayer->IsAlive() || ticks <= 0)
+		return false;
+
+	if (shiftAnyways)
+		return true;
+
+	if ((ticksAllowedForProcessing - ticks) < 0)
+		return false;
+
+	if (activeWeapon->GetNextPrimaryAttack() > Interfaces::Globals->realtime)
+		return false;
+
+	if (!activeWeapon || !activeWeapon->GetAmmoInClip())// 
+		return false;
+
+	if (!GameUtils::IsBallisticWeapon(activeWeapon)
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Revolver
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Awp
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Ssg08
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)WeaponId::Taser
+		|| *activeWeapon->m_AttributeManager()->m_Item()->ItemDefinitionIndex() == (short)(WeaponId::Revolver))
+		return false;
+
+	float shiftTime = (localPlayer->GetTickBase() - ticks) * Interfaces::Globals->intervalPerTick;
+
+	if (shiftTime < activeWeapon->GetNextPrimaryAttack())
+		return false;
+
+	return true;
+
+
+}
+
+void Globals::Tick::run(CUserCmd* cmd, bool& sendPacket)
+{
+	static void* oldNetwork = nullptr;
+	auto localPlayer = hackManager.pLocal();
+
+	if (cmd->buttons & IN_ATTACK) {
+		if (Menu::Window.RageBotTab.DoubleTap.GetState())
+		{
+			static void* oldNetwork = nullptr;
+
+			NetworkChannel* network = Interfaces::Engine->getNetworkChannel();
+
+			if(g_pGameRules->IsValveServer())
+				Globals::Tick::maxUsercmdProcessticks = 8;
+
+			if (network && oldNetwork != network)
+			{
+				oldNetwork = network;
+				Globals::Tick::ticksAllowedForProcessing = Globals::Tick::maxUsercmdProcessticks;
+				Globals::Tick::chokedPackets = 0;
+			}
+
+			if (network && network->chokedPackets > Globals::Tick::chokedPackets)
+				Globals::Tick::chokedPackets = network->chokedPackets;
+
+
+			recalculateTicks();
+
+			ticks = cmd->tick_count;
+
+			if (!localPlayer || !localPlayer->IsAlive())
+				return;
+
+			//speed
+			auto ticksspedd = 6;
+
+			shiftTicks(ticksspedd, cmd);
+
+			if (tickshift <= 0 && ticksAllowedForProcessing < (maxUsercmdProcessticks - fakeLag) && (cmd->command_number - lastShift) >= maxUsercmdProcessticks)
+			{
+				sendPacket = true;
+				cmd->tick_count = INT_MAX; //recharge
+				chokedPackets--;
+			}
+
+			recalculateTicks();
+		}
+	}
+}

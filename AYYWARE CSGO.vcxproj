@@ -68,7 +68,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>onetapv5</TargetName>
+    <TargetName>MSVCP140</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -97,14 +97,16 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -138,14 +140,17 @@
     <ClInclude Include="CommonIncludes.h" />
     <ClInclude Include="Controls.h" />
     <ClInclude Include="CRC32.h" />
+    <ClInclude Include="C_CSGameRules.h" />
     <ClInclude Include="decals.h" />
     <ClInclude Include="DLLMain.h" />
     <ClInclude Include="Dumping.h" />
     <ClInclude Include="EngineClient.h" />
     <ClInclude Include="Entities.h" />
     <ClInclude Include="ESP.h" />
+    <ClInclude Include="GameEventListener.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hacks.h" />
+    <ClInclude Include="NetworkChannel.h" />
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="winwindef.h" />
@@ -178,11 +183,13 @@
     <ClCompile Include="AntiAntiAim.cpp" />
     <ClCompile Include="Autowall.cpp" />
     <ClCompile Include="Chams.cpp" />
+    <ClCompile Include="ChatLog.h" />
     <ClCompile Include="Controls.cpp" />
     <ClCompile Include="CRC32.cpp" />
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="Dumping.cpp" />
     <ClCompile Include="ESP.cpp" />
+    <ClCompile Include="GameEventListener.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hacks.cpp" />
     <ClCompile Include="Hooks.cpp" />
@@ -192,6 +199,7 @@
     <ClCompile Include="MathFunctions.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MetaInfo.cpp" />
+    <ClCompile Include="MiscClasses.cpp" />
     <ClCompile Include="MiscHacks.cpp" />
     <ClCompile Include="NetVarManager.cpp" />
     <ClCompile Include="NetVars.cpp" />

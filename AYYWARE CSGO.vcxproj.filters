@@ -201,6 +201,15 @@
     <ClInclude Include="AnimState.h">
       <Filter>Header Files\Hacks</Filter>
     </ClInclude>
+    <ClInclude Include="C_CSGameRules.h">
+      <Filter>Header Files\Hacks</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkChannel.h">
+      <Filter>Header Files\Source Engine\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEventListener.h">
+      <Filter>Header Files\Hacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLMain.cpp">
@@ -292,6 +301,15 @@
     </ClCompile>
     <ClCompile Include="Resolver.cpp">
       <Filter>Source Files\Hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="MiscClasses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatLog.h">
+      <Filter>Header Files\Hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEventListener.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

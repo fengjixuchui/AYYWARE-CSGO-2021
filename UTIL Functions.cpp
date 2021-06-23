@@ -107,6 +107,7 @@ bool TraceToExit(Vector& end, trace_t& tr, Vector start, Vector vEnd, trace_t* t
 	return pUTIL_GetAchievementEventMask();
 }*/
 
+//C:\Users\sbb\Desktop\source-sdk-2013-master\mp\src\game\client\cdll_util.cpp
 void GameUtils::NormaliseViewAngle(Vector &angle)
 {
 	if (!Menu::Window.MiscTab.OtherSafeMode.GetState())
@@ -115,6 +116,7 @@ void GameUtils::NormaliseViewAngle(Vector &angle)
 	}
 	else
 	{
+		//Normalize angles to -180 to 180 range
 		while (angle.y <= -180) angle.y += 360;
 		while (angle.y > 180) angle.y -= 360;
 		while (angle.x <= -180) angle.x += 360;
@@ -253,9 +255,11 @@ Vector GetEyePosition(IClientEntity* pEntity)
 void ForceUpdate()
 {
 	// Shh
-	static DWORD clientstateaddr = Utilities::Memory::FindPattern("engine.dll", (PBYTE)"\x8B\x3D\x00\x00\x00\x00\x8A\xF9\xF3\x0F\x11\x45\xF8\x83\xBF\xE8\x00\x00\x00\x02", "xx????xxxxxxxxxxxxxx");
+	static DWORD 
+		addr = Utilities::Memory::FindPattern("engine.dll", (PBYTE)"\x8B\x3D\x00\x00\x00\x00\x8A\xF9\xF3\x0F\x11\x45\xF8\x83\xBF\xE8\x00\x00\x00\x02", "xx????xxxxxxxxxxxxxx");
 	static uintptr_t pEngineBase = (uintptr_t)GetModuleHandleA("engine.dll");
 
+	//.text:000D76AC                 mov     edi, gpCl
 	static uintptr_t pClientState = **(uintptr_t**)(Utilities::Memory::FindPattern("engine.dll", (PBYTE)"\x8B\x3D\x00\x00\x00\x00\x8A\xF9", "xx????xx") + 2);
 
 	static uintptr_t dwAddr1 = Utilities::Memory::FindPattern("engine.dll", (PBYTE)"\xE8\x00\x00\x00\x00\x68\x00\x00\x00\x00\x68\x00\x00\x00\x00\xC7\x87\x00\x00\x00\x00\x00\x00\x00\x00", "x????x????x????xx????????");

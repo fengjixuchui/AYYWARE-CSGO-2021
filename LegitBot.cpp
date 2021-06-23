@@ -119,7 +119,7 @@ void CLegitBot::DoAimbot(CUserCmd *pCmd, bool &bSendPacket)
 	IClientEntity* pTarget = nullptr;
 	IClientEntity* pLocal = hackManager.pLocal();
 	bool FindNewTarget = true;
-	//IsLocked = false;
+	IsLocked = false;
 
 	// Don't aimbot with the knife..
 	CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(pLocal->GetActiveWeaponHandle());
@@ -127,9 +127,6 @@ void CLegitBot::DoAimbot(CUserCmd *pCmd, bool &bSendPacket)
 	{
 		if (pWeapon->GetAmmoInClip() == 0 || !GameUtils::IsBallisticWeapon(pWeapon))
 		{
-			//TargetID = 0;
-			//pTarget = nullptr;
-			//HitBox = -1;
 			return;
 		}
 		SyncWeaponSettings();
@@ -203,29 +200,15 @@ void CLegitBot::DoAimbot(CUserCmd *pCmd, bool &bSendPacket)
 
 		if (AimAtPoint(pLocal, AimPoint, pCmd, bSendPacket))
 		{
-			//IsLocked = true;
+			IsLocked = true;
 			if (Menu::Window.LegitBotTab.AimbotAutoFire.GetState() && !(pCmd->buttons & IN_ATTACK))
 			{
+				
 				pCmd->buttons |= IN_ATTACK;
 			}
 		}
 	}
 
-	// Auto Pistol
-	static bool WasFiring = false;
-	if (GameUtils::IsPistol(pWeapon) && Menu::Window.LegitBotTab.AimbotAutoPistol.GetState())
-	{
-		if (pCmd->buttons & IN_ATTACK)
-		{
-			static bool WasFiring = false;
-			WasFiring = !WasFiring;
-
-			if (WasFiring)
-			{
-				pCmd->buttons &= ~IN_ATTACK;
-			}
-		}
-	}
 }
 
 bool TargetMeetsTriggerRequirements(IClientEntity* pEntity)
@@ -308,20 +291,6 @@ void CLegitBot::DoTrigger(CUserCmd *pCmd)
 		}
 	}
 
-	// Auto Pistol
-	if (GameUtils::IsPistol(pWeapon) && Menu::Window.LegitBotTab.AimbotAutoPistol.GetState())
-	{
-		if (pCmd->buttons & IN_ATTACK)
-		{
-			static bool WasFiring = false;
-			WasFiring = !WasFiring;
-
-			if (WasFiring)
-			{
-				pCmd->buttons &= ~IN_ATTACK;
-			}
-		}
-	}
 }
 
 bool CLegitBot::TargetMeetsRequirements(IClientEntity* pEntity)
