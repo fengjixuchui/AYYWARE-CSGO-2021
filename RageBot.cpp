@@ -1272,10 +1272,8 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 	}
 
 	void AntiAimTest(CUserCmd* pCmd, bool& bSendPacket){
-	
-		//read out your lby, ur fakeand desync away from it
 
-		pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle();
+		/*pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle();
 
 		if (CRageBot::next_lby_update(pCmd))
 		{
@@ -1286,7 +1284,10 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 		if (!bSendPacket) {
 			pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle()*2.f;
-		}
+		}*/
+
+		EdgeDetect(pCmd,bSendPacket);
+
 	}
 
 }

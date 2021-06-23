@@ -289,3 +289,5 @@ uintptr_t Utilities::GetMoveTarget(PVOID* addr)
 	return *(uintptr_t*)((char*)addr+2);
 
 }
+
+

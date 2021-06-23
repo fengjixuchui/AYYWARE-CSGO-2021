@@ -13,6 +13,7 @@
 #include <intrin.h>
 #include "C_CSGameRules.h"
 #include "MiscClasses.h"
+#include "ChatLog.h"
 
 Vector LastAngleAA;
 

@@ -147,6 +147,7 @@
     <ClInclude Include="EngineClient.h" />
     <ClInclude Include="Entities.h" />
     <ClInclude Include="ESP.h" />
+    <ClInclude Include="GameEventListener.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hacks.h" />
     <ClInclude Include="NetworkChannel.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="Dumping.cpp" />
     <ClCompile Include="ESP.cpp" />
+    <ClCompile Include="GameEventListener.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hacks.cpp" />
     <ClCompile Include="Hooks.cpp" />

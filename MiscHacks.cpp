@@ -6,6 +6,7 @@
 #include "Interfaces.h"
 #include "RenderManager.h"
 #include "resolver.h"
+#include "ChatLog.h"
 
 #include <time.h>
 

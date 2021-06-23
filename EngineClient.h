@@ -25,6 +25,11 @@ public:
 		typedef bool(__thiscall * oGetPlayerInfo)(PVOID, int, player_info_t*);
 		return call_vfunc< oGetPlayerInfo >(this, 8)(this, ent_num, pinfo);
 	}
+	int GetPlayerForUserID(int userID)
+	{
+		typedef int(__thiscall * oGetPlayerForUserID)(PVOID,int);
+		return call_vfunc<oGetPlayerForUserID>(this,9)(this,userID);
+	}
 	int GetLocalPlayer()
 	{
 		typedef int(__thiscall * oLocal)(PVOID);

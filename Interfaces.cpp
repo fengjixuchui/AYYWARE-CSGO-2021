@@ -6,7 +6,7 @@ Syn's AyyWare Framework 2015
 #include "Utilities.h"
 #include "C_CSGameRules.h"
 #include "ChatLog.h"
-
+#include "GameEventListener.h"
 
 
 //SDK Specific Definitions
@@ -49,7 +49,6 @@ namespace Interfaces
 	IInputSystem* InputSystem = nullptr;
 	uintptr_t gpClientState = (uintptr_t)nullptr;
 	CBaseHudChat* gpChat = nullptr;
-
 };
 
 
@@ -84,6 +83,10 @@ void Interfaces::Initialise()
 	char* EngineTraceInterfaceName = (char*)Utilities::Memory::FindTextPattern("engine.dll", "EngineTraceClient0");
 	char* PhysPropsInterfaces = (char*)Utilities::Memory::FindTextPattern("client.dll", "VPhysicsSurfaceProps0");
 	char* VEngineCvarName = (char*)Utilities::Memory::FindTextPattern("engine.dll", "VEngineCvar00");
+	//.rdata:0049F0A8	00000015	C	GAMEEVENTSMANAGER002
+	//.rdata:0049F5D0	00000015	C	GAMEEVENTSMANAGER001
+	//001 is old version,dont use
+	char* GameEventName = (char*)Utilities::Memory::FindTextPattern("engine.dll","GAMEEVENTSMANAGER002");
 
 	Utilities::Log("CHLClientInterfaceName Base %x", CHLClientInterfaceName);
 	Utilities::Log("VGUI2PanelsInterfaceName Base %x", VGUI2PanelsInterfaceName);
@@ -119,6 +122,8 @@ void Interfaces::Initialise()
 	PhysProps = (IPhysicsSurfaceProps*)PhysFactory(PhysPropsInterfaces, NULL);
 	CVar = (ICVar*)StdFactory(VEngineCvarName, NULL);
 	ClientMode = **(IClientModeShared***)((*(DWORD**)Interfaces::Client)[10] + 0x5);
+	GameEventManager = (IGameEventManager2*)EngineFactory(GameEventName,NULL);
+	
 
 	Utilities::Log("Interface Create Complete");
 
@@ -158,6 +163,8 @@ void Interfaces::Initialise()
 
 	gpChat = ClientMode->GetChatElement();
 	
+	CGameEventListener* PlayerHurtListener = new CGameEventListener(("player_hurt"), GameEvent_PlayerHurt, false);
+
 	Utilities::Log("Interfaces Ready");
 }
 

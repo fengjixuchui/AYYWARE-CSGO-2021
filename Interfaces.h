@@ -8,6 +8,8 @@ Syn's AyyWare Framework
 #include "CommonIncludes.h"
 #include "SDK.h"
 
+class IGameEventManager2;
+
 // Namespace to contain all the valve interfaces
 namespace Interfaces
 {
@@ -33,4 +35,5 @@ namespace Interfaces
 	extern ICVar *CVar;
 	extern CInput* pInput;
 	extern IInputSystem* InputSystem;
+
 };

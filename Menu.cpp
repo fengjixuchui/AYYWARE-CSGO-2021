@@ -965,11 +965,16 @@ void Menu::UICheatStatus()
 	int width = 0;
 	int height = 0;
 	Interfaces::Engine->GetScreenSize(width,height);
-	Render::Textf(50, height/3+50, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
 
-	Render::Textf(50, height / 3+100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
+	Render::Line(0,height/3-50,50,height/3+50, Color(148, 43, 226, 220));
+	Render::Line(50,height/3+50,200,height/3+50,Color(148,43,226,220));
+	Render::Text(50+25, height / 3+50, Color(148, 43, 226, 220) ,Render::Fonts::UiCheat,L"keyBinds");
 
-	Render::Text(50,height/3+150, Color(148, 43, 226, 220), Render::Fonts::UiCheat, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
+	Render::Textf(50, height/3+100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
+
+	Render::Textf(50, height / 3+150, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
+
+	Render::Text(50,height/3+200, Color(148, 43, 226, 220), Render::Fonts::UiCheat, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
 
 #define Developer
 	//*********Developer test********************
