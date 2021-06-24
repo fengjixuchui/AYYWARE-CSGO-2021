@@ -964,17 +964,13 @@ void Menu::UICheatStatus()
 {
 	int width = 0;
 	int height = 0;
-	Interfaces::Engine->GetScreenSize(width,height);
+	Interfaces::Engine->GetScreenSize(width, height);
 
-	Render::Line(0,height/3-50,50,height/3+50, Color(148, 43, 226, 220));
-	Render::Line(50,height/3+50,200,height/3+50,Color(148,43,226,220));
-	Render::Text(50+25, height / 3+50, Color(148, 43, 226, 220) ,Render::Fonts::UiCheat,L"keyBinds");
+	Render::Textf(20, height / 3 + 100, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "HC:%.0f", Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
 
-	Render::Textf(50, height/3+100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "HitChance : %f",Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
+	if (bIsSlowWalk)
+		Render::Text(20, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "SlowWalk");
 
-	Render::Textf(50, height / 3+150, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "Minimal damage : %f", Menu::Window.RageBotTab.AccuracyMinimumDamage.GetValue());
-
-	Render::Text(50,height/3+200, Color(148, 43, 226, 220), Render::Fonts::UiCheat, bIsSlowWalk ? "SlowWalk : On" : "SlowWalk : OFF");
 
 #define Developer
 	//*********Developer test********************
@@ -985,51 +981,30 @@ void Menu::UICheatStatus()
 
 	IClientEntity* localPlayer = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 
-	Render::Textf(300, height / 4 + 50, Color(148, 43, 226, 220), Render::Fonts::UiCheat,"LocalPlayer = 0x%x",localPlayer);
 
-	Render::Textf(300, height / 4 + 100, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "MaxDesyncAngle = %f",MaxDesyncAngle);
-
-	if(localPlayer){
+	if (localPlayer) {
 		//fields belong to localPlayer
-	Render::Textf(300, height / 4 + 150, Color(148, 43, 226, 220),Render::Fonts::UiCheat,"LocalPlayer->Velocity = %f",
-		localPlayer->GetVelocity().Length());
 
-	auto eyeAngle = localPlayer->GetEyeAngles();
+		auto eyeAngle = localPlayer->GetEyeAngles();
 
-	CBaseCombatWeapon* currentWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(localPlayer->GetActiveWeaponHandle());
-	
+		CBaseCombatWeapon* currentWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(localPlayer->GetActiveWeaponHandle());
 
-	Render::Textf(300, height / 4 + 200, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesX = %f",
-		eyeAngle.x);
+		//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
 
-	Render::Textf(300, height / 4 + 250, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesY = %f",
-		eyeAngle.y);
 
-	Render::Textf(300, height / 4 + 300, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->ViewAnglesZ = %f",
-		eyeAngle.z);
+		//---------------------------------------------------------------------
+		if (currentWeapon)
+		{//fieds belong to localPlayer
 
-	Render::Textf(300, height / 4 + 350, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "LocalPlayer->m_nTickBase = %d",
-		localPlayer->GetTickBase());
+		}
+		//---------------------------------------------------------------------
 
-	//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
-
-	Render::Textf(300, height / 4 + 400, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "gpGlobals->currentime = %f",
-		Interfaces::Globals->currenttime);
-	
-	//---------------------------------------------------------------------
-	if(currentWeapon)
-	{//fieds belong to localPlayer
-
-	Render::Textf(300, height / 4 + 450, Color(148, 43, 226, 220), Render::Fonts::UiCheat, "currentWeapon->NextPrimaryAttack = %f",
-		currentWeapon->GetNextPrimaryAttack());
-	}
-	//---------------------------------------------------------------------
-	
 	}
 
 #endif
 
 	//*******************************************
+
 }
 
 void Menu::InitConfig()

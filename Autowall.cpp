@@ -179,8 +179,12 @@ bool HandleBulletPenetration(CSWeaponInfo *wpn_data, FireBulletData &data)
 */
 bool CanHit(const Vector &point, float *damage_given)
 {
-	//for test
-	//return 0;
+
+
+	CBaseCombatWeapon* currentWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
+
+	if(currentWeapon->GetNextPrimaryAttack() > Interfaces::Globals->currenttime)
+		return false;
 
 	auto *local = Interfaces::EntList->GetClientEntity(Interfaces::Engine->GetLocalPlayer());
 	auto data = FireBulletData(local->GetOrigin() + local->GetViewOffset());
