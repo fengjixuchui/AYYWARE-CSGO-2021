@@ -969,7 +969,10 @@ void Menu::UICheatStatus()
 	Render::Textf(20, height / 3 + 100, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "HC:%.0f", Menu::Window.RageBotTab.AccuracyHitchance.GetValue());
 
 	if (bIsSlowWalk)
-		Render::Text(20, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "SlowWalk");
+		Render::Text(20, height / 3 + 150, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "SlowWalk");
+
+	if(Menu::Window.RageBotTab.DoubleTap.GetState())
+		Render::Text(20, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "DT");
 
 
 #define Developer
@@ -991,6 +994,8 @@ void Menu::UICheatStatus()
 
 		//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
 
+		/*Render::Textf(100, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat,
+			"localPlayer %x",localPlayer);*/
 
 		//---------------------------------------------------------------------
 		if (currentWeapon)

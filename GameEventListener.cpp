@@ -58,7 +58,7 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 	}*/
 
 	auto LocalPlayer = hackManager.pLocal();
-	if (!LocalPlayer->IsAlive() || !gameEvent || !Interfaces::Engine->IsConnected())
+	if (!LocalPlayer || !gameEvent || !Interfaces::Engine->IsConnected())
 		return;
 	
 	GameEvent_PlayerHurt_t ev;
@@ -101,10 +101,10 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 	Interfaces::Engine->GetPlayerInfo(killed, &killer_entity_info);
 
 	//"Hit Name xx hitgroup xx HP , Left xx HP"
-	char logBuffer[64] = {0};
+	char logBuffer[128] = {0};
 	char hittedName[64] = {0};
-	memcpy_s(hittedName,sizeof(hittedName) ,&killed_entity_info.name,64);
-	sprintf_s(logBuffer,sizeof(logBuffer),
+	memcpy(hittedName,&killed_entity_info.name,64);
+	sprintf(logBuffer,
 		"Hit  \x01%s \x02%s  \x03%d  HP , Left \x04%d HP",
 		hittedName,HitGroupToString(ev.hitgroup),ev.dmg_health,ev.health);
 	ChatLog(logBuffer);
