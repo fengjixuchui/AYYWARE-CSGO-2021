@@ -832,8 +832,8 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 		if(from != -1)
 			return true;
 
-		int* pNumBackupCommands = (int*)((uintptr_t)buf - 0x30);
-		int* pNumNewCommands = (int*)((uintptr_t)buf - 0x2C);
+		int* pNumBackupCommands = (int*)((uintptr_t)buf - 0x30);//in most cases 2
+		int* pNumNewCommands = (int*)((uintptr_t)buf - 0x2C); //in most cases 1
 		int32_t new_commands = *pNumNewCommands;
 
 		//IDA CL_Move
@@ -852,6 +852,16 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 		*pNumNewCommands = total_new_commands;
 		*pNumBackupCommands = 0;
 
+		/*
+	for (int to = nextcommandnr - numcmds + 1; to <= nextcommandnr; to++) {
+	bool isnewcmd = to >= (nextcommandnr - moveMsg.m_nNewCommands + 1);
+
+	// first valid command number is 1
+	bOK = bOK && g_ClientDLL->WriteUsercmdDeltaToBuffer(&moveMsg.m_DataOut,
+														from, to, isnewcmd);
+	from = to;
+  }
+		*/
 		for (to = next_cmdnr - new_commands + 1; to <= next_cmdnr; to++) {
 			if (!oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, true))
 				return false;
@@ -867,7 +877,7 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 
 		CInput::CUserCmd toCmd = fromCmd;
 		toCmd.command_number++;
-		toCmd.tick_count += 100;
+		toCmd.tick_count += 25;//dont use too small and too large
 
 		static WriteUsercmdFn pWriteUsercmdFn = (WriteUsercmdFn)GameUtils::FindPattern1("client.dll",
 			"55 8B EC 83 E4 F8 51 53 56 8B D9");
@@ -879,6 +889,7 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 			fromCmd = toCmd;
 			toCmd.command_number++;
 			toCmd.tick_count++;
+			toCmd.forwardmove = 10;
 		}
 
 		return true;
@@ -929,7 +940,8 @@ bool Globals::Tick::canShift(int ticks, bool shiftAnyways = false)
 	if ((ticksAllowedForProcessing - ticks) < 0)
 		return false;
 
-	if (activeWeapon->GetNextPrimaryAttack() > Interfaces::Globals->realtime)
+	//current time can not open 
+	if (activeWeapon->GetNextPrimaryAttack() > Interfaces::Globals->currenttime)
 		return false;
 
 	if (!activeWeapon || !activeWeapon->GetAmmoInClip())// 

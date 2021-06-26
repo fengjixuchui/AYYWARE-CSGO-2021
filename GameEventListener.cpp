@@ -92,6 +92,7 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 
 	if(killer != LocalPlayer->GetIndex())
 		return;
+	
 
 	IClientEntity* killed_entity = Interfaces::EntList->GetClientEntity(killed);
 	IClientEntity* killer_entity = Interfaces::EntList->GetClientEntity(killer);
