@@ -205,8 +205,13 @@ int InitialThread()
 	Utilities::SetConsoleColor(FOREGROUND_GREEN);
 	Utilities::Log("[*]EveryThing have Ready,Have Fun");
 
-	//just wait ,no need to unload
-	WaitForSingleObject(GetCurrentProcess(),INFINITE);
+	//wait process also can cause dead lock
+	//so dont use wait function in DLLMain
+	//WaitForSingleObject(GetCurrentProcess(),INFINITE);
+	while(1)
+	{
+	Sleep(1);//abandon time slice every thread scheduling
+	}
 
 	return 0;
 }

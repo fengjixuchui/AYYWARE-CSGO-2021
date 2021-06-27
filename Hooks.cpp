@@ -819,7 +819,8 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 {
 	//retn should not be zero
 	static auto retn = GameUtils::FindPattern1("engine.dll", "84 C0 74 04 B0 01 EB 02 32 C0 8B FE 46 3B F3 7E C9 84 C0 0F 84 ? ? ? ?");
-
+	if(!retn)
+		_asm int 3
 
 	if(retn != 0 && _ReturnAddress() != (void*)retn && oWriteUsercmdDeltaToBuffer)
 	return oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, isnewcommand);
@@ -877,7 +878,7 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 
 		CInput::CUserCmd toCmd = fromCmd;
 		toCmd.command_number++;
-		toCmd.tick_count += 25;//dont use too small and too large
+		toCmd.tick_count += 25;
 
 		static WriteUsercmdFn pWriteUsercmdFn = (WriteUsercmdFn)GameUtils::FindPattern1("client.dll",
 			"55 8B EC 83 E4 F8 51 53 56 8B D9");
@@ -889,7 +890,6 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 			fromCmd = toCmd;
 			toCmd.command_number++;
 			toCmd.tick_count++;
-			toCmd.forwardmove = 10;
 		}
 
 		return true;

@@ -1193,7 +1193,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 		for (float i = 0; i < 360; i++)
 		{
-			Vector vecDummy(10.f, pCmd->viewangles.y, 0.f);
+			Vector vecDummy(10.f, pCmd->viewangles.y + 180.f, 0.f);
 			vecDummy.y += i;
 
 			Vector forward = vecDummy.Forward();
@@ -1224,8 +1224,8 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 				Vector left = (vecDummy + Vector(0, 45, 0)).Forward(); // or 45
 				Vector right = (vecDummy - Vector(0, 45, 0)).Forward();
 
-				left *= (flLength * cosf(rad(30)) * 2); //left *= (len * cosf(rad(30)) * 2);
-				right *= (flLength * cosf(rad(30)) * 2); // right *= (len * cosf(rad(30)) * 2);
+				left *= (flLength * cosf(rad(30)) * 3); 
+				right *= (flLength * cosf(rad(30)) * 3); 
 
 				ray.Init(eyePos, (eyePos + left));
 				Interfaces::Trace->EdgeTraceRay(ray, traceFilter, leftTrace, true);
@@ -1235,15 +1235,14 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 				if ((leftTrace.fraction == 1.f) && (rightTrace.fraction != 1.f))
 				{
-					vecDummy.y -= 45; // left
+					vecDummy.y += 60; // left
 				}
 				else if ((leftTrace.fraction != 1.f) && (rightTrace.fraction == 1.f))
 				{
-					vecDummy.y += 45; // right     
+					vecDummy.y -= 60; // right     
 				}
 
 				angle.y = vecDummy.y;
-				angle.y += 360;
 				bEdge = true;
 			}
 		}
@@ -1256,18 +1255,6 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 	
 		}
 		
-		static int iChoked = -1;
-		iChoked++;
-		if (iChoked < 1)
-		{
-			bSendPacket = false;
-		}
-		else
-		{
-			bSendPacket = true;
-			pCmd->viewangles.y = angle.y + 135.f;
-			iChoked = -1;
-		}
 
 	}
 
@@ -1286,6 +1273,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 			pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle()*2.f;
 		}*/
 
+		pCmd->viewangles.y -=180 ;
 		EdgeDetect(pCmd,bSendPacket);
 
 	}
