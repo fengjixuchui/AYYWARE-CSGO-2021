@@ -125,7 +125,8 @@ typedef bool (__fastcall* WriteUsercmdDeltaToBufferFn)(void* ecx, void*, int slo
 using OverrideViewFn = void(__fastcall*)(void*, void*, CViewSetup*);
 typedef float(__stdcall *oGetViewModelFOV)();
 
-typedef void (__stdcall *WriteUsercmdFn)(bf_write* buf, CInput::CUserCmd* to, CInput::CUserCmd* from);
+//cant be stdcall
+typedef void (__fastcall *WriteUsercmdFn)(bf_write* buf, CInput::CUserCmd* to, CInput::CUserCmd* from);
 
 // Function Pointers to the originals
 PaintTraverse_ oPaintTraverse;
@@ -290,6 +291,8 @@ void ClanTag()
 
 //https://www.unknowncheats.me/forum/1453101-post8.html
 //https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/game/client/clientmode_shared.cpp#L408
+//CreateMove is called every tick
+//serveral ticks is a framecount
 bool __stdcall CreateMoveClient_Hooked(float frametime, CUserCmd* pCmd)
 {
 
@@ -816,7 +819,8 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 {
 	//retn should not be zero
 	static auto retn = GameUtils::FindPattern1("engine.dll", "84 C0 74 04 B0 01 EB 02 32 C0 8B FE 46 3B F3 7E C9 84 C0 0F 84 ? ? ? ?");
-
+	if(!retn)
+		_asm int 3
 
 	if(retn != 0 && _ReturnAddress() != (void*)retn && oWriteUsercmdDeltaToBuffer)
 	return oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, isnewcommand);
@@ -829,8 +833,8 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 		if(from != -1)
 			return true;
 
-		int* pNumBackupCommands = (int*)((uintptr_t)buf - 0x30);
-		int* pNumNewCommands = (int*)((uintptr_t)buf - 0x2C);
+		int* pNumBackupCommands = (int*)((uintptr_t)buf - 0x30);//in most cases 2
+		int* pNumNewCommands = (int*)((uintptr_t)buf - 0x2C); //in most cases 1
 		int32_t new_commands = *pNumNewCommands;
 
 		//IDA CL_Move
@@ -846,9 +850,19 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 		Globals::Tick::tickshift = 0;
 
 		from = -1;
-		*pNumBackupCommands = total_new_commands;
+		*pNumNewCommands = total_new_commands;
 		*pNumBackupCommands = 0;
 
+		/*
+	for (int to = nextcommandnr - numcmds + 1; to <= nextcommandnr; to++) {
+	bool isnewcmd = to >= (nextcommandnr - moveMsg.m_nNewCommands + 1);
+
+	// first valid command number is 1
+	bOK = bOK && g_ClientDLL->WriteUsercmdDeltaToBuffer(&moveMsg.m_DataOut,
+														from, to, isnewcmd);
+	from = to;
+  }
+		*/
 		for (to = next_cmdnr - new_commands + 1; to <= next_cmdnr; to++) {
 			if (!oWriteUsercmdDeltaToBuffer(ecx, nouse,slot, buf, from, to, true))
 				return false;
@@ -864,10 +878,12 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 
 		CInput::CUserCmd toCmd = fromCmd;
 		toCmd.command_number++;
-		toCmd.tick_count += 200;
+		toCmd.tick_count += 25;
 
 		static WriteUsercmdFn pWriteUsercmdFn = (WriteUsercmdFn)GameUtils::FindPattern1("client.dll",
 			"55 8B EC 83 E4 F8 51 53 56 8B D9");
+		if(!pWriteUsercmdFn)
+			_asm int 3;
 
 		for (int i = new_commands; i <= total_new_commands; i++) {
 			pWriteUsercmdFn(buf, &toCmd, &fromCmd);
@@ -904,6 +920,7 @@ void Globals::Tick::recalculateTicks()
 {
 	using namespace Globals::Tick;
 	chokedPackets = std::clamp(chokedPackets, 0, maxUsercmdProcessticks);
+	//ticks that we can operate
 	ticksAllowedForProcessing = maxUsercmdProcessticks - chokedPackets;
 	ticksAllowedForProcessing = std::clamp(ticksAllowedForProcessing, 0, maxUsercmdProcessticks);
 }
@@ -923,7 +940,8 @@ bool Globals::Tick::canShift(int ticks, bool shiftAnyways = false)
 	if ((ticksAllowedForProcessing - ticks) < 0)
 		return false;
 
-	if (activeWeapon->GetNextPrimaryAttack() > Interfaces::Globals->realtime)
+	//current time can not open 
+	if (activeWeapon->GetNextPrimaryAttack() > Interfaces::Globals->currenttime)
 		return false;
 
 	if (!activeWeapon || !activeWeapon->GetAmmoInClip())// 
@@ -939,6 +957,7 @@ bool Globals::Tick::canShift(int ticks, bool shiftAnyways = false)
 
 	float shiftTime = (localPlayer->GetTickBase() - ticks) * Interfaces::Globals->intervalPerTick;
 
+	//if shift but cant open fire, return false
 	if (shiftTime < activeWeapon->GetNextPrimaryAttack())
 		return false;
 
@@ -959,29 +978,31 @@ void Globals::Tick::run(CUserCmd* cmd, bool& sendPacket)
 
 			NetworkChannel* network = Interfaces::Engine->getNetworkChannel();
 
-			if(g_pGameRules->IsValveServer())
-				Globals::Tick::maxUsercmdProcessticks = 8;
+			//if(g_pGameRules->IsValveServer())
+				//Globals::Tick::maxUsercmdProcessticks = 8;
 
 			if (network && oldNetwork != network)
 			{
 				oldNetwork = network;
-				Globals::Tick::ticksAllowedForProcessing = Globals::Tick::maxUsercmdProcessticks;
 				Globals::Tick::chokedPackets = 0;
 			}
 
 			if (network && network->chokedPackets > Globals::Tick::chokedPackets)
+				/*
+				cl.m_NetChannel->SetChoke.d();
+				cl.chokedcommands++;
+				*/
 				Globals::Tick::chokedPackets = network->chokedPackets;
 
 
 			recalculateTicks();
 
-			ticks = cmd->tick_count;
 
 			if (!localPlayer || !localPlayer->IsAlive())
 				return;
 
-			//speed
-			auto ticksspedd = 6;
+			//ticksspedd is 1-16
+			auto ticksspedd = 15;
 
 			shiftTicks(ticksspedd, cmd);
 

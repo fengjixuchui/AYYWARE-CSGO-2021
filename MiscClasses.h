@@ -15,6 +15,7 @@ Syn's AyyWare Framework 2015
 
 #define ChatLogStuff(str) gpChat->ChatPrintf(0,0,u8" \x10" str);
 
+
 //https://www.unknowncheats.me/wiki/Counter_Strike_Global_Offensive:Printing_text_to_chat
 class CBaseHudChat
 {
@@ -276,6 +277,7 @@ public:
 		hasbeenpredicted = false;
 	}
 
+
 	CUserCmd& operator =(const CUserCmd& src)
 	{
 		if (this == &src)
@@ -306,7 +308,6 @@ public:
 		*this = src;
 	}
 
-
 	int        command_number;
 	int        tick_count;
 	Vector  viewangles;
@@ -325,6 +326,7 @@ public:
 	Vector  headangles;
 	Vector    headoffset;
 };
+static_assert(offsetof(CUserCmd, command_number) == 4);
 
 class CVerifiedUserCmd
 {

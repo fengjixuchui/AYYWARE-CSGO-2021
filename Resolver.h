@@ -52,14 +52,14 @@ namespace Globals
 	
 	namespace Tick
 	{
-		inline int maxUsercmdProcessticks{16};
-		inline int ticksAllowedForProcessing{0};
+		//"sv_maxusrcmdprocessticks" = "0" ( def. "16" ) game
+		inline int maxUsercmdProcessticks{16-1};
+		inline int ticksAllowedForProcessing{ maxUsercmdProcessticks };
 		inline int chokedPackets{ 0 };
 		inline int fakeLag{ 0 };
 		inline int tickshift{ 0 };
 		inline int tickbase{ 0 };
 		inline int commandNumber{ 0 };
-		inline int ticks{ 0 };
 		inline int lastShift{0};
 
 		inline void recalculateTicks();
