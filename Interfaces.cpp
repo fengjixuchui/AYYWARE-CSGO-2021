@@ -49,6 +49,7 @@ namespace Interfaces
 	IInputSystem* InputSystem = nullptr;
 	uintptr_t gpClientState = (uintptr_t)nullptr;
 	CBaseHudChat* gpChat = nullptr;
+	IViewRenderBeams* g_pViewRenderBeams = nullptr;
 };
 
 
@@ -65,6 +66,7 @@ void Interfaces::Initialise()
 	PhysFactory = (CreateInterface_t)GetProcAddress((HMODULE)Offsets::Modules::VPhysics, "CreateInterface");
 	StdFactory = (CreateInterface_t)GetProcAddress((HMODULE)Offsets::Modules::Stdlib, "CreateInterface");
 	InputSystemPointer = (CreateInterface_t)GetProcAddress((HMODULE)Utilities::Memory::WaitOnModuleHandle("inputsystem.dll"), "CreateInterface");
+
 
 	//Get the interface names regardless of their version number by scanning for each string
 	//#define CLIENT_DLL_INTERFACE_VERSION		"VClient017" 
@@ -83,6 +85,7 @@ void Interfaces::Initialise()
 	char* EngineTraceInterfaceName = (char*)Utilities::Memory::FindTextPattern("engine.dll", "EngineTraceClient0");
 	char* PhysPropsInterfaces = (char*)Utilities::Memory::FindTextPattern("client.dll", "VPhysicsSurfaceProps0");
 	char* VEngineCvarName = (char*)Utilities::Memory::FindTextPattern("engine.dll", "VEngineCvar00");
+	g_pViewRenderBeams = *(IViewRenderBeams**)(Utilities::Memory::FindPatternV2("client.dll", "B9 ? ? ? ? A1 ? ? ? ? FF 10 A1 ? ? ? ? B9") + 1);
 	//.rdata:0049F0A8	00000015	C	GAMEEVENTSMANAGER002
 	//.rdata:0049F5D0	00000015	C	GAMEEVENTSMANAGER001
 	//001 is old version,dont use
@@ -164,6 +167,8 @@ void Interfaces::Initialise()
 	gpChat = ClientMode->GetChatElement();
 	
 	CGameEventListener* PlayerHurtListener = new CGameEventListener(("player_hurt"), GameEvent_PlayerHurt, false);
+
+	CGameEventListener* ImpactListener = new CGameEventListener(("bullet_impact"), GameEvent_BulletImpact, false);
 
 	Utilities::Log("Interfaces Ready");
 }

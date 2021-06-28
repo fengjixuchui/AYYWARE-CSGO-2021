@@ -119,7 +119,7 @@ void AyyWareWindow::Setup()
 	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	SetTitle("Solo King");
 
-	RegisterTab(&LegitBotTab);
+	//RegisterTab(&LegitBotTab);
 	RegisterTab(&RageBotTab);
 	RegisterTab(&VisualsTab);
 	RegisterTab(&MiscTab);
@@ -128,7 +128,8 @@ void AyyWareWindow::Setup()
 	RECT Client = GetClientArea();
 	Client.bottom -= 29;
 
-	LegitBotTab.Setup();
+	//Legit is useless
+	//LegitBotTab.Setup();
 	RageBotTab.Setup();
 	VisualsTab.Setup();
 	MiscTab.Setup();
@@ -550,8 +551,6 @@ void CVisualTab::Setup()
 	OptionsAimSpot.SetFileId("opt_aimspot");
 	OptionsGroup.PlaceLabledControl("Head Cross", this, &OptionsAimSpot);
 	
-	OptionsCompRank.SetFileId("opt_comprank");
-	OptionsGroup.PlaceLabledControl("Player Ranks", this, &OptionsCompRank);
 
 #pragma endregion Setting up the Options controls
 
@@ -740,17 +739,16 @@ void CMiscTab::Setup()
 	FakeLagGroup.PlaceLabledControl("Randomize Send", this, &SendRandomize);
 #pragma endregion fakelag shit
 
-#pragma region Teleport
-	TeleportGroup.SetPosition(16, 316);
-	TeleportGroup.SetSize(360, 75);
-	TeleportGroup.SetText("Dont Use");
-	RegisterControl(&TeleportGroup);
+#pragma region EventListen
+	EventListner.SetPosition(16, 316);
+	EventListner.SetSize(360, 75);
+	EventListner.SetText("EventListner");
+	RegisterControl(&EventListner);
 
-	TeleportEnable.SetFileId("teleport_enable");
-	TeleportGroup.PlaceLabledControl("Enable", this, &TeleportEnable);
+	EventListner.SetFileId("fire_event");
+	EventListner.PlaceLabledControl("FireLog", this, &FireEvent);
+	EventListner.PlaceLabledControl("FireTrace",this,&FireBulletTrace);
 
-	TeleportKey.SetFileId("teleport_key");
-	TeleportGroup.PlaceLabledControl("Key", this, &TeleportKey);
 
 #pragma endregion
 

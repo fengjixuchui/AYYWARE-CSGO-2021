@@ -3,11 +3,18 @@
 #include "ChatLog.h"
 #include "Hacks.h"
 #include "Entities.h"
+#include "Menu.h"
 
 #include <string>
 
+//all game events in src engine
+//https://wiki.alliedmods.net/Counter-Strike:_Global_Offensive_Events
+
 extern HackManager hackManager;
 
+namespace menu{
+extern AyyWareWindow Window;
+}
 
 //////////////////////////////////////
 //listener cpp file
@@ -57,10 +64,13 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 		break;
 	}*/
 
+
 	auto LocalPlayer = hackManager.pLocal();
 	if (!LocalPlayer || !gameEvent || !Interfaces::Engine->IsConnected())
 		return;
 	
+
+
 	GameEvent_PlayerHurt_t ev;
 
 	ev.targetuserid = gameEvent->GetInt(("userid"));
@@ -90,9 +100,8 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 	const int killed = Interfaces::Engine->GetPlayerForUserID(user_id);
 	const int killer = Interfaces::Engine->GetPlayerForUserID(attacker_id);
 
-	if(killer != LocalPlayer->GetIndex())
-		return;
-	
+	if (!Menu::Window.MiscTab.FireEvent.GetState() || (killer != LocalPlayer->GetIndex())) {
+			return;
 
 	IClientEntity* killed_entity = Interfaces::EntList->GetClientEntity(killed);
 	IClientEntity* killer_entity = Interfaces::EntList->GetClientEntity(killer);
@@ -100,6 +109,7 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 	player_info_t killer_entity_info;
 	Interfaces::Engine->GetPlayerInfo(killed, &killed_entity_info);
 	Interfaces::Engine->GetPlayerInfo(killed, &killer_entity_info);
+
 
 	//"Hit Name xx hitgroup xx HP , Left xx HP"
 	char logBuffer[128] = {0};
@@ -109,5 +119,42 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 		"Hit  \x01%s \x02%s  \x03%d  HP , Left \x04%d HP",
 		hittedName,HitGroupToString(ev.hitgroup),ev.dmg_health,ev.health);
 	ChatLog(logBuffer);
+	}
 
+
+}
+
+struct GameEvent_Impact_t
+{
+	Vector impactpos;
+	int attackeruserid;
+};
+void GameEvent_BulletImpact(CGameEvent* gameEvent)
+{
+	if(!Menu::Window.MiscTab.FireBulletTrace.GetState())
+		return;
+
+	auto LocalPlayer = hackManager.pLocal();
+	if (!LocalPlayer || !gameEvent || !Interfaces::Engine->IsConnected())
+		return;
+
+
+
+	GameEvent_Impact_t ev;
+
+	ev.impactpos.x = gameEvent->GetFloat(("x"));
+	ev.impactpos.y = gameEvent->GetFloat(("y"));
+	ev.impactpos.z = gameEvent->GetFloat(("z"));
+	ev.attackeruserid = gameEvent->GetInt(("userid"));
+
+	const int killer = Interfaces::Engine->GetPlayerForUserID(ev.attackeruserid);
+	IClientEntity* killer_entity = Interfaces::EntList->GetClientEntity(killer);
+	
+	auto viewAngles = killer_entity->GetEyeAngles();
+	Vector forward = {0,0,0};
+	AngleVectors(viewAngles,&forward);
+	int lenth = 500;
+	auto src = forward*lenth;
+
+	DrawBeamd(killer_entity->GetEyePosition(),src, Color(128,42,42, 255));
 }

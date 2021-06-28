@@ -210,6 +210,9 @@
     <ClInclude Include="GameEventListener.h">
       <Filter>Header Files\Hacks</Filter>
     </ClInclude>
+    <ClInclude Include="RenderBeams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLMain.cpp">
@@ -309,6 +312,9 @@
       <Filter>Header Files\Hacks</Filter>
     </ClCompile>
     <ClCompile Include="GameEventListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderBeams.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

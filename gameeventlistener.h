@@ -3,6 +3,7 @@
 #include <string>
 #include <Windows.h>
 #include "Interfaces.h"
+#include "RenderBeams.h"
 
 class IGameEventVisitor2;
 class CGameEventDescriptor;
@@ -93,6 +94,7 @@ public:
 };
 
 void GameEvent_PlayerHurt(CGameEvent* gameEvent);
+void GameEvent_BulletImpact(CGameEvent* gameEvent);
 
 inline char *HitGroupToString(int hitgroup)
 {

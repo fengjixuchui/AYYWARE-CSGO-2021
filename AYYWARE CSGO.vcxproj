@@ -97,7 +97,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -153,6 +153,7 @@
     <ClInclude Include="Hacks.h" />
     <ClInclude Include="NetworkChannel.h" />
     <ClInclude Include="Pad.h" />
+    <ClInclude Include="RenderBeams.h" />
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="winwindef.h" />
     <ClInclude Include="Hooks.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="NetVars.cpp" />
     <ClCompile Include="Offsets.cpp" />
     <ClCompile Include="RageBot.cpp" />
+    <ClCompile Include="RenderBeams.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="Resolver.cpp" />
     <ClCompile Include="SpoofedConvar.cpp" />
