@@ -13,8 +13,8 @@ void DrawBeamd(Vector src, Vector end, Color color)
 	beamInfo.m_nModelIndex = -1; // will be set by CreateBeamPoints if its -1
 	beamInfo.m_flHaloScale = 0.0f;
 	beamInfo.m_flLife = 1.5f;
-	beamInfo.m_flWidth = 2.0f;
-	beamInfo.m_flEndWidth = 2.0f;
+	beamInfo.m_flWidth = 5.0f;
+	beamInfo.m_flEndWidth = 5.0f;
 	beamInfo.m_flFadeLength = 0.0f;
 	beamInfo.m_flAmplitude = 2.0f;
 	beamInfo.m_flBrightness = color.a();

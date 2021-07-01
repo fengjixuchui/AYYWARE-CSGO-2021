@@ -399,7 +399,7 @@ void CRageBotTab::Setup()
 
 	TargetHitscan.SetFileId("tgt_hitscan");
 	TargetHitscan.AddItem("Off"); //0
-	TargetHitscan.AddItem("NoHead");
+	TargetHitscan.AddItem("Baim");
 	TargetHitscan.AddItem("Low"); // 1
 	TargetHitscan.AddItem("Medium"); // 2
 	TargetHitscan.AddItem("High"); // 3
@@ -992,8 +992,8 @@ void Menu::UICheatStatus()
 
 		//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
 
-		/*Render::Textf(100, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat,
-			"localPlayer %x",localPlayer);*/
+		Render::Textf(100, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat,
+			"tickBase %x",localPlayer->GetTickBase());
 
 		//---------------------------------------------------------------------
 		if (currentWeapon)

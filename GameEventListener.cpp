@@ -100,8 +100,9 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 	const int killed = Interfaces::Engine->GetPlayerForUserID(user_id);
 	const int killer = Interfaces::Engine->GetPlayerForUserID(attacker_id);
 
-	if (!Menu::Window.MiscTab.FireEvent.GetState() || (killer != LocalPlayer->GetIndex())) {
+	if (!Menu::Window.MiscTab.FireEvent.GetState() || (killer != LocalPlayer->GetIndex())) 
 			return;
+	
 
 	IClientEntity* killed_entity = Interfaces::EntList->GetClientEntity(killed);
 	IClientEntity* killer_entity = Interfaces::EntList->GetClientEntity(killer);
@@ -119,7 +120,7 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 		"Hit  \x01%s \x02%s  \x03%d  HP , Left \x04%d HP",
 		hittedName,HitGroupToString(ev.hitgroup),ev.dmg_health,ev.health);
 	ChatLog(logBuffer);
-	}
+	
 
 
 }
@@ -153,8 +154,14 @@ void GameEvent_BulletImpact(CGameEvent* gameEvent)
 	auto viewAngles = killer_entity->GetEyeAngles();
 	Vector forward = {0,0,0};
 	AngleVectors(viewAngles,&forward);
-	int lenth = 500;
+
+
+	int lenth = 2000;
 	auto src = forward*lenth;
 
-	DrawBeamd(killer_entity->GetEyePosition(),src, Color(128,42,42, 255));
+	auto start = killer_entity->GetOrigin() + killer_entity->GetViewOffset();
+
+	DrawBeamd(start,
+		start+src, 
+		Color(128,42,42, 255));
 }

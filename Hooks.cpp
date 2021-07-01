@@ -878,7 +878,7 @@ bool __fastcall Hooks::Hooked_WriteUsercmdDeltaToBuffer(void* ecx,
 
 		CInput::CUserCmd toCmd = fromCmd;
 		toCmd.command_number++;
-		toCmd.tick_count += 25;
+		toCmd.tick_count += 138;
 
 		static WriteUsercmdFn pWriteUsercmdFn = (WriteUsercmdFn)GameUtils::FindPattern1("client.dll",
 			"55 8B EC 83 E4 F8 51 53 56 8B D9");
