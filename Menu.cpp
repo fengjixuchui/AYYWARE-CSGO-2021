@@ -14,6 +14,7 @@ Syn's AyyWare Framework 2015
 #include<memory>
 #include<future>
 #include<thread>
+#include<vector>
 
 #pragma comment(lib,"Comctl32.lib")
 
@@ -26,12 +27,19 @@ Syn's AyyWare Framework 2015
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 630
 
+struct DamageIndicator_t {
+	int iDamage;
+	float flEraseTime;
+	Vector Position;
+};
+
 AyyWareWindow Menu::Window;
 
 using std::string;
 using std::wstring;
 
 extern float MaxDesyncAngle;
+extern std::vector<DamageIndicator_t> g_vdamage;
 
 static wstring g_documentPath;
 static wstring g_configPath;
@@ -971,6 +979,22 @@ void Menu::UICheatStatus()
 
 	if(Menu::Window.RageBotTab.DoubleTap.GetState())
 		Render::Text(20, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "DT");
+
+	//GameListern Task
+	for(auto first = g_vdamage.cbegin();first!= g_vdamage.cend();){
+		if(Interfaces::Globals->currenttime > first->flEraseTime){
+			first = g_vdamage.erase(first);//The erase method can return the next valid iterator
+			continue;
+		}
+		else
+			first++;
+			
+
+	Render::Text(first->Position.x, first->Position.y, Color(255, 255, 255, 220), Render::Fonts::Menu,
+		std::to_string(first->iDamage).c_str());
+	}
+	//-------------------------
+
 
 
 #define Developer

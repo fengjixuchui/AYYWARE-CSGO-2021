@@ -138,8 +138,9 @@ void Offsets::Initialise()
 		using namespace ClientStates;
 		auto p = offset_m_nChokedCommands - 0xC;
 
-		offset_m_nChokedCommands = *(DWORD*)(p+2);
-		offset_m_nLastOutgoingCommand = *(DWORD*)(p+8);
+		offset_m_nLastOutgoingCommand = *(DWORD*)(p+2);
+		offset_m_nChokedCommands = *(DWORD*)(p+8);
+
 	}
 
 

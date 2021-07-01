@@ -4,13 +4,22 @@
 #include "Hacks.h"
 #include "Entities.h"
 #include "Menu.h"
-
+#include "RenderManager.h"
 #include <string>
-
+#include <vector>
 //all game events in src engine
 //https://wiki.alliedmods.net/Counter-Strike:_Global_Offensive_Events
 
 extern HackManager hackManager;
+
+struct DamageIndicator_t {
+	DamageIndicator_t(int a,float b,Vector c):iDamage(a),flEraseTime(b),Position(c){}
+	int iDamage;
+	float flEraseTime;
+	Vector Position;
+};
+
+std::vector<DamageIndicator_t> g_vdamage;
 
 namespace menu{
 extern AyyWareWindow Window;
@@ -120,7 +129,12 @@ void GameEvent_PlayerHurt(CGameEvent* gameEvent)
 		"Hit  \x01%s \x02%s  \x03%d  HP , Left \x04%d HP",
 		hittedName,HitGroupToString(ev.hitgroup),ev.dmg_health,ev.health);
 	ChatLog(logBuffer);
+
 	
+	auto headPos = killed_entity->GetBonePos(6);
+	Vector headPosScreen = {};
+	Render::WorldToScreen(headPos, headPosScreen);
+	g_vdamage.emplace_back(ev.dmg_health,Interfaces::Globals->currenttime+1.f,headPosScreen);
 
 
 }
