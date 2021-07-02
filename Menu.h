@@ -140,7 +140,6 @@ public:
 	CComboBox OptionsChams;
 	CCheckBox OptionsSkeleton;
 	CCheckBox OptionsAimSpot;
-	CCheckBox OptionsCompRank;
 
 	// Filters Settings
 	CGroupBox FiltersGroup;
@@ -205,10 +204,12 @@ public:
 	CCheckBox SendRandomize;
 	//CCheckBox FakeLagWhileShooting;
 
-	// Teleport shit cause we're cool
-	CGroupBox TeleportGroup;
-	CCheckBox TeleportEnable;
-	CKeyBind  TeleportKey;
+	// EventListenr 
+	CGroupBox EventListner;
+	CCheckBox FireEvent;
+	CCheckBox FireBulletTrace;
+
+	
 };
 
 class AyyWareWindow : public CWindow

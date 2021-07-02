@@ -14,6 +14,7 @@ Syn's AyyWare Framework 2015
 #include<memory>
 #include<future>
 #include<thread>
+#include<vector>
 
 #pragma comment(lib,"Comctl32.lib")
 
@@ -26,12 +27,29 @@ Syn's AyyWare Framework 2015
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 630
 
+struct DamageIndicator_t {
+	int iDamage;
+	float flEraseTime;
+	Vector Position;
+};
+
+struct BeamTask
+{
+	BeamTask(Vector a, Vector c, float b) :Position(a), flEraseTime(b), PositionEnd(c) {}
+	Vector Position;
+	Vector PositionEnd;
+	float flEraseTime;
+};
+
+
 AyyWareWindow Menu::Window;
 
 using std::string;
 using std::wstring;
 
 extern float MaxDesyncAngle;
+extern std::vector<DamageIndicator_t> g_vdamage;
+extern std::vector<BeamTask> g_vBeam;
 
 static wstring g_documentPath;
 static wstring g_configPath;
@@ -119,7 +137,7 @@ void AyyWareWindow::Setup()
 	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	SetTitle("Solo King");
 
-	RegisterTab(&LegitBotTab);
+	//RegisterTab(&LegitBotTab);
 	RegisterTab(&RageBotTab);
 	RegisterTab(&VisualsTab);
 	RegisterTab(&MiscTab);
@@ -128,7 +146,8 @@ void AyyWareWindow::Setup()
 	RECT Client = GetClientArea();
 	Client.bottom -= 29;
 
-	LegitBotTab.Setup();
+	//Legit is useless
+	//LegitBotTab.Setup();
 	RageBotTab.Setup();
 	VisualsTab.Setup();
 	MiscTab.Setup();
@@ -398,7 +417,7 @@ void CRageBotTab::Setup()
 
 	TargetHitscan.SetFileId("tgt_hitscan");
 	TargetHitscan.AddItem("Off"); //0
-	TargetHitscan.AddItem("NoHead");
+	TargetHitscan.AddItem("Baim");
 	TargetHitscan.AddItem("Low"); // 1
 	TargetHitscan.AddItem("Medium"); // 2
 	TargetHitscan.AddItem("High"); // 3
@@ -550,8 +569,6 @@ void CVisualTab::Setup()
 	OptionsAimSpot.SetFileId("opt_aimspot");
 	OptionsGroup.PlaceLabledControl("Head Cross", this, &OptionsAimSpot);
 	
-	OptionsCompRank.SetFileId("opt_comprank");
-	OptionsGroup.PlaceLabledControl("Player Ranks", this, &OptionsCompRank);
 
 #pragma endregion Setting up the Options controls
 
@@ -740,17 +757,16 @@ void CMiscTab::Setup()
 	FakeLagGroup.PlaceLabledControl("Randomize Send", this, &SendRandomize);
 #pragma endregion fakelag shit
 
-#pragma region Teleport
-	TeleportGroup.SetPosition(16, 316);
-	TeleportGroup.SetSize(360, 75);
-	TeleportGroup.SetText("Dont Use");
-	RegisterControl(&TeleportGroup);
+#pragma region EventListen
+	EventListner.SetPosition(16, 316);
+	EventListner.SetSize(360, 75);
+	EventListner.SetText("EventListner");
+	RegisterControl(&EventListner);
 
-	TeleportEnable.SetFileId("teleport_enable");
-	TeleportGroup.PlaceLabledControl("Enable", this, &TeleportEnable);
+	EventListner.SetFileId("fire_event");
+	EventListner.PlaceLabledControl("FireLog", this, &FireEvent);
+	EventListner.PlaceLabledControl("FireTrace",this,&FireBulletTrace);
 
-	TeleportKey.SetFileId("teleport_key");
-	TeleportGroup.PlaceLabledControl("Key", this, &TeleportKey);
 
 #pragma endregion
 
@@ -974,6 +990,37 @@ void Menu::UICheatStatus()
 	if(Menu::Window.RageBotTab.DoubleTap.GetState())
 		Render::Text(20, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat, "DT");
 
+	//GameListern Task
+	for(auto first = g_vdamage.cbegin();first!= g_vdamage.cend();){
+		if(Interfaces::Globals->currenttime > first->flEraseTime){
+			first = g_vdamage.erase(first);//The erase method can return the next valid iterator
+			continue;
+		}
+		else {
+			Render::Text(first->Position.x, first->Position.y, Color(255, 255, 255, 220), Render::Fonts::Menu,
+			std::to_string(first->iDamage).c_str());
+			first++;
+		}
+	
+	}
+
+	for (auto first = g_vBeam.cbegin(); first != g_vBeam.cend();) {
+		if (Interfaces::Globals->currenttime > first->flEraseTime) {
+			first = g_vBeam.erase(first);//The erase method can return the next valid iterator
+			continue;
+		}
+		else{
+			DrawBeamd(first->Position,first->PositionEnd, Color(128, 42, 42, 255));
+			first++;
+		}
+		
+	}
+
+
+
+	//-------------------------
+
+
 
 #define Developer
 	//*********Developer test********************
@@ -994,8 +1041,8 @@ void Menu::UICheatStatus()
 
 		//TICKS_TO_TIME(localPlayer->GetTickBase()) ¡Ö gpGlobals->currenttime 
 
-		/*Render::Textf(100, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat,
-			"localPlayer %x",localPlayer);*/
+		Render::Textf(100, height / 3 + 200, Color(46, 139, 87, 255), Render::Fonts::UiCheat,
+			"tickBase %x",localPlayer->GetTickBase());
 
 		//---------------------------------------------------------------------
 		if (currentWeapon)

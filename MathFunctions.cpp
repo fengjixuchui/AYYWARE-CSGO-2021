@@ -4,8 +4,8 @@ Syn's AyyWare Framework 2015
 
 #include "MathFunctions.h"
 #include "CommonIncludes.h"
-
-void AngleVectors(const Vector &angles, Vector *forward)
+					//(45,0,0)
+void AngleVectors(const Vector &angles, Vector *forward) // forward.lenth(3D) is 1
 {
 	Assert(s_bMathlibInitialized);
 	Assert(forward);
@@ -13,16 +13,16 @@ void AngleVectors(const Vector &angles, Vector *forward)
 	float	sp, sy, cp, cy;
 
 	//yaw
-	sy = sin(DEG2RAD(angles[1]));
-	cy = cos(DEG2RAD(angles[1]));
+	sy = sin(DEG2RAD(angles[1]));//sin(0)=0
+	cy = cos(DEG2RAD(angles[1]));//cos(0)=1
 
 	//pitch
-	sp = sin(DEG2RAD(angles[0]));
-	cp = cos(DEG2RAD(angles[0]));
+	sp = sin(DEG2RAD(angles[0]));//sin(pi/4) = ¡Ì2/2
+	cp = cos(DEG2RAD(angles[0]));//cos(pi/4) = ¡Ì2/2
 
-	forward->x = cp*cy;
-	forward->y = cp*sy;
-	forward->z = -sp;
+	forward->x = cp*cy;//¡Ì2/2
+	forward->y = cp*sy;//0
+	forward->z = -sp;//-¡Ì2/2
 }
 
 void VectorTransform(const Vector in1, float in2[3][4], Vector &out)

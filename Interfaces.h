@@ -7,6 +7,7 @@ Syn's AyyWare Framework
 // Includes
 #include "CommonIncludes.h"
 #include "SDK.h"
+#include "RenderBeams.h"
 
 class IGameEventManager2;
 
@@ -35,5 +36,5 @@ namespace Interfaces
 	extern ICVar *CVar;
 	extern CInput* pInput;
 	extern IInputSystem* InputSystem;
-
+	extern IViewRenderBeams* g_pViewRenderBeams;
 };

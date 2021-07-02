@@ -146,11 +146,6 @@ void Hacks::DrawHacks()
 	if (!Menu::Window.VisualsTab.Active.GetState())
 		return;
 
-	if (Menu::Window.VisualsTab.OptionsCompRank.GetState() && GUI.GetKeyState(VK_TAB))
-	{
-		//not worked
-		//GameUtils::ServerRankRevealAll();
-	}
 
 	hackManager.Draw();
 	//--------------------------------
