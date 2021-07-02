@@ -33,6 +33,15 @@ struct DamageIndicator_t {
 	Vector Position;
 };
 
+struct BeamTask
+{
+	BeamTask(Vector a, Vector c, float b) :Position(a), flEraseTime(b), PositionEnd(c) {}
+	Vector Position;
+	Vector PositionEnd;
+	float flEraseTime;
+};
+
+
 AyyWareWindow Menu::Window;
 
 using std::string;
@@ -40,6 +49,7 @@ using std::wstring;
 
 extern float MaxDesyncAngle;
 extern std::vector<DamageIndicator_t> g_vdamage;
+extern std::vector<BeamTask> g_vBeam;
 
 static wstring g_documentPath;
 static wstring g_configPath;
@@ -986,13 +996,28 @@ void Menu::UICheatStatus()
 			first = g_vdamage.erase(first);//The erase method can return the next valid iterator
 			continue;
 		}
-		else
+		else {
+			Render::Text(first->Position.x, first->Position.y, Color(255, 255, 255, 220), Render::Fonts::Menu,
+			std::to_string(first->iDamage).c_str());
 			first++;
-			
-
-	Render::Text(first->Position.x, first->Position.y, Color(255, 255, 255, 220), Render::Fonts::Menu,
-		std::to_string(first->iDamage).c_str());
+		}
+	
 	}
+
+	for (auto first = g_vBeam.cbegin(); first != g_vBeam.cend();) {
+		if (Interfaces::Globals->currenttime > first->flEraseTime) {
+			first = g_vBeam.erase(first);//The erase method can return the next valid iterator
+			continue;
+		}
+		else{
+			DrawBeamd(first->Position,first->PositionEnd, Color(128, 42, 42, 255));
+			first++;
+		}
+		
+	}
+
+
+
 	//-------------------------
 
 

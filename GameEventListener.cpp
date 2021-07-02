@@ -19,7 +19,16 @@ struct DamageIndicator_t {
 	Vector Position;
 };
 
+struct BeamTask
+{
+	BeamTask(Vector a,Vector c,float b):Position(a),flEraseTime(b),PositionEnd(c){}
+	Vector Position;
+	Vector PositionEnd;
+	float flEraseTime;
+};
+
 std::vector<DamageIndicator_t> g_vdamage;
+std::vector<BeamTask> g_vBeam;
 
 namespace menu{
 extern AyyWareWindow Window;
@@ -144,6 +153,7 @@ struct GameEvent_Impact_t
 	Vector impactpos;
 	int attackeruserid;
 };
+
 void GameEvent_BulletImpact(CGameEvent* gameEvent)
 {
 	if(!Menu::Window.MiscTab.FireBulletTrace.GetState())
@@ -175,7 +185,6 @@ void GameEvent_BulletImpact(CGameEvent* gameEvent)
 
 	auto start = killer_entity->GetOrigin() + killer_entity->GetViewOffset();
 
-	DrawBeamd(start,
-		start+src, 
-		Color(128,42,42, 255));
+	g_vBeam.emplace_back(start,start+src,Interfaces::Globals->currenttime+1.f);
+
 }
