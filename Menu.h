@@ -57,7 +57,7 @@ public:
 	CComboBox AntiAimPitch;
 	CComboBox AntiAimYaw;
 	CComboBox AntiAimEdge;
-	CSlider	  AntiAimOffset;
+	CCheckBox ChamsDesyAA;
 	CCheckBox AntiAimKnife;
 	CCheckBox AntiAimTarget;
 };

@@ -8,6 +8,7 @@
 #include "UTIL Functions.h"
 #include "esp.h"
 #include <random>
+#include <windows.h>
 
 #define TICK_INTERVAL			( Interfaces::Globals->intervalPerTick )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
@@ -190,26 +191,14 @@ void CRageBot::Move(CUserCmd *pCmd, bool &bSendPacket)
 	// Anti Aim 
 	if (Menu::Window.RageBotTab.AntiAimEnable.GetState())
 	{
-		static int ChokedPackets = -1;
 
-		CBaseCombatWeapon* pWeapon = (CBaseCombatWeapon*)Interfaces::EntList->GetClientEntityFromHandle(hackManager.pLocal()->GetActiveWeaponHandle());
-		if (!pWeapon)
-			return;
 
-		if (ChokedPackets < 1 && pLocalEntity->GetLifeState() == LIFE_ALIVE && pCmd->buttons & IN_ATTACK && CanOpenFire() && GameUtils::IsBallisticWeapon(pWeapon))
+		if (pLocalEntity->GetLifeState() == LIFE_ALIVE)
 		{
-			bSendPacket = false;
+			DoAntiAim(pCmd, bSendPacket);
 		}
-		else
-		{
-			if (pLocalEntity->GetLifeState() == LIFE_ALIVE)
-			{
-				DoAntiAim(pCmd, bSendPacket);
-			}
-			ChokedPackets = -1;
-		}
+
 	}
-
 	// Position Adjustment
 	if (Menu::Window.RageBotTab.AccuracyPositionAdjustment.GetState())
 		PositionAdjustment(pCmd);
@@ -905,7 +894,7 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 
 				pCmd->viewangles.y = qTmp.y;
 
-				int offset = Menu::Window.RageBotTab.AntiAimOffset.GetValue();
+				int offset = 0;
 
 				static int ChokedPackets = -1;
 				ChokedPackets++;
@@ -1259,22 +1248,32 @@ namespace AntiAims // CanOpenFire checks for fake anti aims?
 	}
 
 	void AntiAimTest(CUserCmd* pCmd, bool& bSendPacket){
+		//https://www.unknowncheats.me/forum/counterstrike-global-offensive/367470-desync-final-solution.html
 
-		/*pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle();
+		//Reverse Server.dll -> SetupVelocity
+		//https://www.unknowncheats.me/forum/counterstrike-global-offensive/324767-setupvelocity.html
+		
+		bSendPacket = pCmd->command_number %2;
 
-		if (CRageBot::next_lby_update(pCmd))
-		{
+		if(CRageBot::next_lby_update(pCmd)){
+			pCmd->viewangles.y += 180.f-58.f;
 			bSendPacket = false;
-			pCmd->viewangles.y += 45.f;
-			return;
 		}
+		else if (bSendPacket)
+		{
+			pCmd->viewangles.y +=180.f;
+		}
+		else{
+			pCmd->viewangles.y += 180.f + 120.f;
 
-		if (!bSendPacket) {
-			pCmd->viewangles.y += hackManager.pLocal()->getMaxDesyncAngle()*2.f;
-		}*/
-
-		pCmd->viewangles.y -=180 ;
-		EdgeDetect(pCmd,bSendPacket);
+			
+		}
+		if (fabsf(pCmd->sidemove) < 5.0f) {
+			if (pCmd->buttons & UserCmd::IN_DUCK)
+				pCmd->sidemove = pCmd->tick_count & 1 ? 3.25f : -3.25f;
+			else
+				pCmd->sidemove = pCmd->tick_count & 1 ? 1.1f : -1.1f;
+		}
 
 	}
 
@@ -1349,7 +1348,7 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket)
 	switch (Menu::Window.RageBotTab.AntiAimYaw.GetIndex())
 	{
 	case 0:
-		// make sure test is annotated
+		// make sure test is annotated if release
 		AntiAims::AntiAimTest(pCmd,bSendPacket);
 		break;
 	case 1:
@@ -1394,8 +1393,6 @@ void CRageBot::DoAntiAim(CUserCmd *pCmd, bool &bSendPacket)
 		break;
 	}
 
-	// Angle offset
-	pCmd->viewangles.y += Menu::Window.RageBotTab.AntiAimOffset.GetValue();
 
 }
 

@@ -208,10 +208,7 @@ int InitialThread()
 	//wait process also can cause dead lock
 	//so dont use wait function in DLLMain
 	//WaitForSingleObject(GetCurrentProcess(),INFINITE);
-	while(1)
-	{
-	Sleep(1);//abandon time slice every thread scheduling
-	}
+
 
 	return 0;
 }
