@@ -511,10 +511,8 @@ void CRageBotTab::Setup()
 	AntiAimEdge.AddItem("Normal");
 	AntiAimGroup.PlaceLabledControl("Wall Detect", this, &AntiAimEdge);
 
-	AntiAimOffset.SetFileId("aa_offset");
-	AntiAimOffset.SetBoundaries(0, 360);
-	AntiAimOffset.SetValue(0);
-	AntiAimGroup.PlaceLabledControl("Yaw Offset", this, &AntiAimOffset);
+	ChamsDesyAA.SetFileId("aa_chams");
+	AntiAimGroup.PlaceLabledControl("AAChams",this,&ChamsDesyAA);
 
 	AntiAimKnife.SetFileId("aa_knife");
 	AntiAimGroup.PlaceLabledControl("Anti Aim on Knife", this, &AntiAimKnife);
@@ -1052,6 +1050,7 @@ void Menu::UICheatStatus()
 		//---------------------------------------------------------------------
 
 	}
+
 
 #endif
 
